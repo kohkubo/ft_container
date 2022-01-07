@@ -3,7 +3,7 @@ CXX = clang++
 CXXFLAGS = -Wall -Werror -Wextra -Wshadow -MMD -MP -std=c++98
 
 srcsdir = .
-includes = .
+includes = ./includes
 srcs_test = 
 srcs = main.cpp $(srcs_test)
 objs = $(srcs:.cpp=.o)
@@ -41,7 +41,7 @@ debug: re
 gtestdir	=	./test
 gtest		=	$(gtestdir)/gtest $(gtestdir)/googletest-release-1.11.0
 
-testdir = .
+testdir = ./gtest
 
 $(gtest):
 	mkdir -p $(dir ../test)
@@ -56,5 +56,7 @@ test: $(gtest) fclean
 	-DDEBUG -g -fsanitize=address -fsanitize=undefined \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread $(srcs_test) -o tester
 	./tester
+	rm -rf tester
+	rm -rf tester.dSYM
 
 -include $(depends)

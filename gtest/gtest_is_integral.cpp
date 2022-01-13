@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "is_integral.hpp"
+#include "type_traits.hpp"
 
 class IsIntegralTest : public ::testing::Test {};
 

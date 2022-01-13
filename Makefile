@@ -2,10 +2,10 @@ NAME = a.out
 CXX = clang++
 CXXFLAGS = -Wall -Werror -Wextra -Wshadow -MMD -MP -std=c++98
 
-srcsdir = .
+srcsdir = ./srcs
 includes = ./includes
-srcs_test = 
-srcs = main.cpp $(srcs_test)
+srcs_test =
+srcs = $(srcsdir)/main.cpp $(srcs_test)
 objs = $(srcs:.cpp=.o)
 depends = $(objs:.o=.d)
 
@@ -19,13 +19,6 @@ $(NAME): $(objs)
 clean:
 	$(RM) -rf *.dSYM
 	$(RM) -rf $(objs) $(depends)
-	rm -rf cov_test.info
-	rm -rf tester
-	rm -rf *.gcda
-	rm -rf *.gcno
-	rm -rf *.info
-	rm -rf tester.dSYM
-	rm -rf cov_test
 
 .PHONY: fclean
 fclean: clean

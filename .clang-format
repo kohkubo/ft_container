@@ -35,7 +35,7 @@ IndentAccessModifiers: false
 AccessModifierOffset: -4
 IndentPPDirectives: AfterHash
 IndentWidth: 4
-PenaltyExcessCharacter: 0
+ColumnLimit: 100
 IndentWrappedFunctionNames: true
 NamespaceIndentation: All
 PointerAlignment: Right

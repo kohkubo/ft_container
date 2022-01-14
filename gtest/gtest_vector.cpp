@@ -16,3 +16,11 @@ TEST_F(VectorTest, Constructor) {
     EXPECT_EQ(0, v.size());
     EXPECT_EQ(10, v.capacity());
 }
+
+TEST_F(VectorTest, CopyConstructor) {
+    ft::vector<int> v1(10);
+    ft::vector<int> v2(v1);
+    EXPECT_EQ(1, v2.empty());
+    EXPECT_EQ(0, v2.size());
+    EXPECT_EQ(10, v2.capacity());
+}

@@ -21,8 +21,8 @@ namespace ft {
         // Canonical
         // =====================================================================
         random_access_iterator() : _iter(0) {}
-        random_access_iterator(iterator_type iter) : _iter(iter) {}
-        random_access_iterator(const iterator_type &rhs) : _iter(rhs.base()) {}
+        random_access_iterator(pointer p) : _iter(p) {}
+
         random_access_iterator &operator=(const iterator_type &rhs) {
             _iter = rhs.base();
             return *this;
@@ -75,6 +75,39 @@ namespace ft {
         }
         reference operator[](difference_type n) const { return *(*this + n); }
     };
+    // =========================================================================
+    // Operator
+    // =========================================================================
+    template <class Iterator>
+    bool operator==(const random_access_iterator<Iterator> &lhs,
+                    const random_access_iterator<Iterator> &rhs) {
+        return lhs.base() == rhs.base();
+    }
+    template <class Iterator>
+    bool operator!=(const random_access_iterator<Iterator> &lhs,
+                    const random_access_iterator<Iterator> &rhs) {
+        return !(lhs == rhs);
+    }
+    template <class Iterator>
+    bool operator<(const random_access_iterator<Iterator> &lhs,
+                   const random_access_iterator<Iterator> &rhs) {
+        return lhs.base() < rhs.base();
+    }
+    template <class Iterator>
+    bool operator>(const random_access_iterator<Iterator> &lhs,
+                   const random_access_iterator<Iterator> &rhs) {
+        return lhs.base() > rhs.base();
+    }
+    template <class Iterator>
+    bool operator<=(const random_access_iterator<Iterator> &lhs,
+                    const random_access_iterator<Iterator> &rhs) {
+        return lhs.base() <= rhs.base();
+    }
+    template <class Iterator>
+    bool operator>=(const random_access_iterator<Iterator> &lhs,
+                    const random_access_iterator<Iterator> &rhs) {
+        return lhs.base() >= rhs.base();
+    }
 }  // namespace ft
 
 #endif

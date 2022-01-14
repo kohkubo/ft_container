@@ -51,9 +51,9 @@ namespace ft {
     template <>
     struct is_integral<wchar_t> : public true_type {};
 
-    // =====================================================================
+    // =========================================================================
     // enable_if
-    // =====================================================================
+    // =========================================================================
     // コンパイル時条件式が真の場合のみ有効な型
     template <bool B, class T = void>
     struct enable_if {};
@@ -62,6 +62,16 @@ namespace ft {
     struct enable_if<true, T> {
         typedef T type;
     };
+    // =========================================================================
+    // is_same
+    // =========================================================================
+    // 型が同じかどうかを判定する
+    template <class T, class U>
+    struct is_same : public ft::false_type {};
+
+    template <class T>
+    struct is_same<T, T> : public ft::true_type {};
+
 }  // namespace ft
 
 #endif

@@ -31,5 +31,9 @@ int main()
     std::cout << "std_v2.empty() = " << std_v2.empty() << std::endl;
     std::cout << "std_v2.begin() = " << *std_v2.begin() << std::endl;
     std::cout << "std_v2.end() = " << *--std_v2.end() << std::endl;
+
+    // iterator
+    std::cout << "========== iterator ===========" << std::endl;
+    std::vector<int>::iterator it = std_v.begin();
     return 0;
 }

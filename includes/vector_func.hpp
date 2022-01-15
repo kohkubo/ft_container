@@ -23,11 +23,18 @@ namespace ft {
         __vallocate(last - first);
         __construct_at_end(first, last);
     }
-
+    // TODO バグっている
     template <class T, class Alloc>
     vector<T, Alloc>::vector(const vector &v) : _alloc(Alloc()) {
         __vallocate(v.size());
         __construct_at_end(v.size(), v.front());
+    }
+    // ~vector
+    template <class T, class Alloc>
+    vector<T, Alloc>::~vector() {
+        if (_begin) {
+            _alloc.deallocate(_begin, _end_cap - _begin);
+        }
     }
     // =========================================================================
     // Element access
@@ -69,7 +76,7 @@ namespace ft {
             std::uninitialized_copy(_begin, _end, new_begin);
             // TODO ダブルフリーが起きる描き方になっている。
             __destroy_range(_begin, _end);
-            // _alloc.deallocate(_begin, capacity());
+            _alloc.deallocate(_begin, capacity());
             _begin   = new_begin;
             _end     = new_end;
             _end_cap = new_end_cap;
@@ -78,6 +85,18 @@ namespace ft {
     // =========================================================================
     // private menber function
     // =========================================================================
+    template <class T, class Alloc>
+    void vector<T, Alloc>::__construct_at_end(size_type n, const_reference x) {
+        _end = _begin + n;
+        std::uninitialized_fill(_begin, _end, x);
+    }
+    // __destroy_range
+    template <class T, class Alloc>
+    inline void vector<T, Alloc>::__destroy_range(pointer first, pointer last) {
+        for (; first != last; ++first) {
+            _alloc.destroy(first);
+        }
+    }
     template <class T, class Alloc>
     void vector<T, Alloc>::__vallocate(size_type n) {
         if (n > max_size()) {
@@ -95,11 +114,6 @@ namespace ft {
             _end     = 0;
             _end_cap = 0;
         }
-    }
-    template <class T, class Alloc>
-    void vector<T, Alloc>::__construct_at_end(size_type n, const_reference x) {
-        _end = _begin + n;
-        std::uninitialized_fill(_begin, _end, x);
     }
     // =========================================================================
     // Modifiers

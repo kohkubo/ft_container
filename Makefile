@@ -45,8 +45,8 @@ $(gtest):
 	mv googletest-release-1.11.0 $(gtestdir)
 
 test: $(gtest) fclean
-	g++ -std=c++11 $(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
-	-DDEBUG -g -fsanitize=address -fsanitize=undefined \
+	clang++ -std=c++11 $(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
+	-DDEBUG -g -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread $(srcs_test) -o tester
 	./tester
 	rm -rf tester

@@ -22,7 +22,6 @@ namespace ft {
         // =====================================================================
         random_access_iterator() : _iter(0) {}
         random_access_iterator(pointer p) : _iter(p) {}
-
         random_access_iterator &operator=(const iterator_type &rhs) {
             _iter = rhs.base();
             return *this;
@@ -73,7 +72,7 @@ namespace ft {
             __tmp -= n;
             return __tmp;
         }
-        reference operator[](difference_type n) const { return *(*this + n); }
+        reference operator[](difference_type n) const { return *(_iter + n); }
     };
     // =========================================================================
     // Operator

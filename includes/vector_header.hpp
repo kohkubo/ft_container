@@ -64,24 +64,21 @@ class vector {
   size_type       size() const { return __end_ - __begin_; }
   // TODO(kohkubo)
   size_type       max_size() const;
-  // TODO(kohkubo)
   void            reserve(size_type n);
   size_type       capacity() const { return __end_cap_ - __begin_; }
   // =====================================================================
   // Modifiers
   // =====================================================================
-  // TODO(kohkubo)
   void            clear();
-  iterator        insert(const_iterator pos, const T &value);
-  iterator        insert(const_iterator pos, size_type n, const T &value);
+  iterator        insert(iterator pos, const_reference value);
+  iterator        insert(iterator pos, size_type n, const_reference value);
   template <class InputIterator>
-  iterator insert(const_iterator pos, InputIterator first, InputIterator last);
-  iterator erase(const_iterator pos);
-  iterator erase(const_iterator first, const_iterator last);
-  // TODO(kohkubo)
-  void     push_back(const T &value);
+  iterator insert(iterator pos, InputIterator first, InputIterator last);
+  iterator erase(iterator pos);
+  iterator erase(iterator first, iterator last);
+  void     push_back(const_reference value);
   void     pop_back();
-  void     resize(size_type n, const T &value = T());
+  void     resize(size_type n, const_reference value = T());
   void     swap(vector &x);
 
  private:
@@ -91,16 +88,17 @@ class vector {
   inline const_iterator __make_iter(const_pointer p) {
     return const_iterator(p);
   }
-  void        __construct_at_end(size_type n, const_reference x = T());
+  void           __construct_at_end(size_type n, const_reference x = T());
   // template <class InputIterator>
   // void __construct_at_end(
   //     InputIterator first,
   //     typename enable_if<is_input_iterator<InputIterator>::value,
   //                        InputIterator>::type last);
-  inline void __destroy_range(pointer first, pointer last);
-  void        __vallocate(size_type n);
-  void        __vdeallocate();
-  size_t      __distance(pointer first, pointer last) const;
+  inline void    __destroy_range(pointer first, pointer last);
+  void           __vallocate(size_type n);
+  void           __vdeallocate();
+  size_t         __distance(pointer first, pointer last) const;
+  inline pointer __iterator_to_pointer(iterator it);
 
  protected:
   pointer        __begin_;

@@ -162,6 +162,23 @@ TEST_F(VectorTest, Clear) {
   EXPECT_EQ(v1.empty(), v2.empty());
 }
 
+// // erase()
+// TEST_F(VectorTest, Erase) {
+//   ft::vector<int> v1(_ft_vector);
+//   v1.erase(v1.begin());
+//   std::vector<int> v2(_std_vector);
+//   v2.erase(v2.begin());
+//   EXPECT_EQ(v1.size(), v2.size());
+//   EXPECT_EQ(v1.capacity(), v2.capacity());
+//   EXPECT_EQ(v1.empty(), v2.empty());
+//   EXPECT_EQ(v1.front(), v2.front());
+//   EXPECT_EQ(v1.back(), v2.back());
+//   for (size_t i = 0; i < v1.size(); ++i) {
+//     EXPECT_EQ(v1.at(i), v2.at(i));
+//     EXPECT_EQ(v1[i], v2[i]);
+//   }
+// }
+
 // push_back
 TEST_F(VectorTest, PushBack) {
   ft::vector<int> v1(10);
@@ -180,4 +197,10 @@ TEST_F(VectorTest, PushBack) {
   for (int i = 0; i < v1.size(); ++i) {
     EXPECT_EQ(v1[i], v2[i]);
   }
+  EXPECT_EQ(v1.size(), v2.size());
+  EXPECT_EQ(v1.empty(), v2.empty());
+  v1.clear();
+  v2.clear();
+  EXPECT_EQ(v1.size(), v2.size());
+  EXPECT_EQ(v1.empty(), v2.empty());
 }

@@ -114,6 +114,19 @@ bool operator>=(const random_access_iterator<Iterator> &lhs,
                 const random_access_iterator<Iterator> &rhs) {
   return lhs.base() >= rhs.base();
 }
+template <class Iterator>
+typename random_access_iterator<Iterator>::difference_type operator-(
+    const random_access_iterator<Iterator> &lhs,
+    const random_access_iterator<Iterator> &rhs) {
+  return lhs.base() - rhs.base();
+}
+template <class Iterator>
+random_access_iterator<Iterator> operator+(
+    typename random_access_iterator<Iterator>::difference_type n,
+    const random_access_iterator<Iterator>                    &rhs) {
+  return rhs + n;
+}
+
 }  // namespace ft
 
 #endif  // INCLUDES_RANDOM_ACCESS_ITERATOR_HPP_

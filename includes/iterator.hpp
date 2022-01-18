@@ -40,7 +40,7 @@ template <class T>
 struct has_iterator_category {
   static no_type check(...);
   template <class U>
-  static yes_type   check(typename U::iterator_category *= 0);
+  static yes_type check(typename U::iterator_category * = 0);
   static const bool value = sizeof(check<T>(0)) == sizeof(yes_type);
 };
 

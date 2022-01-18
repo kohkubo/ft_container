@@ -1,113 +1,167 @@
 // Copyright (c) 2022 kohkubo
 
-#ifndef INCLUDES_VECTOR_HPP_
-#define INCLUDES_VECTOR_HPP_
+#ifndef INCLUDES_VECTOR_FUNC_HPP_
+#define INCLUDES_VECTOR_FUNC_HPP_
 
-#include <iostream>
-#include <memory>
+#include <algorithm>
+#include <limits>
 
-#include "random_access_iterator.hpp"
-#include "type_traits.hpp"
+#include "vector_header.hpp"
 
 namespace ft {
-template <class T, class Alloc = std::allocator<T> >
-class vector {
- public:
-  typedef T                                         value_type;
-  typedef Alloc                                     allocator_type;
-  typedef value_type                               &reference;
-  typedef const value_type                         &const_reference;
-  typedef std::size_t                               size_type;
-  typedef std::ptrdiff_t                            difference_type;
-  typedef typename allocator_type::pointer          pointer;
-  typedef typename allocator_type::const_pointer    const_pointer;
-  typedef ft::random_access_iterator<pointer>       iterator;
-  typedef ft::random_access_iterator<const_pointer> const_iterator;
-
-  // =====================================================================
-  // Canonical
-  // =====================================================================
-  vector() : __begin_(0), __end_(0), __end_cap_(0), __alloc_(Alloc()) {}
-  explicit vector(const Alloc &alloc)
-      : __begin_(0), __end_(0), __end_cap_(0), __alloc_(alloc) {}
-  explicit vector(size_type n, const T &value = T(),
-                  const Alloc &alloc = Alloc());
-  template <class InputIterator>
-  vector(InputIterator                           first,
-         typename enable_if<is_input_iterator<InputIterator>::value,
-                            InputIterator>::type last,
-         const Alloc                            &alloc = Alloc());
-  vector(const vector &x);
-  ~vector();
-  // =====================================================================
-  // Element access
-  // =====================================================================
-  reference       at(size_type n);
-  const_reference at(size_type n) const;
-  reference       operator[](size_type n) { return __begin_[n]; }
-  const_reference operator[](size_type n) const { return __begin_[n]; }
-  reference       front() { return *__begin_; }
-  const_reference front() const { return *__begin_; }
-  reference       back() { return *(__end_ - 1); }
-  const_reference back() const { return *(__end_ - 1); }
-  // =====================================================================
-  // Iterators
-  // =====================================================================
-  iterator        begin() { return __make_iter(__begin_); }
-  const_iterator  begin() const { return __make_iter(__begin_); }
-  iterator        end() { return __make_iter(__end_); }
-  const_iterator  end() const { return __make_iter(__end_); }
-  // =====================================================================
-  // Capacity
-  // =====================================================================
-  bool            empty() const { return __begin_ == __end_; }
-  size_type       size() const { return __end_ - __begin_; }
-  // TODO(kohkubo)
-  size_type       max_size() const;
-  // TODO(kohkubo)
-  void            reserve(size_type n);
-  size_type       capacity() const { return __end_cap_ - __begin_; }
-  // =====================================================================
-  // Modifiers
-  // =====================================================================
-  // TODO(kohkubo)
-  void            clear();
-  iterator        insert(const_iterator pos, const T &value);
-  iterator        insert(const_iterator pos, size_type n, const T &value);
-  template <class InputIterator>
-  iterator insert(const_iterator pos, InputIterator first, InputIterator last);
-  iterator erase(const_iterator pos);
-  iterator erase(const_iterator first, const_iterator last);
-  // TODO(kohkubo)
-  void     push_back(const T &value);
-  void     pop_back();
-  void     resize(size_type n, const T &value = T());
-  void     swap(vector &x);
-
- private:
-  void            __throw_length_error() { throw std::length_error("vector"); }
-  void            __throw_out_of_range() { throw std::out_of_range("vector"); }
-  inline iterator __make_iter(pointer p) { return iterator(p); }
-  inline const_iterator __make_iter(const_pointer p) {
-    return const_iterator(p);
+// =============================================================================
+// Canonic
+// =============================================================================
+template <class T, class Alloc>
+vector<T, Alloc>::vector(size_type n, const_reference value, const Alloc &alloc)
+    : __alloc_(alloc) {
+  if (n > max_size()) {
+    __throw_length_error();
   }
-  void        __construct_at_end(size_type n, const_reference x = T());
-  // template <class InputIterator>
-  // void __construct_at_end(
-  //     InputIterator first,
-  //     typename enable_if<is_input_iterator<InputIterator>::value,
-  //                        InputIterator>::type last);
-  inline void __destroy_range(pointer first, pointer last);
-  void        __vallocate(size_type n);
-  void        __vdeallocate();
-  size_t      __distance(pointer first, pointer last) const;
+  __vallocate(n);
+  __construct_at_end(n, value);
+}
+template <class T, class Alloc>
+template <class InputIterator>
+vector<T, Alloc>::vector(
+    InputIterator                           first,
+    typename enable_if<is_input_iterator<InputIterator>::value,
+                       InputIterator>::type last,
+    const Alloc                            &alloc)
+    : __alloc_(alloc) {
+  size_t        n  = 0;
+  InputIterator it = first;
+  while (it != last) {
+    ++it;
+    ++n;
+  }
+  __vallocate(n);
+  __end_ = __begin_ + n;
+  std::uninitialized_copy(first, last, __begin_);
+}
+template <class T, class Alloc>
+vector<T, Alloc>::vector(const vector &v) : __alloc_(Alloc()) {
+  __vallocate(v.size());
+  std::uninitialized_copy(v.__begin_, v.__end_, __begin_);
+  __end_ = __begin_ + v.size();
+}
+// ~vector
+template <class T, class Alloc>
+vector<T, Alloc>::~vector() {
+  if (__begin_) {
+    __alloc_.deallocate(__begin_, __end_cap_ - __begin_);
+  }
+}
+// =============================================================================
+// Element access
+// =============================================================================
+template <class T, class Alloc>
+typename vector<T, Alloc>::reference vector<T, Alloc>::at(size_type n) {
+  if (n >= size()) {
+    __throw_out_of_range();
+  }
+  return __begin_[n];
+}
+template <class T, class Alloc>
+typename vector<T, Alloc>::const_reference vector<T, Alloc>::at(
+    size_type n) const {
+  if (n >= size()) {
+    __throw_out_of_range();
+  }
+  return __begin_[n];
+}
+// =============================================================================
+// Capacity
+// =============================================================================
+// max_size()
+template <class T, class Alloc>
+typename vector<T, Alloc>::size_type vector<T, Alloc>::max_size() const {
+  return std::min<size_type>(std::numeric_limits<difference_type>::max(),
+                             std::numeric_limits<size_type>::max()) /
+         sizeof(value_type);
+}
+// reserve()
+template <class T, class Alloc>
+void vector<T, Alloc>::reserve(size_type n) {
+  if (n > capacity()) {
+    if (n > max_size()) {
+      __throw_length_error();
+    }
+    pointer new_begin   = __alloc_.allocate(n);
+    pointer new_end     = new_begin + size();
+    pointer new_end_cap = new_begin + n;
+    std::uninitialized_copy(__begin_, __end_, new_begin);
+    // TODO(kohkubo) ダブルフリーが起きる描き方になっている。
+    __destroy_range(__begin_, __end_);
+    __alloc_.deallocate(__begin_, capacity());
+    __begin_   = new_begin;
+    __end_     = new_end;
+    __end_cap_ = new_end_cap;
+  }
+}
+// =============================================================================
+// private menber function
+// =============================================================================
+template <class T, class Alloc>
+void vector<T, Alloc>::__construct_at_end(size_type n, const_reference x) {
+  __end_ = __begin_ + n;
+  std::uninitialized_fill(__begin_, __end_, x);
+}
+// template <class T, class Alloc>
+// template <class InputIterator>
+// void vector<T, Alloc>::__construct_at_end(
+//     InputIterator first,
+//     typename enable_if<!is_integral<InputIterator>::value,
+//     InputIterator>::type
+//                       last) {
+//   __end_ = __begin_ + __distance(first, last);
+//   std::uninitialized_copy(first, last, __begin_);
+// }
 
- protected:
-  pointer        __begin_;
-  pointer        __end_;
-  pointer        __end_cap_;
-  allocator_type __alloc_;
-};
+// __destroy_range
+template <class T, class Alloc>
+inline void vector<T, Alloc>::__destroy_range(pointer first, pointer last) {
+  for (; first != last; ++first) {
+    __alloc_.destroy(first);
+  }
+}
+template <class T, class Alloc>
+void vector<T, Alloc>::__vallocate(size_type n) {
+  if (n > max_size()) {
+    __throw_length_error();
+  }
+  __begin_   = __alloc_.allocate(n);
+  __end_     = __begin_;
+  __end_cap_ = __begin_ + n;
+}
+template <class T, class Alloc>
+void vector<T, Alloc>::__vdeallocate() {
+  if (__begin_) {
+    __alloc_.deallocate(__begin_, __end_cap_ - __begin_);
+    __begin_   = 0;
+    __end_     = 0;
+    __end_cap_ = 0;
+  }
+}
+
+// =============================================================================
+// Modifiers
+// =============================================================================
+// clear()
+template <class T, class Alloc>
+void vector<T, Alloc>::clear() {
+  __destroy_range(__begin_, __end_);
+  __end_ = __begin_;
+}
+// push_back()
+template <class T, class Alloc>
+void vector<T, Alloc>::push_back(const_reference x) {
+  if (__end_ == __end_cap_) {
+    reserve(capacity() + 1);
+  }
+  __alloc_.construct(__end_, x);
+  ++__end_;
+}
 }  // namespace ft
 
-#endif  // INCLUDES_VECTOR_HPP_
+#endif  // INCLUDES_VECTOR_FUNC_HPP_

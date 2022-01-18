@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <vector>
-#include "vector_func.hpp"
+#include "vector.hpp"
 #include "random_access_iterator.hpp"
 
 #define VISUAL(a) std::cout << #a << ": " << a << std::endl;

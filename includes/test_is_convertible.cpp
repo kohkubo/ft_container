@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <vector>
 
-#include "vector_func.hpp"
+#include "vector.hpp"
 #include "iterator.hpp"
 #include "random_access_iterator.hpp"
 #include "type_traits.hpp"

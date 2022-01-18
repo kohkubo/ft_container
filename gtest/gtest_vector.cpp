@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "vector_func.hpp"
+#include "vector.hpp"
 
 #define VISUAL(a) std::cout << #a << ": " << a << std::endl;
 
@@ -125,6 +125,17 @@ TEST_F(VectorTest, Begin) {
         ++std_it;
     }
 }
+
+// end
+// TEST_F(VectorTest, End) {
+//     ft::vector<int>::iterator ft_it = _ft_vector.end();
+//     std::vector<int>::iterator std_it = _std_vector.end();
+//     for (size_t i = 0; i < _ft_vector.size(); ++i) {
+//         --ft_it;
+//         --std_it;
+//         EXPECT_EQ(*ft_it, *std_it);
+//     }
+// }
 
 // reserve()
 TEST_F(VectorTest, Reserve) {

@@ -9,6 +9,9 @@
 #include "type_traits.hpp"
 
 namespace ft {
+template <class Iterator>
+struct iterator_traits;
+
 template <class Category, class T, class Distance = ptrdiff_t,
           class Pointer = T *, class Reference = T &>
 struct iterator {
@@ -19,39 +22,12 @@ struct iterator {
   typedef Category  iterator_category;
 };
 
-template <class Iterator>
-struct iterator_traits {
-  typedef typename Iterator::difference_type   difference_type;
-  typedef typename Iterator::value_type        value_type;
-  typedef typename Iterator::pointer           pointer;
-  typedef typename Iterator::reference         reference;
-  typedef typename Iterator::iterator_category iterator_category;
-};
-
-template <class T>
-struct iterator_traits<T *> {
-  typedef ptrdiff_t                       difference_type;
-  typedef T                               value_type;
-  typedef T                              *pointer;
-  typedef T                              &reference;
-  typedef std::random_access_iterator_tag iterator_category;
-};
-
-template <class T>
-struct iterator_traits<const T *> {
-  typedef ptrdiff_t                       difference_type;
-  typedef T                               value_type;
-  typedef const T                        *pointer;
-  typedef const T                        &reference;
-  typedef std::random_access_iterator_tag iterator_category;
-};
-
 // has_iterator_category
 template <class T>
 struct has_iterator_category {
   static no_type check(...);
   template <class U>
-  static yes_type check(typename U::iterator_category * = 0);
+  static yes_type   check(typename U::iterator_category   * = 0);
   static const bool value = sizeof(check<T>(0)) == sizeof(yes_type);
 };
 
@@ -68,6 +44,49 @@ struct has_iterator_category_is_convertible<T, U, false> : false_type {};
 template <class T>
 struct is_input_iterator
     : has_iterator_category_is_convertible<T, std::input_iterator_tag> {};
+
+template <class Iterator, bool>
+struct iterator_traits_base {};
+
+template <class Iterator, bool>
+struct iterator_traits_base_impl {};
+
+template <class Iterator>
+struct iterator_traits_base_impl<Iterator, true> {
+  typedef typename Iterator::iterator_category iterator_category;
+  typedef typename Iterator::value_type        value_type;
+  typedef typename Iterator::difference_type   difference_type;
+  typedef typename Iterator::pointer           pointer;
+  typedef typename Iterator::reference         reference;
+};
+
+template <class Iterator>
+struct iterator_traits_base<Iterator, true>
+    : iterator_traits_base_impl<
+          Iterator, is_convertible<typename Iterator::iterator_category,
+                                   std::input_iterator_tag>::value ||
+                        is_convertible<typename Iterator::iterator_category,
+                                       std::output_iterator_tag>::value> {};
+
+template <class Iterator>
+struct iterator_traits
+    : iterator_traits_base<Iterator, has_iterator_category<Iterator>::value> {
+  typedef typename Iterator::difference_type   difference_type;
+  typedef typename Iterator::value_type        value_type;
+  typedef typename Iterator::pointer           pointer;
+  typedef typename Iterator::reference         reference;
+  typedef typename Iterator::iterator_category iterator_category;
+};
+
+template <class T>
+struct iterator_traits<T *> {
+  typedef ptrdiff_t                       difference_type;
+  typedef T                               value_type;
+  typedef T                              *pointer;
+  typedef T                              &reference;
+  typedef std::random_access_iterator_tag iterator_category;
+};
+
 }  // namespace ft
 
 #endif  // INCLUDES_ITERATOR_HPP_

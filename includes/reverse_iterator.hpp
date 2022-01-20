@@ -9,12 +9,11 @@
 namespace ft {
 template <class Iterator>
 class reverse_iterator
-    : public iterator<
-          typename iterator_traits<Iterator>::iterator_category,
-          typename iterator_traits<Iterator>::difference_type,
-          typename iterator_traits<Iterator>::value_type,
-          typename iterator_traits<Iterator>::pointer,
-          typename iterator_traits<Iterator>::reference> {
+    : public iterator<typename iterator_traits<Iterator>::iterator_category,
+                      typename iterator_traits<Iterator>::difference_type,
+                      typename iterator_traits<Iterator>::value_type,
+                      typename iterator_traits<Iterator>::pointer,
+                      typename iterator_traits<Iterator>::reference> {
  protected:
   Iterator _current;
 
@@ -48,9 +47,9 @@ class reverse_iterator
   // ===========================================================================
   // Operator
   // ===========================================================================
-  Iterator operator*() const {
+  reference operator*() const {
     Iterator tmp = _current;
-    return --tmp;
+    return *--tmp;
   }
   pointer           operator->() const { return addressof(operator*()); }
   reverse_iterator &operator++() {

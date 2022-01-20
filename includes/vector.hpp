@@ -13,13 +13,14 @@ namespace ft {
 // Canonic
 // =============================================================================
 template <class T, class Alloc>
-vector<T, Alloc>::vector(size_type n, const_reference value, const Alloc &alloc)
+vector<T, Alloc>::vector(size_type n, const_reference value, const Alloc& alloc)
     : __alloc_(alloc) {
   if (n > max_size()) {
     __throw_length_error();
   }
   __vallocate(n);
-  __construct_at_end(n, value);
+  __end_ = __begin_ + n;
+  std::uninitialized_fill(__begin_, __end_, value);
 }
 template <class T, class Alloc>
 template <class InputIterator>
@@ -27,7 +28,7 @@ vector<T, Alloc>::vector(
     InputIterator                           first,
     typename enable_if<is_input_iterator<InputIterator>::value,
                        InputIterator>::type last,
-    const Alloc                            &alloc)
+    const Alloc&                            alloc)
     : __alloc_(alloc) {
   size_t        n  = 0;
   InputIterator it = first;
@@ -40,7 +41,7 @@ vector<T, Alloc>::vector(
   std::uninitialized_copy(first, last, __begin_);
 }
 template <class T, class Alloc>
-vector<T, Alloc>::vector(const vector &v) : __alloc_(Alloc()) {
+vector<T, Alloc>::vector(const vector& v) : __alloc_(Alloc()) {
   __vallocate(v.size());
   std::uninitialized_copy(v.__begin_, v.__end_, __begin_);
   __end_ = __begin_ + v.size();
@@ -71,6 +72,50 @@ typename vector<T, Alloc>::const_reference vector<T, Alloc>::at(
   return __begin_[n];
 }
 // =============================================================================
+// Iterators
+// =============================================================================
+// begin
+template <class T, class Alloc>
+typename vector<T, Alloc>::iterator vector<T, Alloc>::begin() {
+  return iterator(__begin_);
+}
+template <class T, class Alloc>
+typename vector<T, Alloc>::const_iterator vector<T, Alloc>::begin() const {
+  return const_iterator(__begin_);
+}
+
+// end
+template <class T, class Alloc>
+typename vector<T, Alloc>::iterator vector<T, Alloc>::end() {
+  return iterator(__end_);
+}
+template <class T, class Alloc>
+typename vector<T, Alloc>::const_iterator vector<T, Alloc>::end() const {
+  return const_iterator(__end_);
+}
+
+// rbegin
+template <class T, class Alloc>
+typename vector<T, Alloc>::reverse_iterator vector<T, Alloc>::rbegin() {
+  return reverse_iterator(end());
+}
+template <class T, class Alloc>
+typename vector<T, Alloc>::const_reverse_iterator vector<T, Alloc>::rbegin()
+    const {
+  return const_reverse_iterator(end());
+}
+// rend
+template <class T, class Alloc>
+typename vector<T, Alloc>::reverse_iterator vector<T, Alloc>::rend() {
+  return reverse_iterator(begin());
+}
+template <class T, class Alloc>
+typename vector<T, Alloc>::const_reverse_iterator vector<T, Alloc>::rend()
+    const {
+  return const_reverse_iterator(begin());
+}
+
+// =============================================================================
 // Capacity
 // =============================================================================
 // max_size()
@@ -100,58 +145,49 @@ void vector<T, Alloc>::reserve(size_type n) {
   }
 }
 // =============================================================================
-// private menber function
+// Others
 // =============================================================================
+// operator=
 template <class T, class Alloc>
-void vector<T, Alloc>::__construct_at_end(size_type n, const_reference x) {
-  __end_ = __begin_ + n;
-  std::uninitialized_fill(__begin_, __end_, x);
-}
-// template <class T, class Alloc>
-// template <class InputIterator>
-// void vector<T, Alloc>::__construct_at_end(
-//     InputIterator first,
-//     typename enable_if<!is_integral<InputIterator>::value,
-//     InputIterator>::type
-//                       last) {
-//   __end_ = __begin_ + __distance(first, last);
-//   std::uninitialized_copy(first, last, __begin_);
-// }
-
-// __destroy_range
-template <class T, class Alloc>
-inline void vector<T, Alloc>::__destroy_range(pointer first, pointer last) {
-  for (; first != last; ++first) {
-    __alloc_.destroy(first);
+vector<T, Alloc>& vector<T, Alloc>::operator=(const vector& v) {
+  if (this != &v) {
+    __vdeallocate();
+    __vallocate(v.size());
+    std::uninitialized_copy(v.__begin_, v.__end_, __begin_);
+    __end_ = __begin_ + v.size();
   }
+  return *this;
 }
 
+// assign
 template <class T, class Alloc>
-void vector<T, Alloc>::__vallocate(size_type n) {
+void vector<T, Alloc>::assign(size_type n, const_reference val) {
   if (n > max_size()) {
     __throw_length_error();
   }
-  __begin_   = __alloc_.allocate(n);
-  __end_     = __begin_;
-  __end_cap_ = __begin_ + n;
-}
-template <class T, class Alloc>
-void vector<T, Alloc>::__vdeallocate() {
-  if (__begin_) {
-    __alloc_.deallocate(__begin_, __end_cap_ - __begin_);
-    __begin_   = 0;
-    __end_     = 0;
-    __end_cap_ = 0;
+  if (n > capacity()) {
+    __vdeallocate();
+    __vallocate(n);
   }
+  __destroy_range(__begin_, __end_);
+  std::uninitialized_fill_n(__begin_, n, val);
+  __end_ = __begin_ + n;
 }
-
-// iterator_to_pointer
 template <class T, class Alloc>
-inline typename vector<T, Alloc>::pointer
-vector<T, Alloc>::__iterator_to_pointer(iterator it) {
-  return &(*it);
+template <class InputIterator>
+void vector<T, Alloc>::assign(InputIterator first, InputIterator last) {
+  size_type n = std::distance(first, last);
+  if (n > max_size()) {
+    __throw_length_error();
+  }
+  if (n > capacity()) {
+    __vdeallocate();
+    __vallocate(n);
+  }
+  __destroy_range(__begin_, __end_);
+  std::uninitialized_copy(first, last, __begin_);
+  __end_ = __begin_ + n;
 }
-
 // =============================================================================
 // Modifiers
 // =============================================================================
@@ -162,28 +198,53 @@ void vector<T, Alloc>::clear() {
   __end_ = __begin_;
 }
 
-// insert()
+template <class T, class Alloc>
+template <class InputIterator>
+void vector<T, Alloc>::insert(typename vector<T, Alloc>::iterator pos,
+                              InputIterator first, InputIterator last) {
+  if (pos == end()) {
+    while (first != last) {
+      push_back(*first);
+      ++first;
+      return;
+    }
+  }
+  size_t pos_index = pos - begin();
+  size_t n         = std::distance(first, last);
+  if (size() + n > capacity()) {
+    reserve(2 * (size() + n));
+    pos = begin() + pos_index;
+  }
+  pointer pos_ptr = __iterator_to_pointer(pos);
+  std::uninitialized_copy(pos_ptr, __end_, pos_ptr + n);
+  std::uninitialized_copy(first, last, __begin_);
+  __end_ += n;
+}
+
+template <class T, class Alloc>
+void vector<T, Alloc>::insert(typename vector<T, Alloc>::iterator pos,
+                              size_type n, const_reference x) {
+  if (pos == end()) {
+    push_back(x);
+    return;
+  }
+  size_t pos_index = pos - begin();
+  if (size() + n > capacity()) {
+    reserve(2 * (size() + n));
+    pos = begin() + pos_index;
+  }
+  pointer pos_ptr = __iterator_to_pointer(pos);
+  std::uninitialized_copy(pos_ptr, __end_, pos_ptr + n);
+  std::uninitialized_fill(pos_ptr, __end_, x);
+  __end_ += n;
+}
+
 template <class T, class Alloc>
 typename vector<T, Alloc>::iterator vector<T, Alloc>::insert(
-    iterator position, const_reference x) {
-  if (position == end()) {
-    push_back(x);
-    return end() - 1;
-  }
-  if (size() == capacity()) {
-    reserve(size() + 1);
-  }
-  pointer pos = __iterator_to_pointer(position);
-  pointer new_end = __end_ + 1;
-  pointer new_pos = __end_;
-  __alloc_.construct(__end_, *(__end_ - 1));
-  while (new_pos != pos) {
-    *(new_pos) = *(new_pos - 1);
-    --new_pos;
-  }
-  *new_pos = x;
-  ++__end_;
-  return new_pos;
+    typename vector<T, Alloc>::iterator pos, const_reference x) {
+  size_t pos_index = pos - begin();
+  insert(pos, 1, x);
+  return begin() + pos_index;
 }
 
 // erase()
@@ -228,16 +289,97 @@ void vector<T, Alloc>::resize(size_type n, const_reference x) {
     if (n > max_size()) {
       __throw_length_error();
     }
-    __construct_at_end(n - size(), x);
+    __end_ = __begin_ + n;
+    std::uninitialized_fill(__begin_, __end_, x);
   } else if (n < size()) {
     __destroy_range(__begin_ + n, __end_);
     __end_ = __begin_ + n;
   }
 }
+// =============================================================================
+// private menber function
+// =============================================================================
+// __destroy_range
+template <class T, class Alloc>
+inline void vector<T, Alloc>::__destroy_range(pointer first, pointer last) {
+  for (; first != last; ++first) {
+    __alloc_.destroy(first);
+  }
+}
+
+template <class T, class Alloc>
+void vector<T, Alloc>::__vallocate(size_type n) {
+  if (n > max_size()) {
+    __throw_length_error();
+  }
+  __begin_   = __alloc_.allocate(n);
+  __end_     = __begin_;
+  __end_cap_ = __begin_ + n;
+}
+template <class T, class Alloc>
+void vector<T, Alloc>::__vdeallocate() {
+  if (__begin_) {
+    __alloc_.deallocate(__begin_, __end_cap_ - __begin_);
+    __begin_   = 0;
+    __end_     = 0;
+    __end_cap_ = 0;
+  }
+}
+
+// iterator_to_pointer
+template <class T, class Alloc>
+inline typename vector<T, Alloc>::pointer
+vector<T, Alloc>::__iterator_to_pointer(iterator it) {
+  return &(*it);
+}
+
+// pointer_to_iterator
+template <class T, class Alloc>
+inline typename vector<T, Alloc>::iterator
+vector<T, Alloc>::__pointer_to_iterator(pointer p) {
+  return iterator(p);
+}
+// =============================================================================
+// Non-member functions
+// =============================================================================
+// operator==
+template <class T, class Alloc>
+bool operator==(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
+  if (lhs.size() != rhs.size()) {
+    return false;
+  }
+  return std::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+// operator!=
+template <class T, class Alloc>
+bool operator!=(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
+  return !(lhs == rhs);
+}
+// operator<
+template <class T, class Alloc>
+bool operator<(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
+  return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
+                                      rhs.end());
+}
+// operator>
+template <class T, class Alloc>
+bool operator>(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
+  return rhs < lhs;
+}
+// operator<=
+template <class T, class Alloc>
+bool operator<=(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
+  return !(rhs < lhs);
+}
+// operator>=
+template <class T, class Alloc>
+bool operator>=(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
+  return !(lhs < rhs);
+}
 
 // swap()
 template <class T, class Alloc>
-void vector<T, Alloc>::swap(vector &v) {
+void vector<T, Alloc>::swap(vector& v) {
   std::swap(__begin_, v.__begin_);
   std::swap(__end_, v.__end_);
   std::swap(__end_cap_, v.__end_cap_);

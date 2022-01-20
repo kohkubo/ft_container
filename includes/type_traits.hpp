@@ -77,6 +77,13 @@ struct is_same<T, T> : public ft::true_type {};
 // =============================================================================
 // is_convertible
 // =============================================================================
+// is_lvalue_reference
+template <class T>
+struct is_lvalue_reference : public ft::false_type {};
+
+template <class T>
+struct is_lvalue_reference<T &> : public ft::true_type {};
+
 // yes_type
 typedef char yes_type;
 // no_type
@@ -90,7 +97,7 @@ struct is_convertible {
   static From       val;
   static no_type    test(...);
   static yes_type   test(To);
-  static const bool value = sizeof(test(val)) == sizeof(true_type);
+  static bool const value = sizeof(test(val)) == sizeof(true_type);
 };
 
 }  // namespace ft

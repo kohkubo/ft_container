@@ -1,3 +1,4 @@
+// Copyright (c) 2022 kohkubo
 
 #include <iostream>
 #include <vector>
@@ -26,14 +27,14 @@ int main() {
 
   // // // std::cout << "v.end() = " << *v.end() << std::endl;
 
-  // std::cout << "========== allocate ===========" << std::endl;
-  // int *p = std::allocator<int>().allocate(10);
-  // for (int i = 0; i < 10; ++i)
-  //     p[i] = i;
-  // for (int i = 0; i < 10; ++i)
-  //     std::cout << p[i] << " ";
-  // std::cout << std::endl;
-  // std::allocator<int>().deallocate(p, 10);
+  std::cout << "========== allocate ===========" << std::endl;
+  int *p = std::allocator<int>().allocate(10);
+  for (int i = 0; i < 10; ++i)
+      p[i] = i;
+  for (int i = 0; i < 10; ++i)
+      std::cout << p[i] << " ";
+  std::cout << std::endl;
+  std::allocator<int>().deallocate(p, 10);
 
   std::cout << "========== ft::vector ===========" << std::endl;
   ft::vector<int> ft_v(10);

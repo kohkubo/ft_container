@@ -11,7 +11,6 @@ template <class From, class To>
 void test_is_convertible() {
   bool ft  = ft::is_convertible<From, To>::value;
   bool std = std::is_convertible<From, To>::value;
-//   std::cout << typeid(From).name() << ", " << typeid(To).name() << std::endl;
   EXPECT_EQ(ft, std);
 }
 

@@ -46,7 +46,6 @@ vector<T, Alloc>::vector(const vector& v) : __alloc_(Alloc()) {
   std::uninitialized_copy(v.__begin_, v.__end_, __begin_);
   __end_ = __begin_ + v.size();
 }
-// ~vector
 template <class T, class Alloc>
 vector<T, Alloc>::~vector() {
   if (__begin_) {
@@ -74,7 +73,6 @@ typename vector<T, Alloc>::const_reference vector<T, Alloc>::at(
 // =============================================================================
 // Iterators
 // =============================================================================
-// begin
 template <class T, class Alloc>
 typename vector<T, Alloc>::iterator vector<T, Alloc>::begin() {
   return iterator(__begin_);
@@ -83,8 +81,6 @@ template <class T, class Alloc>
 typename vector<T, Alloc>::const_iterator vector<T, Alloc>::begin() const {
   return const_iterator(__begin_);
 }
-
-// end
 template <class T, class Alloc>
 typename vector<T, Alloc>::iterator vector<T, Alloc>::end() {
   return iterator(__end_);
@@ -93,8 +89,6 @@ template <class T, class Alloc>
 typename vector<T, Alloc>::const_iterator vector<T, Alloc>::end() const {
   return const_iterator(__end_);
 }
-
-// rbegin
 template <class T, class Alloc>
 typename vector<T, Alloc>::reverse_iterator vector<T, Alloc>::rbegin() {
   return reverse_iterator(end());
@@ -104,7 +98,6 @@ typename vector<T, Alloc>::const_reverse_iterator vector<T, Alloc>::rbegin()
     const {
   return const_reverse_iterator(end());
 }
-// rend
 template <class T, class Alloc>
 typename vector<T, Alloc>::reverse_iterator vector<T, Alloc>::rend() {
   return reverse_iterator(begin());
@@ -114,18 +107,15 @@ typename vector<T, Alloc>::const_reverse_iterator vector<T, Alloc>::rend()
     const {
   return const_reverse_iterator(begin());
 }
-
 // =============================================================================
 // Capacity
 // =============================================================================
-// max_size()
 template <class T, class Alloc>
 typename vector<T, Alloc>::size_type vector<T, Alloc>::max_size() const {
   return std::min<size_type>(std::numeric_limits<difference_type>::max(),
                              std::numeric_limits<size_type>::max()) /
          sizeof(value_type);
 }
-// reserve()
 template <class T, class Alloc>
 void vector<T, Alloc>::reserve(size_type n) {
   if (n > capacity()) {
@@ -136,7 +126,6 @@ void vector<T, Alloc>::reserve(size_type n) {
     pointer new_end     = new_begin + size();
     pointer new_end_cap = new_begin + n;
     std::uninitialized_copy(__begin_, __end_, new_begin);
-    // TODO(kohkubo) ダブルフリーが起きる描き方になっている？
     __destroy_range(__begin_, __end_);
     __alloc_.deallocate(__begin_, capacity());
     __begin_   = new_begin;
@@ -147,7 +136,6 @@ void vector<T, Alloc>::reserve(size_type n) {
 // =============================================================================
 // Others
 // =============================================================================
-// operator=
 template <class T, class Alloc>
 vector<T, Alloc>& vector<T, Alloc>::operator=(const vector& v) {
   if (this != &v) {
@@ -158,8 +146,6 @@ vector<T, Alloc>& vector<T, Alloc>::operator=(const vector& v) {
   }
   return *this;
 }
-
-// assign
 template <class T, class Alloc>
 void vector<T, Alloc>::assign(size_type n, const_reference val) {
   if (n > max_size()) {
@@ -191,13 +177,11 @@ void vector<T, Alloc>::assign(InputIterator first, InputIterator last) {
 // =============================================================================
 // Modifiers
 // =============================================================================
-// clear()
 template <class T, class Alloc>
 void vector<T, Alloc>::clear() {
   __destroy_range(__begin_, __end_);
   __end_ = __begin_;
 }
-
 template <class T, class Alloc>
 template <class InputIterator>
 void vector<T, Alloc>::insert(typename vector<T, Alloc>::iterator pos,
@@ -220,7 +204,6 @@ void vector<T, Alloc>::insert(typename vector<T, Alloc>::iterator pos,
   std::uninitialized_copy(first, last, __begin_);
   __end_ += n;
 }
-
 template <class T, class Alloc>
 void vector<T, Alloc>::insert(typename vector<T, Alloc>::iterator pos,
                               size_type n, const_reference x) {
@@ -238,7 +221,6 @@ void vector<T, Alloc>::insert(typename vector<T, Alloc>::iterator pos,
   std::uninitialized_fill(pos_ptr, __end_, x);
   __end_ += n;
 }
-
 template <class T, class Alloc>
 typename vector<T, Alloc>::iterator vector<T, Alloc>::insert(
     typename vector<T, Alloc>::iterator pos, const_reference x) {
@@ -246,8 +228,6 @@ typename vector<T, Alloc>::iterator vector<T, Alloc>::insert(
   insert(pos, 1, x);
   return begin() + pos_index;
 }
-
-// erase()
 template <class T, class Alloc>
 typename vector<T, Alloc>::iterator vector<T, Alloc>::erase(
     typename vector<T, Alloc>::iterator first,
@@ -262,8 +242,6 @@ typename vector<T, Alloc>::iterator vector<T, Alloc>::erase(
     typename vector<T, Alloc>::iterator pos) {
   return erase(pos, pos + 1);
 }
-
-// push_back()
 template <class T, class Alloc>
 void vector<T, Alloc>::push_back(const_reference x) {
   if (__end_ == __end_cap_) {
@@ -272,8 +250,6 @@ void vector<T, Alloc>::push_back(const_reference x) {
   __alloc_.construct(__end_, x);
   ++__end_;
 }
-
-// pop_back()
 template <class T, class Alloc>
 void vector<T, Alloc>::pop_back() {
   if (__end_ != __begin_) {
@@ -281,8 +257,6 @@ void vector<T, Alloc>::pop_back() {
     __alloc_.destroy(__end_);
   }
 }
-
-// resize()
 template <class T, class Alloc>
 void vector<T, Alloc>::resize(size_type n, const_reference x) {
   if (n > size()) {
@@ -299,14 +273,12 @@ void vector<T, Alloc>::resize(size_type n, const_reference x) {
 // =============================================================================
 // private menber function
 // =============================================================================
-// __destroy_range
 template <class T, class Alloc>
 inline void vector<T, Alloc>::__destroy_range(pointer first, pointer last) {
   for (; first != last; ++first) {
     __alloc_.destroy(first);
   }
 }
-
 template <class T, class Alloc>
 void vector<T, Alloc>::__vallocate(size_type n) {
   if (n > max_size()) {
@@ -325,24 +297,14 @@ void vector<T, Alloc>::__vdeallocate() {
     __end_cap_ = 0;
   }
 }
-
-// iterator_to_pointer
 template <class T, class Alloc>
 inline typename vector<T, Alloc>::pointer
 vector<T, Alloc>::__iterator_to_pointer(iterator it) {
   return &(*it);
 }
-
-// pointer_to_iterator
-template <class T, class Alloc>
-inline typename vector<T, Alloc>::iterator
-vector<T, Alloc>::__pointer_to_iterator(pointer p) {
-  return iterator(p);
-}
 // =============================================================================
 // Non-member functions
 // =============================================================================
-// operator==
 template <class T, class Alloc>
 bool operator==(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
   if (lhs.size() != rhs.size()) {
@@ -350,34 +312,27 @@ bool operator==(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
   }
   return std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
-// operator!=
 template <class T, class Alloc>
 bool operator!=(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
   return !(lhs == rhs);
 }
-// operator<
 template <class T, class Alloc>
 bool operator<(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
   return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
                                       rhs.end());
 }
-// operator>
 template <class T, class Alloc>
 bool operator>(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
   return rhs < lhs;
 }
-// operator<=
 template <class T, class Alloc>
 bool operator<=(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
   return !(rhs < lhs);
 }
-// operator>=
 template <class T, class Alloc>
 bool operator>=(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs) {
   return !(lhs < rhs);
 }
-
-// swap()
 template <class T, class Alloc>
 void vector<T, Alloc>::swap(vector& v) {
   std::swap(__begin_, v.__begin_);
@@ -385,5 +340,4 @@ void vector<T, Alloc>::swap(vector& v) {
   std::swap(__end_cap_, v.__end_cap_);
 }
 }  // namespace ft
-
 #endif  // INCLUDES_VECTOR_HPP_

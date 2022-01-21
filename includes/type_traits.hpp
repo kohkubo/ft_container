@@ -56,7 +56,6 @@ struct is_integral<wchar_t> : public true_type {};
 // =============================================================================
 // enable_if
 // =============================================================================
-// コンパイル時条件式が真の場合のみ有効な型
 template <bool B, class T = void>
 struct enable_if {};
 
@@ -67,31 +66,19 @@ struct enable_if<true, T> {
 // =============================================================================
 // is_same
 // =============================================================================
-// 型が同じかどうかを判定する
 template <class T, class U>
 struct is_same : public ft::false_type {};
 
 template <class T>
 struct is_same<T, T> : public ft::true_type {};
-
 // =============================================================================
 // is_convertible
 // =============================================================================
-// is_lvalue_reference
-template <class T>
-struct is_lvalue_reference : public ft::false_type {};
-
-template <class T>
-struct is_lvalue_reference<T &> : public ft::true_type {};
-
-// yes_type
 typedef char yes_type;
-// no_type
 struct no_type {
   char dummy[8];
 };
 
-// 型が変換可能かどうかを判定する
 template <class From, class To>
 struct is_convertible {
   static From       val;
@@ -99,7 +86,5 @@ struct is_convertible {
   static yes_type   test(To);
   static bool const value = sizeof(test(val)) == sizeof(true_type);
 };
-
 }  // namespace ft
-
 #endif  // INCLUDES_TYPE_TRAITS_HPP_

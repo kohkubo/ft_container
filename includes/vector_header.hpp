@@ -14,19 +14,18 @@ namespace ft {
 template <class T, class Alloc = std::allocator<T> >
 class vector {
  public:
-  typedef T                                      value_type;
-  typedef Alloc                                  allocator_type;
-  typedef value_type                            &reference;
-  typedef const value_type                      &const_reference;
-  typedef std::size_t                            size_type;
-  typedef std::ptrdiff_t                         difference_type;
-  typedef typename allocator_type::pointer       pointer;
-  typedef typename allocator_type::const_pointer const_pointer;
-  typedef ft::random_access_iterator<pointer>          iterator;
-  typedef ft::random_access_iterator<const_pointer>    const_iterator;
-  typedef ft::reverse_iterator<iterator>        reverse_iterator;
-  typedef ft::reverse_iterator<const_iterator>  const_reverse_iterator;
-
+  typedef T                                         value_type;
+  typedef Alloc                                     allocator_type;
+  typedef value_type                               &reference;
+  typedef const value_type                         &const_reference;
+  typedef std::size_t                               size_type;
+  typedef std::ptrdiff_t                            difference_type;
+  typedef typename allocator_type::pointer          pointer;
+  typedef typename allocator_type::const_pointer    const_pointer;
+  typedef ft::random_access_iterator<pointer>       iterator;
+  typedef ft::random_access_iterator<const_pointer> const_iterator;
+  typedef ft::reverse_iterator<iterator>            reverse_iterator;
+  typedef ft::reverse_iterator<const_iterator>      const_reverse_iterator;
   // ===========================================================================
   // Canonical
   // ===========================================================================
@@ -42,7 +41,6 @@ class vector {
          const Alloc                            &alloc = Alloc());
   vector(const vector &x);
   ~vector();
-
   // ===========================================================================
   // Element access
   // ===========================================================================
@@ -70,7 +68,6 @@ class vector {
   // ===========================================================================
   bool                   empty() const { return __begin_ == __end_; }
   size_type              size() const { return __end_ - __begin_; }
-  // TODO(kohkubo)
   size_type              max_size() const;
   void                   reserve(size_type n);
   size_type              capacity() const { return __end_cap_ - __begin_; }
@@ -97,7 +94,6 @@ class vector {
   template <class InputIterator>
   void           assign(InputIterator first, InputIterator last);
   allocator_type get_allocator() const { return __alloc_; }
-
   // ===========================================================================
   // Private members
   // ===========================================================================
@@ -108,8 +104,6 @@ class vector {
   void            __vallocate(size_type n);
   void            __vdeallocate();
   inline pointer  __iterator_to_pointer(iterator it);
-  inline iterator __pointer_to_iterator(pointer p);
-
  protected:
   pointer        __begin_;
   pointer        __end_;
@@ -133,7 +127,5 @@ template <class T, class Alloc>
 bool operator>=(const vector<T, Alloc> &x, const vector<T, Alloc> &y);
 template <class T, class Alloc>
 void swap(vector<T, Alloc> &x, vector<T, Alloc> &y);
-
 }  // namespace ft
-
 #endif  // INCLUDES_VECTOR_HEADER_HPP_

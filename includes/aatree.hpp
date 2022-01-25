@@ -1,8 +1,9 @@
 #ifndef INCLUDES_AATREE_HPP_
 #define INCLUDES_AATREE_HPP_
 
-#include "aatree_header.hpp"
 #include <iostream>
+
+#include "aatree_header.hpp"
 
 namespace ft {
 
@@ -24,14 +25,14 @@ AATree<T>::AATree(const AATree &rhs) {
 
 template <typename T>
 AATree<T>::~AATree() {
-  makeEmpty();
+  clear();
   delete __nullNode_;
 }
 
 template <typename T>
 const AATree<T> &AATree<T>::operator=(const AATree &rhs) {
   if (this != &rhs) {
-    makeEmpty();
+    clear();
     __root_ = __clone(rhs.__root_);
   }
   return *this;
@@ -42,7 +43,8 @@ const T &AATree<T>::findMin() const {
   if (isEmpty())
     throw std::underflow_error("AATree::findMin()");
   AANode *ptr = __root_;
-  while (ptr->left_ != __nullNode_) ptr = ptr->left_;
+  while (ptr->left_ != __nullNode_)
+    ptr = ptr->left_;
   return ptr->data_;
 }
 
@@ -51,13 +53,14 @@ const T &AATree<T>::findMax() const {
   if (isEmpty())
     throw std::underflow_error("AATree::findMax()");
   AANode *ptr = __root_;
-  while (ptr->right_ != __nullNode_) ptr = ptr->right_;
+  while (ptr->right_ != __nullNode_)
+    ptr = ptr->right_;
   return ptr->data_;
 }
 
 template <typename T>
 bool AATree<T>::contains(const T &x) const {
-  AANode *current       = __root_;
+  AANode *current    = __root_;
   __nullNode_->data_ = x;
 
   for (;;) {
@@ -84,8 +87,8 @@ void AATree<T>::printTree() const {
 }
 
 template <typename T>
-void AATree<T>::makeEmpty() {
-  __makeEmpty(__root_);
+void AATree<T>::clear() {
+  __clear(__root_);
 }
 
 template <typename T>
@@ -134,8 +137,7 @@ void AATree<T>::__remove(const T &x, AANode *&t) {
     deleteNode        = __nullNode_;
     t                 = t->right_;
     delete lastNode;
-  } else if (t->left_->level_ < t->level_ - 1 ||
-             t->right_->level_ < t->level_ - 1) {
+  } else if (t->left_->level_ < t->level_ - 1 || t->right_->level_ < t->level_ - 1) {
     if (t->right_->level_ > --t->level_)
       t->right_->level_ = t->level_;
     __skew(t);
@@ -147,13 +149,13 @@ void AATree<T>::__remove(const T &x, AANode *&t) {
 }
 
 template <typename T>
-void AATree<T>::__makeEmpty(AANode *&t) {
+void AATree<T>::__clear(AANode *&t) {
   if (t != __nullNode_) {
-    __makeEmpty(t->left_);
-    __makeEmpty(t->right_);
+    __clear(t->left_);
+    __clear(t->right_);
     delete t;
+    t = __nullNode_;
   }
-  t = __nullNode_;
 }
 
 template <typename T>

@@ -8,6 +8,7 @@
 
 namespace ft {
 
+// template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<pair<const Key, T> > >
 template <typename T>
 class AATree {
  public:
@@ -21,9 +22,10 @@ class AATree {
   bool          contains(const T &x) const;
   bool          isEmpty() const;
   void          printTree() const;
-  void          makeEmpty();
+  void          clear();
   void          insert(const T &x);
   void          remove(const T &x);
+  void          size();
 
  private:
   struct AANode {
@@ -31,17 +33,15 @@ class AATree {
     AANode *left_;
     AANode *right_;
     int     level_;
-
     AANode() : left_(NULL), right_(NULL), level_(1) {}
     AANode(const T &data, AANode *left, AANode *right, int level = 1)
         : data_(data), left_(left), right_(right), level_(level) {}
   };
   AANode *__root_;
   AANode *__nullNode_;
-
   void    __insert(const T &x, AANode *&t);
   void    __remove(const T &x, AANode *&t);
-  void    __makeEmpty(AANode *&t);
+  void    __clear(AANode *&t);
   void    __printTree(AANode *t) const;
   void    __skew(AANode *&t);
   void    __split(AANode *&t);
@@ -51,8 +51,7 @@ class AATree {
     if (t == t->left_)
       return __nullNode_;
     else
-      return new AANode(t->data_, __clone(t->left_), __clone(t->right_),
-                        t->level_);
+      return new AANode(t->data_, __clone(t->left_), __clone(t->right_), t->level_);
   }
 };
 

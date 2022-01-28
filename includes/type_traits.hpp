@@ -86,5 +86,62 @@ struct is_convertible {
   static yes_type   test(To);
   static bool const value = sizeof(test(val)) == sizeof(true_type);
 };
+// =============================================================================
+// remove_cv, remove_const, remove_reference
+// =============================================================================
+template <class T>
+struct remove_cv {
+  typedef T type;
+};
+template <class T>
+struct remove_cv<const T> {
+  typedef T type;
+};
+template <class T>
+struct remove_cv<volatile T> {
+  typedef T type;
+};
+template <class T>
+struct remove_cv<const volatile T> {
+  typedef T type;
+};
+template <class T>
+struct remove_const {
+  typedef T type;
+};
+template <class T>
+struct remove_const<const T> {
+  typedef T type;
+};
+template <class T>
+struct remove_reference {
+  typedef T type;
+};
+template <class T>
+struct remove_reference<T&> {
+  typedef T type;
+};
+// =============================================================================
+// __is_same_uncvref
+// =============================================================================
+template <class _Tp>
+struct __uncvref {
+  typedef typename remove_cv<typename remove_reference<_Tp>::type>::type type;
+};
+
+template <class _Tp>
+struct __unconstref {
+  typedef
+      typename remove_const<typename remove_reference<_Tp>::type>::type type;
+};
+
+template <class _Tp, class _Up>
+struct __is_same_uncvref
+    : is_same<typename __uncvref<_Tp>::type, typename __uncvref<_Up>::type> {};
+
+template <class _From, class _To>
+struct __rebind_pointer {
+  typedef typename std::pointer_traits<_From>::template rebind<_To>::other type;
+};
 }  // namespace ft
 #endif  // INCLUDES_TYPE_TRAITS_HPP_

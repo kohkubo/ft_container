@@ -27,6 +27,15 @@ int main() {
   ret = map.insert(std::make_pair(11, "eleven"));
   std::cout << "ret.second = " << ret.second << std::endl;
   std::cout << "ret.first->first = " << ret.first->first << std::endl;
-
+  std::cout << "ret.first->second = " << ret.first->second << std::endl;
+  std::cout << "map.size() = " << map.size() << std::endl;
+  
+  // iterator
+  std::map<int, std::string>::iterator it;
+  it = map.insert(map.begin(), std::make_pair(12, "twelve"));
+  for (size_t i = 0; i < map.size(); ++i) {
+    std::cout << "map[" << i << "] = " << map[i] << std::endl;
+  }
+  
   return 0;
 }

@@ -3,6 +3,8 @@
 #ifndef INCLUDES_TYPE_TRAITS_HPP_
 #define INCLUDES_TYPE_TRAITS_HPP_
 
+#include "pointer_traits.hpp"
+
 #include <exception>
 namespace ft {
 template <class _Tp, _Tp __v>
@@ -141,7 +143,7 @@ struct __is_same_uncvref
 
 template <class _From, class _To>
 struct __rebind_pointer {
-  typedef typename std::pointer_traits<_From>::template rebind<_To>::other type;
+  typedef typename pointer_traits<_From>::template rebind<_To>::other type;
 };
 }  // namespace ft
 #endif  // INCLUDES_TYPE_TRAITS_HPP_

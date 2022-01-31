@@ -5,5 +5,6 @@
 // #include "gtest_random_access_iterator.cpp"
 // #include "gtest_vector.cpp"
 // #include "gtest_is_convertible.cpp"
-#include "gtest_pointer_traits.cpp"
+// #include "gtest_pointer_traits.cpp"
 // #include "gtest_my_aatree.cpp"
+#include "gtest_tree.cpp"

@@ -9,7 +9,7 @@ namespace ft {
 // =============================================================================
 template <typename Key, typename T, typename Compare, typename Alloc>
 AATree<Key, T, Compare, Alloc>::AATree() : __alloc_(Alloc()), __size_(0) {
-  __begin_node_       = node_pointer();
+  __begin_node_       = __node_pointer();
   __null_node_        = __create_node(value_type());
   __null_node_->left_ = __null_node_->right_ = __null_node_;
   __null_node_->level_                       = 0;
@@ -18,7 +18,7 @@ AATree<Key, T, Compare, Alloc>::AATree() : __alloc_(Alloc()), __size_(0) {
 template <typename Key, typename T, typename Compare, typename Alloc>
 AATree<Key, T, Compare, Alloc>::AATree(const Compare& comp, const Alloc& alloc)
     : __compare_(comp), __alloc_(alloc), __size_(0) {
-  __begin_node_       = node_pointer();
+  __begin_node_       = __node_pointer();
   __null_node_        = __create_node(value_type());
   __null_node_->left_ = __null_node_->right_ = __null_node_;
   __null_node_->level_                       = 0;
@@ -30,7 +30,7 @@ AATree<Key, T, Compare, Alloc>& AATree<Key, T, Compare, Alloc>::operator=(
     const AATree& x) {
   if (this != &x) {
     __clear();
-    __begin_node_       = node_pointer();
+    __begin_node_       = __node_pointer();
     __null_node_        = __create_node(value_type());
     __null_node_->left_ = __null_node_->right_ = __null_node_;
     __null_node_->level_                       = 0;
@@ -53,22 +53,10 @@ AATree<Key, T, Compare, Alloc>::~AATree() {
 template <typename Key, typename T, typename Compare, typename Alloc>
 typename AATree<Key, T, Compare, Alloc>::reference
 AATree<Key, T, Compare, Alloc>::operator[](const Key& key) {
-  node_pointer p = __find(key);
+  __node_pointer p = __find(key);
   if (p == __null_node_) {
     __insert(value_type(key, T()));
     p = __find(key);
-  }
-  return p->data_.second;
-}
-
-// operator[](size_type n)
-template <typename Key, typename T, typename Compare, typename Alloc>
-typename AATree<Key, T, Compare, Alloc>::reference
-AATree<Key, T, Compare, Alloc>::operator[](size_type n) {
-  node_pointer p = __find(n);
-  if (p == __null_node_) {
-    __insert(value_type(n, T()));
-    p = __find(n);
   }
   return p->data_.second;
 }
@@ -112,7 +100,7 @@ void AATree<Key, T, Compare, Alloc>::insert(const value_type& v) {
 template <typename Key, typename T, typename Compare, typename Alloc>
 typename AATree<Key, T, Compare, Alloc>::iterator
 AATree<Key, T, Compare, Alloc>::find(const key_type& k) {
-  node_pointer current       = __root_;
+  __node_pointer current       = __root_;
   __null_node_->data_->first = k;
   for (;;) {
     if (__compare(k, current->data_->first)) {
@@ -135,27 +123,27 @@ AATree<Key, T, Compare, Alloc>::find(const key_type& k) {
 // =============================================================================
 // create_node
 template <typename Key, typename T, typename Compare, typename Alloc>
-typename AATree<Key, T, Compare, Alloc>::node_pointer
+typename AATree<Key, T, Compare, Alloc>::__node_pointer
 AATree<Key, T, Compare, Alloc>::__create_node(const value_type& v) {
   pointer tmp = __alloc_.allocate(1);
   __alloc_.construct(tmp, v);
-  node_pointer tmp_node = __node_alloc_.allocate(1);
+  __node_pointer tmp_node = __node_alloc_.allocate(1);
   __node_alloc_.construct(tmp_node, node_type(tmp));
   tmp_node->left_ = tmp_node->right_ = __null_node_;
   return tmp_node;
 }
 // rotateWithLeftChild
 template <typename Key, typename T, typename Compare, typename Alloc>
-void AATree<Key, T, Compare, Alloc>::__rotateWithLeftChild(node_pointer& k2) {
-  node_pointer tmp = k2->left_;
+void AATree<Key, T, Compare, Alloc>::__rotateWithLeftChild(__node_pointer& k2) {
+  __node_pointer tmp = k2->left_;
   k2->left_        = tmp->right_;
   tmp->right_      = k2;
   k2               = tmp;
 }
 // rotateWithRightChild
 template <typename Key, typename T, typename Compare, typename Alloc>
-void AATree<Key, T, Compare, Alloc>::__rotateWithRightChild(node_pointer& k1) {
-  node_pointer tmp = k1->right_;
+void AATree<Key, T, Compare, Alloc>::__rotateWithRightChild(__node_pointer& k1) {
+  __node_pointer tmp = k1->right_;
   k1->right_       = tmp->left_;
   tmp->left_       = k1;
   k1               = tmp;
@@ -205,12 +193,12 @@ void AATree<Key, T, Compare, Alloc>::__insert(const value_type& v,
 }
 // clone
 template <typename Key, typename T, typename Compare, typename Alloc>
-typename AATree<Key, T, Compare, Alloc>::node_pointer
-AATree<Key, T, Compare, Alloc>::__clone(node_pointer node) const {
+typename AATree<Key, T, Compare, Alloc>::__node_pointer
+AATree<Key, T, Compare, Alloc>::__clone(__node_pointer node) const {
   if (node == node->left_) {
     return __null_node_;
   } else {
-    node_pointer tmp = __create_node(*node->data_);
+    __node_pointer tmp = __create_node(*node->data_);
     tmp->left_       = __clone(node->left_);
     tmp->right_      = __clone(node->right_);
     tmp->level_      = node->level_;
@@ -220,7 +208,7 @@ AATree<Key, T, Compare, Alloc>::__clone(node_pointer node) const {
 // size
 template <typename Key, typename T, typename Compare, typename Alloc>
 typename AATree<Key, T, Compare, Alloc>::size_type
-AATree<Key, T, Compare, Alloc>::__size(node_pointer node) const {
+AATree<Key, T, Compare, Alloc>::__size(__node_pointer node) const {
   if (node == __null_node_) {
     return 0;
   } else {
@@ -229,9 +217,9 @@ AATree<Key, T, Compare, Alloc>::__size(node_pointer node) const {
 }
 // find(const key_type& k)
 template <typename Key, typename T, typename Compare, typename Alloc>
-typename AATree<Key, T, Compare, Alloc>::node_pointer
+typename AATree<Key, T, Compare, Alloc>::__node_pointer
 AATree<Key, T, Compare, Alloc>::__find(const key_type& k,
-                                       node_pointer    node) const {
+                                       __node_pointer    node) const {
   if (node == __null_node_) {
     return __null_node_;
   } else if (__compare(k, node->data_->first)) {
@@ -244,8 +232,8 @@ AATree<Key, T, Compare, Alloc>::__find(const key_type& k,
 }
 // at
 template <typename Key, typename T, typename Compare, typename Alloc>
-typename AATree<Key, T, Compare, Alloc>::node_pointer
-AATree<Key, T, Compare, Alloc>::__at(size_type i, node_pointer node) const {
+typename AATree<Key, T, Compare, Alloc>::__node_pointer
+AATree<Key, T, Compare, Alloc>::__at(size_type i, __node_pointer node) const {
   if (node == __null_node_) {
     return __null_node_;
   } else if (i < __size(node->left_)) {

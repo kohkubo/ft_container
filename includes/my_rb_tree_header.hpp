@@ -4,22 +4,10 @@
 #include <iostream>
 #include <memory>
 
-#define END            "\033[0m"
-#define BOLD           "\033[1m"
-#define BLACK          "\033[30m"
-#define RED            "\033[31m"
-#define GREEN          "\033[32m"
-#define YELLOW         "\033[33m"
-#define BLUE           "\033[34m"
-#define MAGENTA        "\033[35m"
-#define CYAN           "\033[36m"
-#define WHITE          "\033[37m"
-#define UNDERLINE      "\033[4m"
-#define BOLD_UNDERLINE "\033[1;4m"
-
 #include "pair.hpp"
 #include "pointer_traits.hpp"
 #include "type_traits.hpp"
+#include "tree_util.hpp"
 
 namespace ft {
 
@@ -89,24 +77,27 @@ class __tree_iterator {
   typedef typename __node_type::__node_pointer            __iter_pointer;
   typedef pointer_traits<__node_pointer>                  __pointer_traits;
 
-  __node_pointer                                          __i_;
+private:
+  __node_pointer                                          __ptr_;
 
+public:
   typedef std::bidirectional_iterator_tag                 iterator_category;
   typedef _Tp                                             value_type;
   typedef _DiffType                                       difference_type;
   typedef value_type&                                     reference;
   typedef _Tp*                                            pointer;
 
-  __tree_iterator() : __i_() {}
-  __tree_iterator(__node_pointer __i) : __i_(__i) {}
+
+  __tree_iterator() : __ptr_() {}
+  __tree_iterator(__node_pointer __i) : __ptr_(__i) {}
   __tree_iterator& operator=(const __tree_iterator& __x) {
-    __i_ = __x.__i_;
+    __ptr_ = __x.__ptr_;
     return *this;
   }
-  reference        operator*() const { return __i_->__value_; }
-  pointer          operator->() const { return &__i_->__value_; }
+  reference        operator*() const { return __ptr_->__value_; }
+  pointer          operator->() const { return &__ptr_->__value_; }
   __tree_iterator& operator++() {
-    __i_ = __tree_next(__i_);
+    __ptr_ = __tree_next(__ptr_);
     return *this;
   }
   __tree_iterator operator++(int) {
@@ -115,7 +106,7 @@ class __tree_iterator {
     return __tmp;
   }
   __tree_iterator& operator--() {
-    __i_ = __tree_prev(__i_);
+    __ptr_ = __tree_prev(__ptr_);
     return *this;
   }
   __tree_iterator operator--(int) {
@@ -123,44 +114,13 @@ class __tree_iterator {
     --(*this);
     return __tmp;
   }
-  inline __node_pointer __tree_min(__node_pointer __x) {
-    while (__x->__left_ != NULL)
-      __x = __x->__left_;
-    return __x;
-  }
-  inline __node_pointer __tree_max(__node_pointer __x) {
-    while (__x->__right_ != NULL)
-      __x = __x->__right_;
-    return __x;
-  }
-  inline __node_pointer __tree_next(__node_pointer __x) {
-    if (__x->__right_ != NULL) {
-      return __tree_min(__x->__right_);
-    }
-    while (!__tree_is_left_child(__x)) {
-      __x = __x->__parent_;
-    }
-    return __x->__parent_;
-  }
-  inline __node_pointer __tree_prev(__node_pointer __x) {
-    if (__x->__left_ != NULL) {
-      return __tree_max(__x->__left_);
-    }
-    while (__tree_is_left_child(__x)) {
-      __x = __x->__parent_;
-    }
-    return __x->__parent_;
-  }
-  inline bool __tree_is_left_child(__node_pointer __x) {
-    return __x == __x->__parent_->__left_;
-  }
   friend bool operator==(const __tree_iterator& __x,
                          const __tree_iterator& __y) {
-    return __x.__i_ == __y.__i_;
+    return __x.__ptr_ == __y.__ptr_;
   }
   friend bool operator!=(const __tree_iterator& __x,
                          const __tree_iterator& __y) {
-    return __x.__i_ != __y.__i_;
+    return __x.__ptr_ != __y.__ptr_;
   }
 };
 
@@ -247,66 +207,37 @@ class __tree {
   // Modifiers
   // ===========================================================================
   void                 clear();
-  pair<iterator, bool> insert(const value_type& __x);
-  iterator             erase(iterator __pos);
-  iterator             erase(iterator __f, iterator __l);
-  size_type            erase(const key_type& __key);
+  pair<iterator, bool> insert(const value_type& __v);
+  iterator             insert(iterator __hint, const value_type& __v);
+  template <class _InputIterator>
+  void            insert(_InputIterator __first, _InputIterator __last);
+  iterator        erase(iterator __pos);
+  iterator        erase(iterator __f, iterator __l);
+  size_type       erase(const key_type& __key);
   // ===========================================================================
   // search
   // ===========================================================================
-  iterator             find(const key_type& __key);
-  iterator             lower_bound(const key_type& __key);
+  iterator        find(const key_type& __key);
+  iterator        lower_bound(const key_type& __key);
   // ===========================================================================
   // observers
   // ===========================================================================
-  key_compare          value_comp() const { return __comp_; }
+  key_compare     value_comp() const { return __comp_; }
   // ===========================================================================
   // private
   // ===========================================================================
   iterator        __lower_bound(const key_type& __k, __node_pointer __root);
   __node_pointer& __find_equal(__node_pointer& __parent, const key_type& __k);
-  void __tree_balance_after_insert(__node_pointer __root, __node_pointer __x);
-  inline bool __tree_is_left_child(__node_pointer __x) {
-    return __x->__parent_->__left_ == __x;
-  }
-  void           __tree_left_rotate(__node_pointer __x);
-  void           __tree_right_rotate(__node_pointer __x);
+  __node_pointer& __find_equal(__node_pointer& __parent, const key_type& __k,
+                               __node_pointer& __hint);
   void           __destroy(__node_pointer __nd);
   __node_pointer __create_node(const value_type& __x);
   iterator       __remove_node_pointer(__node_pointer __ptr);
   void           __tree_remove(__node_pointer __root, __node_pointer __z);
-  void           print_node(__node_pointer __nd) {
-    if (__nd == NULL) {
-      std::cout << "NULL" << std::endl;
-      return;
-    }
-    std::cout << "node: " << __nd << std::endl;
-    std::cout << __nd->__value_.first << " " << __nd->__value_.second
-              << std::endl;
-    std::cout << " parent: " << __nd->__parent_;
-    std::cout << " left: " << __nd->__left_;
-    std::cout << " right: " << __nd->__right_;
-    std::cout << std::endl;
-    std::cout << "==============" << std::endl;
-  }
+
 };
 
-// print_tree
-template <class Node>
-void print_tree(Node __nd, size_t __level) {
-  if (__nd == NULL) {
-    return;
-  }
-  print_tree(__nd->__right_, __level + 1);
-  for (size_t i = 0; i < __level; i++) {
-    std::cout << "  ";
-  }
-  if (!__nd->__is_black_) {
-    std::cout << RED;
-  }
-  std::cout << __nd->__value_.first << " " << END << std::endl;
-  print_tree(__nd->__left_, __level + 1);
-}
+
 }  // namespace ft
 
 #endif  // INCLUDES_MY_RB_TREE_HEADER_HPP_

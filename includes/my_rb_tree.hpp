@@ -20,8 +20,8 @@ __tree<_Tp, _Compare, _Allocator>::~__tree() {
 template <class _Tp, class _Compare, class _Allocator>
 void __tree<_Tp, _Compare, _Allocator>::clear() {
   __destroy(__root());
-  __size_ = 0;
-  __begin_node_ = __end_node_;
+  __size_              = 0;
+  __begin_node_        = __end_node_;
   __end_node_->__left_ = NULL;
 }
 
@@ -43,12 +43,51 @@ __tree<_Tp, _Compare, _Allocator>::insert(const value_type& __v) {
   }
   return pair<iterator, bool>(iterator(__child), __inserted);
 }
+
+template <class _Tp, class _Compare, class _Allocator>
+typename __tree<_Tp, _Compare, _Allocator>::iterator
+__tree<_Tp, _Compare, _Allocator>::insert(iterator          __hint,
+                                          const value_type& __v) {
+  __node_pointer  __parent;
+  
+  __node_pointer& __child    = __find_equal(__parent, __v.first, __hint.__ptr_);
+  if (__child == NULL) {
+    __child            = __create_node(__v);
+    __child->__parent_ = __parent;
+    __tree_balance_after_insert(__root(), __child);
+    ++__size_;
+  }
+  return iterator(__child);
+}
+
+// insert(first, last)
+template <class _Tp, class _Compare, class _Allocator>
+template <class _InputIterator>
+void __tree<_Tp, _Compare, _Allocator>::insert(_InputIterator __first,
+                                                _InputIterator __last) {
+  for (; __first != __last; ++__first) {
+    insert(*__first);
+  }
+}
+
 // erase(iterator)
 template <class _Tp, class _Compare, class _Allocator>
 typename __tree<_Tp, _Compare, _Allocator>::iterator
 __tree<_Tp, _Compare, _Allocator>::erase(iterator __p) {
   __node_pointer __np = __p.__ptr_;
   iterator       __r  = __remove_node_pointer(__np);
+  return __r;
+}
+// erase(const key_type&)
+template <class _Tp, class _Compare, class _Allocator>
+typename __tree<_Tp, _Compare, _Allocator>::size_type
+__tree<_Tp, _Compare, _Allocator>::erase(const key_type& __k) {
+  iterator __it = find(__k);
+  if (__it != __end_node_) {
+    erase(__it);
+    return 1;
+  }
+  return 0;
 }
 // =============================================================================
 // Search
@@ -145,102 +184,37 @@ __tree<_Tp, _Compare, _Allocator>::__find_equal(__node_pointer& __parent,
   return __parent->__left_;
 }
 
-// __rootがNULLの場合は、
-// __xがNULLはなし
 template <class _Tp, class _Compare, class _Allocator>
-void __tree<_Tp, _Compare, _Allocator>::__tree_balance_after_insert(
-    __node_pointer __root, __node_pointer __x) {
-  __x->__is_black_ = __x == __root;
-  // 追加したノードの親は、黒である
-  // rootは、黒である
-  // この2つを満たすまで、ループする
-  while (__x != __root && !__x->__parent_->__is_black_) {
-    // std::cout << "===balance=====" << std::endl;
-    // print_tree(__root, 0);
-    // std::cout << "===============" << std::endl;
-    // 追加したノードの親が、追加したノードの左の子である場合
-    if (__tree_is_left_child(__x->__parent_)) {
-      __node_pointer __y = __x->__parent_->__parent_->__right_;
-      // 追加したノードの親の親が、赤である場合
-      if (__y != NULL && !__y->__is_black_) {
-        __x              = __x->__parent_;
-        __x->__is_black_ = true;
-        __x              = __x->__parent_;
-        __x->__is_black_ = __x == __root;
-        __y->__is_black_ = true;
+typename __tree<_Tp, _Compare, _Allocator>::__node_pointer&
+__tree<_Tp, _Compare, _Allocator>::__find_equal(__node_pointer& __parent,
+                                                const key_type& __k,
+                                                __node_pointer& __hint) {
+  if (__hint == __end_node_ || __comp_(__k, __hint->__value_.first)) {
+    if (__hint == __begin_node_ || __comp_(__hint->__value_.first, __k)) {
+      if (__hint->__left_ == NULL) {
+        __parent = __hint;
+        return __hint->__left_;
       } else {
-        // 追加したノードの親の親が、黒である場合
-        if (!__tree_is_left_child(__x)) {
-          __x = __x->__parent_;
-          __tree_left_rotate(__x);
-        }
-        __x              = __x->__parent_;
-        __x->__is_black_ = true;
-        __x              = __x->__parent_;
-        __x->__is_black_ = false;
-        __tree_right_rotate(__x);
-        break;
-      }
-    } else {
-      // 追加したノードの親が、追加したノードの右の子である場合
-      __node_pointer __y = __x->__parent_->__parent_->__left_;
-      if (__y != NULL && !__y->__is_black_) {
-        __x              = __x->__parent_;
-        __x->__is_black_ = true;
-        __x              = __x->__parent_;
-        __x->__is_black_ = __x == __root;
-        __y->__is_black_ = true;
-      } else {
-        if (__tree_is_left_child(__x)) {
-          __x = __x->__parent_;
-          __tree_right_rotate(__x);
-        }
-        __x              = __x->__parent_;
-        __x->__is_black_ = true;
-        __x              = __x->__parent_;
-        __x->__is_black_ = false;
-        __tree_left_rotate(__x);
-        break;
+        __parent = __hint;
+        return __hint->__right_;
       }
     }
+    return __find_equal(__parent, __k);
+  } else if (__comp_(__hint->__value_.first, __k)) {
+    __node_pointer __next = __tree_next(__hint);
+    if (__next == __end_node_ || __comp_(__k, __next->__value_.first)) {
+      if (__hint->__right_ == NULL) {
+        __parent = __hint;
+        return __hint->__right_;
+      } else {
+        __parent = __hint;
+        return __hint->__left_;
+      }
+    }
+    return __find_equal(__parent, __k);
   }
-}
-
-// __tree_left_rotate
-template <class _Tp, class _Compare, class _Allocator>
-void __tree<_Tp, _Compare, _Allocator>::__tree_left_rotate(__node_pointer __x) {
-  __node_pointer __y = __x->__right_;
-  __x->__right_      = __y->__left_;
-  if (__x->__right_ != NULL) {
-    __x->__right_->__parent_ = __x;
-  }
-  __y->__parent_ = __x->__parent_;
-  if (__tree_is_left_child(__x)) {
-    __x->__parent_->__left_ = __y;
-  } else {
-    __x->__parent_->__right_ = __y;
-  }
-  __y->__left_   = __x;
-  __x->__parent_ = __y;
-}
-
-// __tree_right_rotate
-template <class _Tp, class _Compare, class _Allocator>
-void __tree<_Tp, _Compare, _Allocator>::__tree_right_rotate(
-    __node_pointer __x) {
-  __node_pointer __y = __x->__left_;
-  __x->__left_       = __y->__right_;
-  if (__x->__left_ != NULL) {
-    __x->__left_->__parent_ = __x;
-  }
-  __y->__parent_ = __x->__parent_;
-  if (__tree_is_left_child(__x)) {
-    __x->__parent_->__left_ = __y;
-  } else {
-    __x->__parent_->__right_ = __y;
-  }
-  __y->__right_  = __x;
-  __x->__parent_ = __y;
+  __parent = __hint;
+  return __parent;
 }
 
 // __create_node
@@ -341,7 +315,7 @@ void __tree<_Tp, _Compare, _Allocator>::__tree_remove(__node_pointer __root,
               __w = __w->__parent_;
             }
             __w->__is_black_           = __w->__parent_->__is_black_;
-            __w->__parent_->is_black_  = true;
+            __w->__parent_->__is_black_  = true;
             __w->__right_->__is_black_ = true;
             __tree_left_rotate(__w->__parent_);
             break;

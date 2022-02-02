@@ -16,20 +16,20 @@ class RbTreeTest : public ::testing::Test {
   typedef ft::__tree<ftPair, std::less<int>, std::allocator<ftPair> > ftTree;
   typedef std::map<int, int>                                          stdMap;
   typedef ft::__tree<ftPair, std::less<int>, std::allocator<ftPair> >::iterator
-                                       ftIt;
-  typedef std::map<int, int>::iterator stdIt;
-  typedef ft::pair<ftIt, bool>         ftPairBool;
-  typedef std::pair<stdIt, bool>       stdPairBool;
+                                          ftIt;
+  typedef std::map<int, int>::iterator    stdIt;
+  typedef ft::pair<ftIt, bool>            ftPairBool;
+  typedef std::pair<stdIt, bool>          stdPairBool;
   typedef typename ftTree::__node_pointer ftNodePtr;
-  
-  virtual void                         SetUp() {
+
+  virtual void                            SetUp() {
     std::srand(std::time(nullptr));
     for (int i = 1; i <= nb_elem; ++i) {
       ft_tree_.insert(ft::make_pair(i, i));
       std_tree_.insert(std::make_pair(i, i));
     }
   }
-  const int                           nb_elem = 10;
+  const int   nb_elem = 10;
   ftIt        ft_it_;
   stdIt       std_it_;
   ftTree      ft_tree_;
@@ -67,7 +67,7 @@ TEST_F(RbTreeTest, Constructor) {
 // insert true with sequence value
 TEST_F(RbTreeTest, InsertTrue) {
   // beginより前に挿入
-  int key = -1;
+  int key                  = -1;
   ft_pair_bool_            = ft_tree_.insert(ft::make_pair(key, key));
   std_pair_bool_           = std_tree_.insert(std::make_pair(key, key));
 
@@ -76,27 +76,28 @@ TEST_F(RbTreeTest, InsertTrue) {
   ftTree           __ft_tree;
   stdMap           __std_tree;
   for (int i = 0; i < __kSize; ++i) {
-    key        = i;
+    key            = i;
     keys[i]        = key;
-    ft_pair_bool_ = __ft_tree.insert(ft::make_pair(key, key));
+    ft_pair_bool_  = __ft_tree.insert(ft::make_pair(key, key));
     std_pair_bool_ = __std_tree.insert(std::make_pair(key, key));
     EXPECT_EQ(ft_pair_bool_.second, std_pair_bool_.second);
   }
   for (int i = 0; i < __kSize; ++i) {
     EXPECT_EQ(__ft_tree.find(keys[i])->first, __std_tree.find(keys[i])->first);
-    EXPECT_EQ(__ft_tree.find(keys[i])->second, __std_tree.find(keys[i])->second);
+    EXPECT_EQ(__ft_tree.find(keys[i])->second,
+              __std_tree.find(keys[i])->second);
   }
 }
 
 // insert true
 TEST_F(RbTreeTest, InsertTrue2) {
-  int key = 0;
-  const int        __kSize = 10;
-  ftTree           __ft_tree;
-  stdMap           __std_tree;
+  int       key     = 0;
+  const int __kSize = 10;
+  ftTree    __ft_tree;
+  stdMap    __std_tree;
   for (int i = __kSize; i > 0; --i) {
-    key        = i;
-    ft_pair_bool_ = __ft_tree.insert(ft::make_pair(key, key));
+    key            = i;
+    ft_pair_bool_  = __ft_tree.insert(ft::make_pair(key, key));
     std_pair_bool_ = __std_tree.insert(std::make_pair(key, key));
     EXPECT_EQ(ft_pair_bool_.second, std_pair_bool_.second);
   }
@@ -113,9 +114,9 @@ TEST_F(RbTreeTest, InsertFalse) {
 
 // insert true with random value
 TEST_F(RbTreeTest, InsertTrueRandom) {
-  ftTree __ft;
-  stdMap __std;
-  const int SIZE = 1000;
+  ftTree           __ft;
+  stdMap           __std;
+  const int        SIZE = 1000;
   std::vector<int> keys(SIZE);
   for (int i = 0; i < SIZE; ++i) {
     int key        = std::rand() % 1000;
@@ -130,13 +131,39 @@ TEST_F(RbTreeTest, InsertTrueRandom) {
   }
 }
 
+// insert(iterator, const value_type&)
+TEST_F(RbTreeTest, InsertIterator) {
+  ft_it_  = ft_tree_.insert(ft_tree_.begin(), ft::make_pair(0, 0));
+  std_it_ = std_tree_.insert(std_tree_.begin(), std::make_pair(0, 0));
+  EXPECT_EQ(ft_it_->first, std_it_->first);
+  EXPECT_EQ(ft_it_->second, std_it_->second);
+}
+
+// erase
+TEST_F(DISABLED_RbTreeTest, Erase) {
+  int       key     = 0;
+  const int __kSize = 10;
+  ftTree    __ft_tree;
+  stdMap    __std_tree;
+  for (int i = __kSize; i > 0; --i) {
+    key            = i;
+    ft_pair_bool_  = __ft_tree.insert(ft::make_pair(key, key));
+    std_pair_bool_ = __std_tree.insert(std::make_pair(key, key));
+    EXPECT_EQ(ft_pair_bool_.second, std_pair_bool_.second);
+  }
+  for (int i = 0; i < __kSize; ++i) {
+    key = i;
+    EXPECT_EQ(__ft_tree.erase(key), __std_tree.erase(key));
+    EXPECT_EQ(__ft_tree.size(), __std_tree.size());
+  }
+}
+
 // clear
 TEST_F(RbTreeTest, Clear) {
   ft_tree_.clear();
   std_tree_.clear();
   EXPECT_EQ(ft_tree_.size(), std_tree_.size());
 }
-
 
 // lower_bound
 TEST_F(RbTreeTest, LowerBound) {

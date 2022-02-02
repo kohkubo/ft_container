@@ -12,7 +12,6 @@ namespace ft {
 template <class Iterator>
 class random_access_iterator {
  public:
-  typedef Iterator                                            iterator_type;
   typedef typename iterator_traits<Iterator>::difference_type difference_type;
   typedef typename iterator_traits<Iterator>::value_type      value_type;
   typedef typename iterator_traits<Iterator>::pointer         pointer;
@@ -21,9 +20,14 @@ class random_access_iterator {
       typename iterator_traits<Iterator>::iterator_category iterator_category;
 
  private:
-  iterator_type __iter_;
+  typedef Iterator iterator_type;
+  iterator_type    __iter_;
 
  public:
+  // ===========================================================================
+  // base
+  // ===========================================================================
+  iterator_type base() const { return __iter_; }
   // ===========================================================================
   // Canonical
   // ===========================================================================
@@ -34,10 +38,6 @@ class random_access_iterator {
     return *this;
   }
   ~random_access_iterator() {}
-  // ===========================================================================
-  // base
-  // ===========================================================================
-  iterator_type base() const { return __iter_; }
   // ===========================================================================
   // Operator
   // ===========================================================================

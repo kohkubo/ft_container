@@ -33,11 +33,11 @@ int main() {
   std::cout << p2->second << std::endl;
 
   // insert
-  tree.__insert_unique(ft::make_pair(1, 2));
-  tree.__insert_unique(ft::make_pair(2, 3));
-  tree.__insert_unique(ft::make_pair(3, 4));
-  tree.__insert_unique(ft::make_pair(4, 5));
-  tree.__insert_unique(ft::make_pair(5, 6));
+  tree.insert(ft::make_pair(1, 2));
+  tree.insert(ft::make_pair(2, 3));
+  tree.insert(ft::make_pair(3, 4));
+  tree.insert(ft::make_pair(4, 5));
+  tree.insert(ft::make_pair(5, 6));
   std::cout << "tree.size() = " << tree.size() << std::endl;
   std::cout << tree.begin()->first << std::endl;
   std::cout << tree.begin()->second << std::endl;
@@ -61,6 +61,18 @@ int main() {
   std::cout << it->first << std::endl;
   std::cout << "=== print_tree ========" << std::endl;
   ft::print_tree(tree.__root(), 0);
+  std::cout << "=== find ========" << std::endl;
+  std::cout << tree.find(2)->first << std::endl;
+  std::cout << tree.find(2)->second << std::endl;
+
+  // loewr_bound
+  std::cout << "=== lower_bound ========" << std::endl;
+  ft::__tree<myPair, std::less<int>,
+             std::allocator<ft::pair<const int, int> > >::iterator it2 =
+      tree.lower_bound(1);
+  std::cout << it2->first << std::endl;
+  std::cout << it2->second << std::endl;
+
   return 0;
 }
 

@@ -4,6 +4,19 @@
 #include <iostream>
 #include <memory>
 
+#define END            "\033[0m"
+#define BOLD           "\033[1m"
+#define BLACK          "\033[30m"
+#define RED            "\033[31m"
+#define GREEN          "\033[32m"
+#define YELLOW         "\033[33m"
+#define BLUE           "\033[34m"
+#define MAGENTA        "\033[35m"
+#define CYAN           "\033[36m"
+#define WHITE          "\033[37m"
+#define UNDERLINE      "\033[4m"
+#define BOLD_UNDERLINE "\033[1;4m"
+
 #include "pair.hpp"
 #include "pointer_traits.hpp"
 #include "type_traits.hpp"
@@ -46,9 +59,15 @@ class __tree_node<pair<const _Key, _Tp> > {
   // ===========================================================================
   // construct/copy/destroy:
   // ===========================================================================
-  __tree_node() : __right_(NULL), __left_(NULL), __parent_(NULL) {}
+  __tree_node()
+      : __right_(NULL), __left_(NULL), __parent_(NULL), __is_black_(false) {}
   __tree_node(const __node_value_type& __x)
-      : __value_(__x), __right_(NULL), __left_(NULL), __parent_(NULL) {}
+      : __value_(__x),
+        __right_(NULL),
+        __left_(NULL),
+        __parent_(NULL),
+        __is_black_(false) {}
+  ~__tree_node() {}
 
   // ===========================================================================
   // tree_node_type
@@ -62,6 +81,7 @@ class __tree_node<pair<const _Key, _Tp> > {
 
 template <class _Tp, class _NodePtr, class _DiffType>
 class __tree_iterator {
+ public:
   typedef typename pointer_traits<_NodePtr>::element_type __node_type;
   typedef _NodePtr                                        __node_pointer;
   typedef typename __node_type::__node_pointer            __node_base_pointer;
@@ -71,12 +91,11 @@ class __tree_iterator {
 
   __node_pointer                                          __i_;
 
- public:
-  typedef std::bidirectional_iterator_tag iterator_category;
-  typedef _Tp                             value_type;
-  typedef _DiffType                       difference_type;
-  typedef value_type&                     reference;
-  typedef _Tp*                            pointer;
+  typedef std::bidirectional_iterator_tag                 iterator_category;
+  typedef _Tp                                             value_type;
+  typedef _DiffType                                       difference_type;
+  typedef value_type&                                     reference;
+  typedef _Tp*                                            pointer;
 
   __tree_iterator() : __i_() {}
   __tree_iterator(__node_pointer __i) : __i_(__i) {}
@@ -212,13 +231,12 @@ class __tree {
   void __assign_unique(_ForwardIterator __first, _ForwardIterator __last);
   ~__tree();
 
-  void                 clear();
   void                 swap(__tree& __t);
   // ===========================================================================
   // accese
   // ===========================================================================
   __node_pointer       __root() const { return __end_node_->__left_; }
-  __node_pointer*      __root_ptr() { return &__end_node_->__left_; }
+  __node_pointer*      __root_ptr() { return &(__end_node_->__left_); }
   // ===========================================================================
   // iterator
   // ===========================================================================
@@ -228,11 +246,16 @@ class __tree {
   // ===========================================================================
   // Modifiers
   // ===========================================================================
-  // insert
-  pair<iterator, bool> __insert_unique(const value_type& __x);
+  void                 clear();
+  pair<iterator, bool> insert(const value_type& __x);
   iterator             erase(iterator __pos);
   iterator             erase(iterator __f, iterator __l);
   size_type            erase(const key_type& __key);
+  // ===========================================================================
+  // search
+  // ===========================================================================
+  iterator             find(const key_type& __key);
+  iterator             lower_bound(const key_type& __key);
   // ===========================================================================
   // observers
   // ===========================================================================
@@ -240,9 +263,8 @@ class __tree {
   // ===========================================================================
   // private
   // ===========================================================================
+  iterator        __lower_bound(const key_type& __k, __node_pointer __root);
   __node_pointer& __find_equal(__node_pointer& __parent, const key_type& __k);
-  void __insert_node_at(__node_pointer& __parent, __node_pointer& __child,
-                        __node_pointer __new_node);
   void __tree_balance_after_insert(__node_pointer __root, __node_pointer __x);
   inline bool __tree_is_left_child(__node_pointer __x) {
     return __x->__parent_->__left_ == __x;
@@ -254,6 +276,10 @@ class __tree {
   iterator       __remove_node_pointer(__node_pointer __ptr);
   void           __tree_remove(__node_pointer __root, __node_pointer __z);
   void           print_node(__node_pointer __nd) {
+    if (__nd == NULL) {
+      std::cout << "NULL" << std::endl;
+      return;
+    }
     std::cout << "node: " << __nd << std::endl;
     std::cout << __nd->__value_.first << " " << __nd->__value_.second
               << std::endl;
@@ -261,6 +287,7 @@ class __tree {
     std::cout << " left: " << __nd->__left_;
     std::cout << " right: " << __nd->__right_;
     std::cout << std::endl;
+    std::cout << "==============" << std::endl;
   }
 };
 
@@ -274,8 +301,10 @@ void print_tree(Node __nd, size_t __level) {
   for (size_t i = 0; i < __level; i++) {
     std::cout << "  ";
   }
-  std::cout << __nd->__value_.first << " " << __nd->__value_.second
-            << std::endl;
+  if (!__nd->__is_black_) {
+    std::cout << RED;
+  }
+  std::cout << __nd->__value_.first << " " << END << std::endl;
   print_tree(__nd->__left_, __level + 1);
 }
 }  // namespace ft

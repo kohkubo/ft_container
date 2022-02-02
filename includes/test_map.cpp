@@ -36,6 +36,9 @@ int main() {
   for (size_t i = 0; i < map.size(); ++i) {
     std::cout << "map[" << i << "] = " << map[i] << std::endl;
   }
+  // lower_bound
+  std::cout << "map.lower_bound(20) = " << (map.lower_bound(20) == map.end()) << std::endl;
+  // std::cout << "map.upper_bound(20) = " << map.upper_bound(20)->first << std::endl;
   
   return 0;
 }

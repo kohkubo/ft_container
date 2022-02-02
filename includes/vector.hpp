@@ -112,9 +112,9 @@ typename vector<T, Alloc>::const_reverse_iterator vector<T, Alloc>::rend()
 // =============================================================================
 template <class T, class Alloc>
 typename vector<T, Alloc>::size_type vector<T, Alloc>::max_size() const {
-  return std::min<size_type>(std::numeric_limits<difference_type>::max(),
-                             std::numeric_limits<size_type>::max()) /
-         sizeof(value_type);
+  return std::min<size_type>(
+      __alloc_.max_size(),
+      std::numeric_limits<size_type>::max());
 }
 template <class T, class Alloc>
 void vector<T, Alloc>::reserve(size_type n) {

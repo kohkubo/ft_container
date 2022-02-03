@@ -22,7 +22,6 @@ struct iterator {
   typedef Category  iterator_category;
 };
 
-// has_iterator_category
 template <class T>
 struct has_iterator_category {
   static no_type check(...);
@@ -31,7 +30,6 @@ struct has_iterator_category {
   static const bool value = sizeof(check<T>(0)) == sizeof(yes_type);
 };
 
-// has_iterator_category_is_convertible
 template <class T, class U,
           bool = has_iterator_category<iterator_traits<T> >::value>
 struct has_iterator_category_is_convertible
@@ -40,13 +38,9 @@ struct has_iterator_category_is_convertible
 template <class T, class U>
 struct has_iterator_category_is_convertible<T, U, false> : false_type {};
 
-// is_input_iterator
 template <class T>
 struct is_input_iterator
     : has_iterator_category_is_convertible<T, std::input_iterator_tag> {};
-
-template <class Iterator, bool>
-struct iterator_traits_base {};
 
 template <class Iterator, bool>
 struct iterator_traits_base_impl {};
@@ -61,24 +55,16 @@ struct iterator_traits_base_impl<Iterator, true> {
 };
 
 template <class Iterator>
-struct iterator_traits_base<Iterator, true>
-    : iterator_traits_base_impl<
-          Iterator, is_convertible<typename Iterator::iterator_category,
-                                   std::input_iterator_tag>::value ||
-                        is_convertible<typename Iterator::iterator_category,
-                                       std::output_iterator_tag>::value> {};
-
-template <class Iterator>
 struct iterator_traits
-    : iterator_traits_base<Iterator, has_iterator_category<Iterator>::value> {
+    : iterator_traits_base_impl<Iterator, has_iterator_category<Iterator>::value> {
 };
 
 template <class T>
 struct iterator_traits<T *> {
   typedef ptrdiff_t                       difference_type;
-  typedef T                               value_type;
-  typedef T                              *pointer;
-  typedef T                              &reference;
+  typedef typename remove_cv<T>::type     value_type;
+  typedef value_type                     *pointer;
+  typedef value_type                     &reference;
   typedef std::random_access_iterator_tag iterator_category;
 };
 

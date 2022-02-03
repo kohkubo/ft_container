@@ -112,9 +112,8 @@ typename vector<T, Alloc>::const_reverse_iterator vector<T, Alloc>::rend()
 // =============================================================================
 template <class T, class Alloc>
 typename vector<T, Alloc>::size_type vector<T, Alloc>::max_size() const {
-  return std::min<size_type>(
-      __alloc_.max_size(),
-      std::numeric_limits<size_type>::max());
+  return std::min<size_type>(__alloc_.max_size(),
+                             std::numeric_limits<size_type>::max());
 }
 template <class T, class Alloc>
 void vector<T, Alloc>::reserve(size_type n) {
@@ -184,8 +183,8 @@ void vector<T, Alloc>::clear() {
 }
 template <class T, class Alloc>
 template <class InputIterator>
-void vector<T, Alloc>::insert(typename vector<T, Alloc>::iterator pos,
-                              InputIterator first, InputIterator last) {
+void vector<T, Alloc>::insert(InputIterator pos, InputIterator first,
+                              InputIterator last) {
   if (pos == end()) {
     while (first != last) {
       push_back(*first);
@@ -205,8 +204,7 @@ void vector<T, Alloc>::insert(typename vector<T, Alloc>::iterator pos,
   __end_ += n;
 }
 template <class T, class Alloc>
-void vector<T, Alloc>::insert(typename vector<T, Alloc>::iterator pos,
-                              size_type n, const_reference x) {
+void vector<T, Alloc>::insert(iterator pos, size_type n, const_reference x) {
   if (pos == end()) {
     push_back(x);
     return;
@@ -223,23 +221,21 @@ void vector<T, Alloc>::insert(typename vector<T, Alloc>::iterator pos,
 }
 template <class T, class Alloc>
 typename vector<T, Alloc>::iterator vector<T, Alloc>::insert(
-    typename vector<T, Alloc>::iterator pos, const_reference x) {
+    iterator pos, const_reference x) {
   size_t pos_index = pos - begin();
   insert(pos, 1, x);
   return begin() + pos_index;
 }
 template <class T, class Alloc>
-typename vector<T, Alloc>::iterator vector<T, Alloc>::erase(
-    typename vector<T, Alloc>::iterator first,
-    typename vector<T, Alloc>::iterator last) {
+typename vector<T, Alloc>::iterator vector<T, Alloc>::erase(iterator first,
+                                                            iterator last) {
   __destroy_range(__iterator_to_pointer(first), __iterator_to_pointer(last));
   std::copy(__iterator_to_pointer(last), __end_, __iterator_to_pointer(first));
   __end_ -= last - first;
   return first;
 }
 template <class T, class Alloc>
-typename vector<T, Alloc>::iterator vector<T, Alloc>::erase(
-    typename vector<T, Alloc>::iterator pos) {
+typename vector<T, Alloc>::iterator vector<T, Alloc>::erase(iterator pos) {
   return erase(pos, pos + 1);
 }
 template <class T, class Alloc>

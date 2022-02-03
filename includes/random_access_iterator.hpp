@@ -12,6 +12,7 @@ namespace ft {
 template <class Iterator>
 class random_access_iterator {
  public:
+  typedef Iterator                                            iterator_type;
   typedef typename iterator_traits<Iterator>::difference_type difference_type;
   typedef typename iterator_traits<Iterator>::value_type      value_type;
   typedef typename iterator_traits<Iterator>::pointer         pointer;
@@ -19,30 +20,33 @@ class random_access_iterator {
   typedef
       typename iterator_traits<Iterator>::iterator_category iterator_category;
 
- private:
-  typedef Iterator iterator_type;
-  iterator_type    __iter_;
-
- public:
-  // ===========================================================================
-  // base
-  // ===========================================================================
-  iterator_type base() const { return __iter_; }
+private:
+  pointer __iter_;
+public:
   // ===========================================================================
   // Canonical
   // ===========================================================================
   random_access_iterator() : __iter_(0) {}
-  explicit random_access_iterator(pointer p) : __iter_(p) {}
+  random_access_iterator(pointer p) : __iter_(p) {}
+  template <class _Up>
+  random_access_iterator(
+      const random_access_iterator<_Up> &__u,
+      typename enable_if<is_convertible<_Up, iterator_type>::value>::type * = 0)
+      : __iter_(__u.base()) {}
   random_access_iterator &operator=(const iterator_type &rhs) {
     __iter_ = rhs.base();
     return *this;
   }
   ~random_access_iterator() {}
   // ===========================================================================
+  // base
+  // ===========================================================================
+  iterator_type base() const { return __iter_; }
+  // ===========================================================================
   // Operator
   // ===========================================================================
-  reference     operator*() const { return *__iter_; }
-  pointer operator->() const { return reinterpret_cast<pointer>(*__iter_); }
+  reference operator*() const { return *__iter_; }
+  pointer   operator->() const { return reinterpret_cast<pointer>(*__iter_); }
   random_access_iterator &operator++() {
     ++__iter_;
     return *this;

@@ -78,8 +78,7 @@ class vector {
   iterator               insert(iterator pos, const_reference value);
   void insert(iterator pos, size_type n, const_reference value);
   template <class InputIterator>
-  void     insert(typename vector<T, Alloc>::iterator pos, InputIterator first,
-                  InputIterator last);
+  void     insert(InputIterator pos, InputIterator first, InputIterator last);
   iterator erase(iterator pos);
   iterator erase(iterator first, iterator last);
   void     push_back(const_reference value);

@@ -4,8 +4,8 @@
 #define INCLUDES_TYPE_TRAITS_HPP_
 
 #include "pointer_traits.hpp"
-
 #include <exception>
+
 namespace ft {
 template <class _Tp, _Tp __v>
 struct integral_constant {
@@ -86,7 +86,7 @@ struct is_convertible {
   static From       val;
   static no_type    test(...);
   static yes_type   test(To);
-  static bool const value = sizeof(test(val)) == sizeof(true_type);
+  static bool const value = sizeof(test(val)) == sizeof(yes_type);
 };
 // =============================================================================
 // remove_cv, remove_const, remove_reference
@@ -145,5 +145,7 @@ template <class _From, class _To>
 struct __rebind_pointer {
   typedef typename pointer_traits<_From>::template rebind<_To>::other type;
 };
+
+
 }  // namespace ft
 #endif  // INCLUDES_TYPE_TRAITS_HPP_

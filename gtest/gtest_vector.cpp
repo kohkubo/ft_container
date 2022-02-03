@@ -260,6 +260,19 @@ TEST_F(VectorTest, Insert_2) {
     EXPECT_EQ(v1[i], v2[i]);
   }
 }
+
+// insert 
+// TEST_F(VectorTest, insert_benchmark) {
+//   ft::vector<int> ft;
+//   std::vector<int> std;
+//   for (size_t i = 0; i < 100000; ++i) {
+//     ft.insert(ft.begin(), i);
+//   }
+//   for (size_t i = 0; i < 100000; ++i) {
+//     std.insert(std.begin(), i);
+//   }
+// }
+
 // push_back
 TEST_F(VectorTest, PushBack) {
   ft::vector<int>  v1(10);

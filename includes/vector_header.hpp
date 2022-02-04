@@ -143,7 +143,7 @@ class vector {
       reserve(2 * (size() + n));
       pos = begin() + pos_index;
     }
-    pointer pos_ptr = __iterator_to_pointer(pos);
+    pointer pos_ptr = pos.base();
     std::uninitialized_copy(pos_ptr, __end_, pos_ptr + n);
     std::uninitialized_fill(pos_ptr, __end_, value);
     __end_ += n;
@@ -163,15 +163,14 @@ class vector {
       reserve(2 * (size() + n));
       pos = begin() + pos_index;
     }
-    pointer pos_ptr = __iterator_to_pointer(pos);
+    pointer pos_ptr = pos.base();
     std::uninitialized_copy(pos_ptr, __end_, pos_ptr + n);
     std::uninitialized_copy(first, last, __begin_);
     __end_ += n;
   }
   iterator erase(iterator first, iterator last) {
-    __destroy_range(__iterator_to_pointer(first), __iterator_to_pointer(last));
-    std::copy(__iterator_to_pointer(last), __end_,
-              __iterator_to_pointer(first));
+    __destroy_range(first.base(), last.base());
+    std::copy(last.base(), __end_, first.base());
     __end_ -= last - first;
     return first;
   }
@@ -266,7 +265,6 @@ class vector {
       __begin_, __end_, __end_cap_ = 0;
     }
   }
-  inline pointer __iterator_to_pointer(iterator it) { return &(*it); }
 
  protected:
   pointer        __begin_;

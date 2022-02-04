@@ -124,21 +124,88 @@ class vector {
   // ===========================================================================
   // Modifiers
   // ===========================================================================
-  void      clear();
-  iterator  insert(iterator pos, const_reference value);
-  void      insert(iterator pos, size_type n, const_reference value);
+  void      clear() {
+    __destroy_range(__begin_, __end_);
+    __end_ = __begin_;
+  }
+  iterator insert(iterator pos, const_reference value) {
+    size_t pos_index = pos - begin();
+    insert(pos, 1, value);
+    return begin() + pos_index;
+  }
+  void insert(iterator pos, size_type n, const_reference value) {
+    if (pos == end()) {
+      push_back(value);
+      return;
+    }
+    size_t pos_index = pos - begin();
+    if (size() + n > capacity()) {
+      reserve(2 * (size() + n));
+      pos = begin() + pos_index;
+    }
+    pointer pos_ptr = __iterator_to_pointer(pos);
+    std::uninitialized_copy(pos_ptr, __end_, pos_ptr + n);
+    std::uninitialized_fill(pos_ptr, __end_, value);
+    __end_ += n;
+  }
   template <class InputIterator>
-  void     insert(InputIterator pos, InputIterator first, InputIterator last);
-  iterator erase(iterator pos);
-  iterator erase(iterator first, iterator last);
-  void     push_back(const_reference value);
-  void     pop_back();
-  void     resize(size_type n, const_reference value = T());
-  void     swap(vector& x);
+  void insert(InputIterator pos, InputIterator first, InputIterator last) {
+    if (pos == end()) {
+      while (first != last) {
+        push_back(*first);
+        ++first;
+        return;
+      }
+    }
+    size_t pos_index = pos - begin();
+    size_t n         = last - first;
+    if (size() + n > capacity()) {
+      reserve(2 * (size() + n));
+      pos = begin() + pos_index;
+    }
+    pointer pos_ptr = __iterator_to_pointer(pos);
+    std::uninitialized_copy(pos_ptr, __end_, pos_ptr + n);
+    std::uninitialized_copy(first, last, __begin_);
+    __end_ += n;
+  }
+  iterator erase(iterator first, iterator last) {
+    __destroy_range(__iterator_to_pointer(first), __iterator_to_pointer(last));
+    std::copy(__iterator_to_pointer(last), __end_,
+              __iterator_to_pointer(first));
+    __end_ -= last - first;
+    return first;
+  }
+  iterator erase(iterator pos) { return erase(pos, pos + 1); }
+  void     push_back(const_reference value) {
+    if (__end_ == __end_cap_) {
+      reserve(capacity() + 1);
+    }
+    __alloc_.construct(__end_, value);
+    ++__end_;
+  }
+  void pop_back() {
+    if (__end_ != __begin_) {
+      --__end_;
+      __alloc_.destroy(__end_);
+    }
+  }
+  void resize(size_type n, const_reference value = T()) {
+    if (n > size()) {
+      if (n > max_size()) {
+        __throw_length_error();
+      }
+      __end_ = __begin_ + n;
+      std::uninitialized_fill(__begin_, __end_, value);
+    } else if (n < size()) {
+      __destroy_range(__begin_ + n, __end_);
+      __end_ = __begin_ + n;
+    }
+  }
+  void    swap(vector& x);
   // ===========================================================================
   // Others
   // ===========================================================================
-  vector&  operator=(const vector& v) {
+  vector& operator=(const vector& v) {
     if (this != &v) {
       __vdeallocate();
       __vallocate(v.size());
@@ -178,12 +245,28 @@ class vector {
   // Private members
   // ===========================================================================
  private:
-  void           __throw_length_error() { throw std::length_error("vector"); }
-  void           __throw_out_of_range() { throw std::out_of_range("vector"); }
-  inline void    __destroy_range(pointer first, pointer last);
-  void           __vallocate(size_type n);
-  void           __vdeallocate();
-  inline pointer __iterator_to_pointer(iterator it);
+  void        __throw_length_error() { throw std::length_error("vector"); }
+  void        __throw_out_of_range() { throw std::out_of_range("vector"); }
+  inline void __destroy_range(pointer first, pointer last) {
+    for (; first != last; ++first) {
+      __alloc_.destroy(first);
+    }
+  }
+  void __vallocate(size_type n) {
+    if (n > max_size()) {
+      __throw_length_error();
+    }
+    __begin_   = __alloc_.allocate(n);
+    __end_     = __begin_;
+    __end_cap_ = __begin_ + n;
+  }
+  void __vdeallocate() {
+    if (__begin_) {
+      __alloc_.deallocate(__begin_, __end_cap_ - __begin_);
+      __begin_, __end_, __end_cap_ = 0;
+    }
+  }
+  inline pointer __iterator_to_pointer(iterator it) { return &(*it); }
 
  protected:
   pointer        __begin_;

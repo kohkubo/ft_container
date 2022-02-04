@@ -26,6 +26,16 @@ class VectorTest : public ::testing::Test {
   std::vector<int> _std_vector_insert;
 };
 
+class DISABLED_VectorTest : public ::testing::Test {
+public:
+  ft::vector<int>  _ft_vector;
+  std::vector<int> _std_vector;
+  ft::vector<int>  _ft_vector_empty;
+  std::vector<int> _std_vector_empty;
+  ft::vector<int>  _ft_vector_insert;
+  std::vector<int> _std_vector_insert;
+};
+
 #define RESULT_VISUAL 1
 
 #ifdef RESULT_VISUAL
@@ -121,6 +131,34 @@ TEST_F(VectorTest, CopyConstructor) {
   EXPECT_EQ(ft.back(), std.back());
 }
 // =============================================================================
+// Element access
+// =============================================================================
+TEST_F(DISABLED_VectorTest, ElementAccess) {
+  ft::vector<int>  ft(_ft_vector);
+  std::vector<int> std(_std_vector);
+  // Element access
+  for (size_t i = 0; i < ft.size(); ++i) {
+    EXPECT_EQ(ft.at(i), std.at(i));
+    EXPECT_EQ(ft[i], std[i]);
+  }
+  EXPECT_ANY_THROW(ft.at(ft.size()));
+  EXPECT_ANY_THROW(std.at(std.size()));
+  EXPECT_EQ(ft.front(), std.front());
+  EXPECT_EQ(ft.back(), std.back());
+  // const
+  const ft::vector<int>  ft_const(_ft_vector);
+  const std::vector<int> std_const(_std_vector);
+  // Element access
+  for (size_t i = 0; i < ft_const.size(); ++i) {
+    EXPECT_EQ(ft_const.at(i), std_const.at(i));
+    EXPECT_EQ(ft_const[i], std_const[i]);
+  }
+  EXPECT_ANY_THROW(ft_const.at(ft_const.size()));
+  EXPECT_ANY_THROW(std_const.at(std_const.size()));
+  EXPECT_EQ(ft_const.front(), std_const.front());
+  EXPECT_EQ(ft_const.back(), std_const.back());
+}
+// =============================================================================
 // Iterators
 // =============================================================================
 // begin
@@ -133,18 +171,16 @@ TEST_F(VectorTest, Begin) {
     ++std_it;
   }
 }
-
 // end
 TEST_F(VectorTest, End) {
-    ft::vector<int>::iterator ft_it = _ft_vector.end();
-    std::vector<int>::iterator std_it = _std_vector.end();
-    for (size_t i = 0; i < _ft_vector.size(); ++i) {
-        --ft_it;
-        --std_it;
-        EXPECT_EQ(*ft_it, *std_it);
-    }
+  ft::vector<int>::iterator  ft_it  = _ft_vector.end();
+  std::vector<int>::iterator std_it = _std_vector.end();
+  for (size_t i = 0; i < _ft_vector.size(); ++i) {
+    --ft_it;
+    --std_it;
+    EXPECT_EQ(*ft_it, *std_it);
+  }
 }
-
 // rbegin
 TEST_F(VectorTest, RBegin) {
   ft::vector<int>::reverse_iterator  ft_it  = _ft_vector.rbegin();
@@ -155,10 +191,9 @@ TEST_F(VectorTest, RBegin) {
     ++std_it;
   }
 }
-
 // rend
 TEST_F(VectorTest, REnd) {
-  ft::vector<int>::reverse_iterator  ft_it = _ft_vector.rend();
+  ft::vector<int>::reverse_iterator  ft_it  = _ft_vector.rend();
   std::vector<int>::reverse_iterator std_it = _std_vector.rend();
   for (size_t i = 0; i < _ft_vector.size(); ++i) {
     --ft_it;
@@ -166,7 +201,6 @@ TEST_F(VectorTest, REnd) {
     EXPECT_EQ(*ft_it, *std_it);
   }
 }
-
 // =============================================================================
 // Capacity
 // =============================================================================
@@ -261,7 +295,7 @@ TEST_F(VectorTest, Insert_2) {
   }
 }
 
-// insert 
+// insert
 // TEST_F(VectorTest, insert_benchmark) {
 //   ft::vector<int> ft;
 //   std::vector<int> std;
@@ -298,3 +332,22 @@ TEST_F(VectorTest, PushBack) {
   EXPECT_EQ(v1.size(), v2.size());
   EXPECT_EQ(v1.empty(), v2.empty());
 }
+
+// =============================================================================
+// Other
+// =============================================================================
+// assign(size_type, const T&)
+// TEST_F(VectorTest, Assign_1) {
+//   ft::vector<int> v1(10);
+//   v1.assign(10, 1);
+//   std::vector<int> v2(10);
+//   v2.assign(10, 1);
+//   EXPECT_EQ(v1.size(), v2.size());
+//   EXPECT_EQ(v1.empty(), v2.empty());
+//   EXPECT_EQ(v1.front(), v2.front());
+//   EXPECT_EQ(v1.back(), v2.back());
+//   for (size_t i = 0; i < v1.size(); ++i) {
+//     EXPECT_EQ(v1.at(i), v2.at(i));
+//     EXPECT_EQ(v1[i], v2[i]);
+//   }
+// }

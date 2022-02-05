@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "my_aatree.hpp"
+#include "aatree.hpp"
 
 class MyAatreeTest : public ::testing::Test {
 protected:

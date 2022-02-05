@@ -95,11 +95,13 @@ int main() {
   // ft::vector<int>::const_iterator test_it = std_v.begin();
   // std::cout << *test_it << std::endl;
 
-  std::cout << "========== at ===========" << std::endl;
+  std::cout << "========== insert ===========" << std::endl;
   ft::vector<int> ft;
-  for (int i = 0; i < 10; ++i) ft.push_back(i);
-  const ft::vector<int> ft_c(ft);
-  std::cout << "ft.at(5) = " << ft.at(5) << std::endl;
-  
+  ft.insert(ft.begin(), 1);
+  ft.insert(ft.begin(), 2);
+  ft.insert(ft.begin(), 3);
+  for (size_t i = 0; i < ft.size(); ++i) {
+    std::cout << ft[i] << " ";
+  }
   return 0;
 }

@@ -33,8 +33,10 @@ debug: re
 
 gtestdir	=	./test
 gtest		=	$(gtestdir)/gtest $(gtestdir)/googletest-release-1.11.0
+gbench	=	$(gtestdir)/benchmark
 
 testdir = ./gtest
+benchdir = ./gbench
 
 $(gtest):
 	mkdir -p $(dir ../test)
@@ -44,12 +46,40 @@ $(gtest):
 	python googletest-release-1.11.0/googletest/scripts/fuse_gtest_files.py $(gtestdir)
 	mv googletest-release-1.11.0 $(gtestdir)
 
+$(gbench):
+	mkdir -p $(dir ../test)
+	# git clone https://github.com/google/benchmark.git $(gtestdir)/benchmark
+	cmake -E make_directory "build"
+	cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../
+	cmake --build "build" --config Release
+
 test: $(gtest) fclean
 	clang++ -std=c++11 $(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
 	-DDEBUG -g -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread $(srcs_test) -o tester
 	./tester
-	rm -rf tester
-	rm -rf tester.dSYM
+	# rm -rf tester
+	# rm -rf tester.dSYM
+
+cave: $(gtest) fclean
+	clang++ -std=c++11 $(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
+	-DDEBUG \
+	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread $(srcs_test) -o tester -fprofile-arcs -ftest-coverage -lgtest -g 
+	./tester
+	lcov -c -b . -d . -o cov_test.info
+	genhtml cov_test.info -o cov_test
+	rm -rf cov_test.info
+	# rm -rf tester
+	rm -rf *.gcda
+	rm -rf *.gcno
+	rm -rf *.info
+	# rm -rf tester.dSYM
+	open cov_test/index-sort-f.html
+
+bench: $(gbench)
+	g++ -std=c++11 $(benchdir)/gbench.cpp -isystem $(gbench)/include \
+  -L$(gbench)/build/src -lbenchmark -lpthread \
+	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark
+	./benchmark
 
 -include $(depends)

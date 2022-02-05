@@ -3,7 +3,7 @@
 #include <map>
 #include <random>
 
-#include "my_rb_tree.hpp"
+#include "rb_tree.hpp"
 
 #define VISUAL(a) std::cout << #a << ": " << a << std::endl;
 #define VISUAL2(a, b) \

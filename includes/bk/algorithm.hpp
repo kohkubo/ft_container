@@ -1,5 +1,5 @@
-#ifndef INCLUDES_ALGORITHM_HPP_
-#define INCLUDES_ALGORITHM_HPP_
+#ifndef INCLUDES_BK_ALGORITHM_HPP_
+#define INCLUDES_BK_ALGORITHM_HPP_
 
 #include "iterator.hpp"
 
@@ -19,4 +19,4 @@ inline bool equal(InputIterator1 first1, InputIterator1 last1,
     return equal(first1, last1, first2, equal_to<v1, v2>());
 }
 
-#endif  // INCLUDES_ALGORITHM_HPP_
+#endif  // INCLUDES_BK_ALGORITHM_HPP_

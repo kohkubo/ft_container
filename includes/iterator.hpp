@@ -56,8 +56,8 @@ struct iterator_traits_base_impl<Iterator, true> {
 
 template <class Iterator>
 struct iterator_traits
-    : iterator_traits_base_impl<Iterator, has_iterator_category<Iterator>::value> {
-};
+    : iterator_traits_base_impl<Iterator,
+                                has_iterator_category<Iterator>::value> {};
 
 template <class T>
 struct iterator_traits<T *> {

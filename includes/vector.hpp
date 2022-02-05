@@ -36,7 +36,8 @@ class vector {
                   const Alloc& alloc = Alloc())
       : __alloc_(alloc) {
     if (n > max_size()) __throw_length_error();
-    __vallocate(n);
+    // __vallocate(n);
+    __vallocate(max_size());
     __end_ = __begin_ + n;
     std::uninitialized_fill(__begin_, __end_, value);
   }
@@ -51,7 +52,8 @@ class vector {
     while (it != last) {
       ++it, ++n;
     }
-    __vallocate(n);
+    // __vallocate(n);
+    __vallocate(max_size());
     __end_ = __begin_ + n;
     std::uninitialized_copy(first, last, __begin_);
   }
@@ -128,9 +130,9 @@ class vector {
     return begin() + pos_index;
   }
   void insert(iterator pos, size_type n, const_reference value) {
-    size_t pos_index = pos - begin();
+      size_t pos_index = pos - begin();
     if (size() + n > capacity()) {
-      reserve(2 * (size() + n));
+      reserve(16 * (size() + n));
       pos = begin() + pos_index;
     }
     pointer pos_ptr = pos.base();
@@ -164,12 +166,8 @@ class vector {
     __end_ -= last - first;
     return first;
   }
-  iterator erase(iterator pos) { return erase(pos, pos + 1); }
-  void     push_back(const_reference value) {
-    if (__end_ == __end_cap_) reserve(capacity() + 1);
-    __alloc_.construct(__end_, value);
-    ++__end_;
-  }
+  iterator    erase(iterator pos) { return erase(pos, pos + 1); }
+  void        push_back(const_reference value) { insert(end(), 1, value); }
   inline void pop_back() {
     if (!empty()) erase(__end_ - 1);
   }

@@ -78,7 +78,7 @@ struct is_same<T, T> : public ft::true_type {};
 // =============================================================================
 typedef char yes_type;
 struct no_type {
-  char dummy[8];
+  char dummy[16];
 };
 
 template <class From, class To>

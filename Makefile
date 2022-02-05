@@ -77,7 +77,7 @@ cave: $(gtest) fclean
 	open cov_test/index-sort-f.html
 
 bench: $(gbench)
-	g++ -std=c++11 $(benchdir)/gbench.cpp -isystem $(gbench)/include \
+	g++ -Ofast -std=c++11 $(benchdir)/gbench.cpp -isystem $(gbench)/include \
   -L$(gbench)/build/src -lbenchmark -lpthread \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark
 	./benchmark

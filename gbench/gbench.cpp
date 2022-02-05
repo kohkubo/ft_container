@@ -1,17 +1,15 @@
 #include <benchmark/benchmark.h>
 
-#include <vector>
 #include <iostream>
-#include "vector.hpp"
 #include <map>
+#include <vector>
+
+#include "vector.hpp"
 
 static void BM_FtVectorPushBack(benchmark::State& state) {
   ft::vector<int> v;
-
   for (auto _ : state) {
-    for (int i = 0; i < state.range(0); ++i) {
-      v.push_back(i);
-    }
+    for (int i = 0; i < state.range(0); ++i) v.push_back(i);
   }
 }
 BENCHMARK(BM_FtVectorPushBack)->Range(1, 1 << 22);
@@ -19,9 +17,7 @@ BENCHMARK(BM_FtVectorPushBack)->Range(1, 1 << 22);
 static void BM_StdVectorPushBack(benchmark::State& state) {
   std::vector<int> v;
   for (auto _ : state) {
-    for (int i = 0; i < state.range(0); ++i) {
-      v.push_back(i);
-    }
+    for (int i = 0; i < state.range(0); ++i) v.push_back(i);
   }
 }
 BENCHMARK(BM_StdVectorPushBack)->Range(1, 1 << 22);

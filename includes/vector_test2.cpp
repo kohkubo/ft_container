@@ -24,7 +24,10 @@ int main() {
     v1.push_back(i);
     v2.push_back(i);
   }
-  v1.assign(1, 100);
-  v2.assign(1, 100);
+  for (int i = 0; i < 100000; i++) {
+    v1.insert(v1.begin(), i, i);
+    v2.insert(v2.begin(), i, i);
+  }
+
   print_vector(v1, v2);
 }

@@ -416,3 +416,4 @@ TEST_F(VectorTest, Swap_2) {
   EXPECT_EQ(v1.back(), 1000);
   EXPECT_EQ(v2.back(), _ft_vector.back());
 }
+

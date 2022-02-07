@@ -36,14 +36,13 @@ class vector {
                   const Alloc& alloc = Alloc())
       : __alloc_(alloc) {
     if (n > max_size()) __throw_length_error();
-    // __vallocate(n);
-    __vallocate(max_size());
+    __vallocate(n);
     __end_ = __begin_ + n;
     std::uninitialized_fill(__begin_, __end_, value);
   }
   template <class InputIterator>
   vector(InputIterator                           first,
-         typename enable_if<is_input_iterator<InputIterator>::value,
+         typename enable_if<!ft::is_integral<InputIterator>::value,
                             InputIterator>::type last,
          const Alloc&                            alloc = Alloc())
       : __alloc_(alloc) {
@@ -52,8 +51,7 @@ class vector {
     while (it != last) {
       ++it, ++n;
     }
-    // __vallocate(n);
-    __vallocate(max_size());
+    __vallocate(n);
     __end_ = __begin_ + n;
     std::uninitialized_copy(first, last, __begin_);
   }
@@ -130,9 +128,9 @@ class vector {
     return begin() + pos_index;
   }
   void insert(iterator pos, size_type n, const_reference value) {
-      size_t pos_index = pos - begin();
     if (size() + n > capacity()) {
-      reserve(16 * (size() + n));
+      size_t pos_index = pos - begin();
+      reserve(16 * (capacity() + n));
       pos = begin() + pos_index;
     }
     pointer pos_ptr = pos.base();
@@ -152,7 +150,7 @@ class vector {
     size_t pos_index = pos - begin();
     size_t n         = last - first;
     if (size() + n > capacity()) {
-      reserve(2 * (size() + n));
+      reserve(16 * (size() + n));
       pos = begin() + pos_index;
     }
     pointer pos_ptr = pos.base();

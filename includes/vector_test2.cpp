@@ -1,10 +1,12 @@
 #include <iostream>
 #include <vector>
 #include "vector.hpp"
+#include "pair.hpp"
 
 using namespace std;
 
 void print_vector(ft::vector<int> v1, std::vector<int> v2) {
+  cout << "====================================" << endl;
   cout << "v1.size() = " << v1.size() << " v2.size() = " << v2.size() << endl;
   cout << "v1.empty() = " << v1.empty() << " v2.empty() = " << v2.empty() << endl;
   cout << "v1.max_size() = " << v1.max_size() << " v2.max_size() = " << v2.max_size() << endl;
@@ -24,10 +26,21 @@ int main() {
     v1.push_back(i);
     v2.push_back(i);
   }
-  for (int i = 0; i < 100000; i++) {
-    v1.insert(v1.begin(), i, i);
-    v2.insert(v2.begin(), i, i);
-  }
-
   print_vector(v1, v2);
+
+  std::pair<int, int> p1;
+  p1.first = 1;
+  p1.second = 2;
+  cout << "p1.first = " << p1.first << " p1.second = " << p1.second << endl;
+  std::pair<int, int> p2;
+  p2 = p1;
+  cout << "p2.first = " << p2.first << " p2.second = " << p2.second << endl;
+
+  ft::pair<int, int> p3;
+  p3.first = 1;
+  p3.second = 2;
+  cout << "p3.first = " << p3.first << " p3.second = " << p3.second << endl;
+  ft::pair<int, int> p4;
+  p4 = p3;
+  cout << "p4.first = " << p4.first << " p4.second = " << p4.second << endl;
 }

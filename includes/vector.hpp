@@ -107,7 +107,9 @@ class vector {
       pointer new_end     = new_begin + size();
       pointer new_end_cap = new_begin + n;
       std::uninitialized_copy(__begin_, __end_, new_begin);
+      // 要素のデストラクタを呼ぶ
       __destroy_range(__begin_, __end_);
+      // 要素を入れている配列を破棄する
       __alloc_.deallocate(__begin_, capacity());
       __begin_   = new_begin;
       __end_     = new_end;
@@ -207,6 +209,7 @@ class vector {
  private:
   void        __throw_length_error() { throw std::length_error("vector"); }
   void        __throw_out_of_range() { throw std::out_of_range("vector"); }
+  // 範囲の要素のデストラクタを呼ぶ
   inline void __destroy_range(pointer first, pointer last) {
     for (; first != last; ++first) __alloc_.destroy(first);
   }

@@ -64,15 +64,9 @@ class __tree_node<pair<const _Key, _Tp> > {
 
 template <class _Tp, class _NodePtr, class _DiffType>
 class __tree_iterator {
- public:
   typedef typename pointer_traits<_NodePtr>::element_type __node_type;
   typedef _NodePtr                                        __node_pointer;
-  typedef typename __node_type::__node_pointer            __node_base_pointer;
-  typedef typename __node_type::__node_pointer            __end_node_pointer;
-  typedef typename __node_type::__node_pointer            __iter_pointer;
   typedef pointer_traits<__node_pointer>                  __pointer_traits;
-
- private:
   __node_pointer __ptr_;
 
  public:
@@ -85,7 +79,7 @@ class __tree_iterator {
   __node_pointer                          base() const { return __ptr_; }
 
   __tree_iterator() : __ptr_() {}
-  __tree_iterator(__node_pointer __i) : __ptr_(__i) {}
+  __tree_iterator(__node_pointer __p) : __ptr_(__p) {}
   __tree_iterator& operator=(const __tree_iterator& __x) {
     __ptr_ = __x.__ptr_;
     return *this;
@@ -116,6 +110,59 @@ class __tree_iterator {
   }
   friend bool operator!=(const __tree_iterator& __x,
                          const __tree_iterator& __y) {
+    return __x.__ptr_ != __y.__ptr_;
+  }
+};
+
+template <class _Tp, class _NodePtr, class _DiffType>
+class __tree_const_iterator {
+  typedef typename pointer_traits<_NodePtr>::element_type __node_type;
+  typedef _NodePtr                                        __node_pointer;
+  typedef pointer_traits<__node_pointer>                  __pointer_traits;
+  __node_pointer __ptr_;
+  typedef __tree_iterator<_Tp, _NodePtr, _DiffType> __non_const_iterator;
+
+ public:
+  typedef std::bidirectional_iterator_tag iterator_category;
+  typedef _Tp                             value_type;
+  typedef _DiffType                       difference_type;
+  typedef const value_type&                     reference;
+  typedef _Tp*                            pointer;
+
+  __node_pointer                          base() const { return __ptr_; }
+
+  __tree_const_iterator() : __ptr_() {}
+  __tree_const_iterator(__non_const_iterator __p) : __ptr_(__p) {}
+  __tree_const_iterator& operator=(const __tree_const_iterator& __x) {
+    __ptr_ = __x.__ptr_;
+    return *this;
+  }
+  reference        operator*() const { return __ptr_->__value_; }
+  pointer          operator->() const { return &__ptr_->__value_; }
+  __tree_const_iterator& operator++() {
+    __ptr_ = __tree_next(__ptr_);
+    return *this;
+  }
+  __tree_const_iterator operator++(int) {
+    __tree_const_iterator __tmp(*this);
+    ++(*this);
+    return __tmp;
+  }
+  __tree_const_iterator& operator--() {
+    __ptr_ = __tree_prev(__ptr_);
+    return *this;
+  }
+  __tree_const_iterator operator--(int) {
+    __tree_const_iterator __tmp(*this);
+    --(*this);
+    return __tmp;
+  }
+  friend bool operator==(const __tree_const_iterator& __x,
+                         const __tree_const_iterator& __y) {
+    return __x.__ptr_ == __y.__ptr_;
+  }
+  friend bool operator!=(const __tree_const_iterator& __x,
+                         const __tree_const_iterator& __y) {
     return __x.__ptr_ != __y.__ptr_;
   }
 };
@@ -151,6 +198,8 @@ class __tree {
   // __node_allocator;
 
   typedef __tree_iterator<value_type, __node_pointer, difference_type> iterator;
+  typedef __tree_const_iterator<value_type, __node_pointer, difference_type>
+      const_iterator;
 
  public:
   __node_pointer   __begin_node_;
@@ -161,7 +210,6 @@ class __tree {
 
  public:
   allocator_type    __alloc() const { return allocator_type(__node_alloc()); }
-  key_compare       key_comp() const { return __comp_; }
   size_type&        size() { return __size_; }
   __node_allocator& __node_alloc() { return __node_alloc_; }
 
@@ -293,43 +341,56 @@ class __tree {
   // ===========================================================================
   // search
   // ===========================================================================
+  size_type count(const key_type& __k) const {
+    __node_pointer __node = find(__k);
+    return __node == NULL ? 0 : 1;
+  }
   iterator find(const key_type& __k) {
-    iterator __p = __lower_bound(__k, __root());
+    iterator __p = lower_bound(__k);
     if (__p != end() && !__comp_(__k, __p->first)) {
       return __p;
     }
     return end();
   }
-  // lower_bound(const key_type&)
-  // key より小さくない(すなわち大きいまたは等しい)
-  // 最初の要素を指すイテレータを返します。
-  iterator lower_bound(const key_type& __k) {
-    return __lower_bound(__k, __root());
+  value_type equal_range(const key_type& __k) {
+    return pair<iterator, iterator>(lower_bound(__k), upper_bound(__k));
   }
-  // ===========================================================================
-  // observers
-  // ===========================================================================
-  key_compare value_comp() const { return __comp_; }
-  // ===========================================================================
-  // private
-  // ===========================================================================
+  // lower_bound(const key_type&)
   // keyより大きい、または等しい最初の要素を指すイテレータを返します。
-  iterator    __lower_bound(const key_type& __k, __node_pointer __root) {
+  iterator lower_bound(const key_type& __k) {
     __node_pointer __result;
-    // 根にたどり着くまで回る
-    while (__root != NULL) {
-      // __rootのキーが__vより大きい場合
-      if (!__comp_(__root->__value_.first, __k)) {
-        __result = __root;
-        // 小さい方に移動
-        __root   = __root->__left_;
+    __node_pointer __node = __root();
+    while (__node != NULL) {
+      if (!__comp_(__node->__value_.first, __k)) {
+        __result = __node;
+        __node   = __node->__left_;
       } else {
-        // 大きい方に移動
-        __root = __root->__right_;
+        __node = __node->__right_;
       }
     }
     return iterator(__result);
   }
+  iterator upper_bound(const key_type& __k) {
+    __node_pointer __result;
+    __node_pointer __node = __root();
+    while (__node != NULL) {
+      if (!__comp_(__k, __node->__value_.first)) {
+        __result = __node;
+        __node   = __node->__left_;
+      } else {
+        __node = __node->__right_;
+      }
+    }
+    return iterator(__result);
+  }
+  // ===========================================================================
+  // observers
+  // ===========================================================================
+  key_compare     value_comp() const { return __comp_; }
+  key_compare     key_comp() const { return __comp_; }
+  // ===========================================================================
+  // private
+  // ===========================================================================
   // Find place to insert if __k doesn't exist
   // Set __parent to parent of null leaf
   // Return reference to null leaf

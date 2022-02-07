@@ -190,7 +190,6 @@ class __tree {
   template <class _ForwardIterator>
   void __assign_unique(_ForwardIterator __first, _ForwardIterator __last);
   ~__tree();
-
   void                 swap(__tree& __t);
   // ===========================================================================
   // accese
@@ -233,7 +232,6 @@ class __tree {
   void            __destroy(__node_pointer __nd);
   __node_pointer  __create_node(const value_type& __x);
   iterator        __remove_node_pointer(__node_pointer __ptr);
-  void            __tree_remove(__node_pointer __root, __node_pointer __z);
 };
 
 }  // namespace ft

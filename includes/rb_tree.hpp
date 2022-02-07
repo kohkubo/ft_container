@@ -75,8 +75,21 @@ typename __tree<_Tp, _Compare, _Allocator>::iterator
 __tree<_Tp, _Compare, _Allocator>::erase(iterator __p) {
   __node_pointer __np = __p.base();
   iterator       __r  = __remove_node_pointer(__np);
+  __node_alloc_.destroy(__np);
+  __node_alloc_.deallocate(__np, 1);
   return __r;
 }
+
+// erase(first, last)
+template <class _Tp, class _Compare, class _Allocator>
+typename __tree<_Tp, _Compare, _Allocator>::iterator
+__tree<_Tp, _Compare, _Allocator>::erase(iterator __first, iterator __last) {
+  for (; __first != __last; ++__first) {
+    erase(__first);
+  }
+  return __last;
+}
+
 // erase(const key_type&)
 template <class _Tp, class _Compare, class _Allocator>
 typename __tree<_Tp, _Compare, _Allocator>::size_type

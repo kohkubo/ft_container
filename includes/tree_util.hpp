@@ -122,6 +122,12 @@ void print_tree(__node_pointer __nd, size_t __level) {
 }
 
 template <class __node_pointer>
+void print_tree_node(__node_pointer __nd) {
+  std::cout << "==========================" << std::endl;
+  print_tree(__nd, 0);
+}
+
+template <class __node_pointer>
 void __tree_balance_after_insert(__node_pointer __root, __node_pointer __x) {
   __x->__is_black_ = __x == __root;
   // xがルートではない && xが赤。xの親が赤のとき、ループする
@@ -389,8 +395,7 @@ void __tree_remove(__node_pointer __root, __node_pointer __z) {
           if (__tree_is_black(__w->__left_) && __tree_is_black(__w->__right_)) {
             // wの子が全部黒なら、wを赤にする
             __w->__is_black_ = false;
-            // wは上に移動
-            __w              = __w->__parent_;
+            __x              = __w->__parent_;
             if (__x == __root || !__x->__is_black_) {
               // xがルート、または、xが赤なら、xを黒にする
               __x->__is_black_ = true;

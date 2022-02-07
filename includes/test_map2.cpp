@@ -36,7 +36,6 @@ int main() {
   tree.insert(ft::make_pair(1, 2));
   tree.insert(ft::make_pair(2, 3));
   tree.insert(ft::make_pair(3, 4));
-  exit(0);
   tree.insert(ft::make_pair(4, 5));
   tree.insert(ft::make_pair(5, 6));
   std::cout << "tree.size() = " << tree.size() << std::endl;
@@ -74,6 +73,11 @@ int main() {
   std::cout << it2->first << std::endl;
   std::cout << it2->second << std::endl;
 
+  // erase
+  std::cout << "=== erase ========" << std::endl;
+  ft::print_tree_node(tree.__root());
+  std::cout << tree.erase(2) << std::endl;
+  ft::print_tree_node(tree.__root());
   return 0;
 }
 

@@ -140,23 +140,23 @@ TEST_F(RbTreeTest, InsertIterator) {
 }
 
 // erase
-// TEST_F(DISABLED_RbTreeTest, Erase) {
-//   int       key     = 0;
-//   const int __kSize = 10;
-//   ftTree    __ft_tree;
-//   stdMap    __std_tree;
-//   for (int i = __kSize; i > 0; --i) {
-//     key            = i;
-//     ft_pair_bool_  = __ft_tree.insert(ft::make_pair(key, key));
-//     std_pair_bool_ = __std_tree.insert(std::make_pair(key, key));
-//     EXPECT_EQ(ft_pair_bool_.second, std_pair_bool_.second);
-//   }
-//   for (int i = 0; i < __kSize; ++i) {
-//     key = i;
-//     EXPECT_EQ(__ft_tree.erase(key), __std_tree.erase(key));
-//     EXPECT_EQ(__ft_tree.size(), __std_tree.size());
-//   }
-// }
+TEST_F(RbTreeTest, Erase) {
+  int       key     = 0;
+  const int __kSize = 10;
+  ftTree    __ft_tree;
+  stdMap    __std_tree;
+  for (int i = __kSize; i > 0; --i) {
+    key            = i;
+    ft_pair_bool_  = __ft_tree.insert(ft::make_pair(key, key));
+    std_pair_bool_ = __std_tree.insert(std::make_pair(key, key));
+    EXPECT_EQ(ft_pair_bool_.second, std_pair_bool_.second);
+  }
+  for (int i = 0; i < __kSize; ++i) {
+    key = i;
+    EXPECT_EQ(__ft_tree.erase(key), __std_tree.erase(key));
+    EXPECT_EQ(__ft_tree.size(), __std_tree.size());
+  }
+}
 
 // clear
 TEST_F(RbTreeTest, Clear) {

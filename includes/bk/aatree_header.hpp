@@ -1,7 +1,7 @@
 // Copyright (c) 2022 kohkubo
 
-#ifndef INCLUDES_AATREE_HEADER_HPP_
-#define INCLUDES_AATREE_HEADER_HPP_
+#ifndef INCLUDES_BK_AATREE_HEADER_HPP_
+#define INCLUDES_BK_AATREE_HEADER_HPP_
 
 #include <algorithm>
 #include <stdexcept>
@@ -57,4 +57,4 @@ class AATree {
 
 }  // namespace ft
 
-#endif  // INCLUDES_AATREE_HEADER_HPP_
+#endif  // INCLUDES_BK_AATREE_HEADER_HPP_

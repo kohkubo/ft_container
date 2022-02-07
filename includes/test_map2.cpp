@@ -1,7 +1,7 @@
 #include <iostream>
 #include <map>
 
-#include "my_rb_tree.hpp"
+#include "rb_tree.hpp"
 #include "pair.hpp"
 
 int main() {
@@ -36,17 +36,18 @@ int main() {
   tree.insert(ft::make_pair(1, 2));
   tree.insert(ft::make_pair(2, 3));
   tree.insert(ft::make_pair(3, 4));
+  exit(0);
   tree.insert(ft::make_pair(4, 5));
   tree.insert(ft::make_pair(5, 6));
   std::cout << "tree.size() = " << tree.size() << std::endl;
   std::cout << tree.begin()->first << std::endl;
   std::cout << tree.begin()->second << std::endl;
 
-  tree.print_node(tree.__end_node_);
-  tree.print_node(tree.__root());
-  tree.print_node(tree.__root()->__left_);
-  tree.print_node(tree.__root()->__right_);
-  tree.print_node(tree.__root()->__parent_);
+  ft::print_node(tree.__end_node_);
+  ft::print_node(tree.__root());
+  ft::print_node(tree.__root()->__left_);
+  ft::print_node(tree.__root()->__right_);
+  ft::print_node(tree.__root()->__parent_);
   // iterator
   std::cout << "=== iterator ========" << std::endl;
   ft::__tree<myPair, std::less<int>,

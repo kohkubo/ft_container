@@ -39,6 +39,6 @@ int main() {
   // lower_bound
   std::cout << "map.lower_bound(20) = " << (map.lower_bound(20) == map.end()) << std::endl;
   // std::cout << "map.upper_bound(20) = " << map.upper_bound(20)->first << std::endl;
-  
+  std::cout << map.begin().base() << std::endl;
   return 0;
 }

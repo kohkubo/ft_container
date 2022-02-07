@@ -1,5 +1,5 @@
-#ifndef INCLUDES_MY_AATREE_HEADER_HPP_
-#define INCLUDES_MY_AATREE_HEADER_HPP_
+#ifndef INCLUDES_AATREE_HEADER_HPP_
+#define INCLUDES_AATREE_HEADER_HPP_
 
 #include <memory>
 
@@ -133,4 +133,4 @@ class AATree {
 };
 }  // namespace ft
 
-#endif  // INCLUDES_MY_AATREE_HEADER_HPP_
+#endif  // INCLUDES_AATREE_HEADER_HPP_

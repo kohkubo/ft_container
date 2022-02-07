@@ -1,7 +1,7 @@
-#ifndef INCLUDES_MY_AATREE_HPP_
-#define INCLUDES_MY_AATREE_HPP_
+#ifndef INCLUDES_AATREE_HPP_
+#define INCLUDES_AATREE_HPP_
 
-#include "my_aatree_header.hpp"
+#include "aatree_header.hpp"
 
 namespace ft {
 // =============================================================================
@@ -247,4 +247,4 @@ AATree<Key, T, Compare, Alloc>::__at(size_type i, __node_pointer node) const {
 
 }  // namespace ft
 
-#endif  // INCLUDES_MY_AATREE_HPP_
+#endif  // INCLUDES_AATREE_HPP_

@@ -1,13 +1,13 @@
-#ifndef INCLUDES_MY_RB_TREE_HEADER_HPP_
-#define INCLUDES_MY_RB_TREE_HEADER_HPP_
+#ifndef INCLUDES_RB_TREE_HEADER_HPP_
+#define INCLUDES_RB_TREE_HEADER_HPP_
 
 #include <iostream>
 #include <memory>
 
 #include "pair.hpp"
 #include "pointer_traits.hpp"
-#include "type_traits.hpp"
 #include "tree_util.hpp"
+#include "type_traits.hpp"
 
 namespace ft {
 
@@ -77,16 +77,17 @@ class __tree_iterator {
   typedef typename __node_type::__node_pointer            __iter_pointer;
   typedef pointer_traits<__node_pointer>                  __pointer_traits;
 
-private:
-  __node_pointer                                          __ptr_;
+ private:
+  __node_pointer __ptr_;
 
-public:
-  typedef std::bidirectional_iterator_tag                 iterator_category;
-  typedef _Tp                                             value_type;
-  typedef _DiffType                                       difference_type;
-  typedef value_type&                                     reference;
-  typedef _Tp*                                            pointer;
+ public:
+  typedef std::bidirectional_iterator_tag iterator_category;
+  typedef _Tp                             value_type;
+  typedef _DiffType                       difference_type;
+  typedef value_type&                     reference;
+  typedef _Tp*                            pointer;
 
+  __node_pointer                          base() const { return __ptr_; }
 
   __tree_iterator() : __ptr_() {}
   __tree_iterator(__node_pointer __i) : __ptr_(__i) {}
@@ -162,7 +163,6 @@ class __tree {
   __node_allocator __node_alloc_;
   size_type        __size_;
   key_compare      __comp_;
-  // __node_pointer   __root_;
 
  public:
   allocator_type    __alloc() const { return allocator_type(__node_alloc()); }
@@ -229,15 +229,13 @@ class __tree {
   iterator        __lower_bound(const key_type& __k, __node_pointer __root);
   __node_pointer& __find_equal(__node_pointer& __parent, const key_type& __k);
   __node_pointer& __find_equal(__node_pointer& __parent, const key_type& __k,
-                               __node_pointer& __hint);
-  void           __destroy(__node_pointer __nd);
-  __node_pointer __create_node(const value_type& __x);
-  iterator       __remove_node_pointer(__node_pointer __ptr);
-  void           __tree_remove(__node_pointer __root, __node_pointer __z);
-
+                               __node_pointer __hint);
+  void            __destroy(__node_pointer __nd);
+  __node_pointer  __create_node(const value_type& __x);
+  iterator        __remove_node_pointer(__node_pointer __ptr);
+  void            __tree_remove(__node_pointer __root, __node_pointer __z);
 };
-
 
 }  // namespace ft
 
-#endif  // INCLUDES_MY_RB_TREE_HEADER_HPP_
+#endif  // INCLUDES_RB_TREE_HEADER_HPP_

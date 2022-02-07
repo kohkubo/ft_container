@@ -1,7 +1,7 @@
-#ifndef INCLUDES_MY_RB_TREE_HPP_
-#define INCLUDES_MY_RB_TREE_HPP_
+#ifndef INCLUDES_RB_TREE_HPP_
+#define INCLUDES_RB_TREE_HPP_
 
-#include "my_rb_tree_header.hpp"
+#include "rb_tree_header.hpp"
 
 namespace ft {
 
@@ -49,8 +49,7 @@ typename __tree<_Tp, _Compare, _Allocator>::iterator
 __tree<_Tp, _Compare, _Allocator>::insert(iterator          __hint,
                                           const value_type& __v) {
   __node_pointer  __parent;
-  
-  __node_pointer& __child    = __find_equal(__parent, __v.first, __hint.__ptr_);
+  __node_pointer& __child = __find_equal(__parent, __v.first, __hint.base());
   if (__child == NULL) {
     __child            = __create_node(__v);
     __child->__parent_ = __parent;
@@ -64,7 +63,7 @@ __tree<_Tp, _Compare, _Allocator>::insert(iterator          __hint,
 template <class _Tp, class _Compare, class _Allocator>
 template <class _InputIterator>
 void __tree<_Tp, _Compare, _Allocator>::insert(_InputIterator __first,
-                                                _InputIterator __last) {
+                                               _InputIterator __last) {
   for (; __first != __last; ++__first) {
     insert(*__first);
   }
@@ -74,7 +73,7 @@ void __tree<_Tp, _Compare, _Allocator>::insert(_InputIterator __first,
 template <class _Tp, class _Compare, class _Allocator>
 typename __tree<_Tp, _Compare, _Allocator>::iterator
 __tree<_Tp, _Compare, _Allocator>::erase(iterator __p) {
-  __node_pointer __np = __p.__ptr_;
+  __node_pointer __np = __p.base();
   iterator       __r  = __remove_node_pointer(__np);
   return __r;
 }
@@ -188,7 +187,7 @@ template <class _Tp, class _Compare, class _Allocator>
 typename __tree<_Tp, _Compare, _Allocator>::__node_pointer&
 __tree<_Tp, _Compare, _Allocator>::__find_equal(__node_pointer& __parent,
                                                 const key_type& __k,
-                                                __node_pointer& __hint) {
+                                                __node_pointer  __hint) {
   if (__hint == __end_node_ || __comp_(__k, __hint->__value_.first)) {
     if (__hint == __begin_node_ || __comp_(__hint->__value_.first, __k)) {
       if (__hint->__left_ == NULL) {
@@ -232,132 +231,16 @@ __tree<_Tp, _Compare, _Allocator>::__remove_node_pointer(__node_pointer __ptr) {
   iterator __it(__ptr);
   ++__it;
   if (__begin_node_ == __ptr) {
-    __begin_node_ = __it.__ptr_;
+    __begin_node_ = __it.base();
   }
   --__size_;
-  __tree_remove(__end_node_->__left_, __ptr);
+  __tree_remove(__root(), __ptr);
   return __it;
 }
 // =============================================================================
 // tree_base
 // =============================================================================
-template <class _Tp, class _Compare, class _Allocator>
-void __tree<_Tp, _Compare, _Allocator>::__tree_remove(__node_pointer __root,
-                                                      __node_pointer __z) {
-  __node_pointer __y =
-      (__z->__left_ == NULL || __z->__right_ == NULL) ? __z : __tree_next(__z);
-  __node_pointer __x = __y->__left_ != NULL ? __y->__left_ : __y->__right_;
-  __node_pointer __w = NULL;
-  if (__x != NULL) {
-    __x->__parent_ = __y->__parent_;
-  }
-  if (__tree_is_left_child(__y)) {
-    __y->__parent_->__left_ = __x;
-    if (__y != __root) {
-      __w = __y->__parent_->__right_;
-    } else {
-      __root = __x;
-    }
-  } else {
-    __y->__parent_->__right_ = __x;
-    __w                      = __y->__parent_->__left_;
-  }
-  bool __removed_black = __y->__is_black_;
-  if (__y != __z) {
-    __y->__parent_ = __z->__parent_;
-    if (__tree_is_left_child(__z)) {
-      __y->__parent_->__left_ = __y;
-    } else {
-      __y->__parent_->__right_ = __y;
-    }
-    __y->__left_            = __z->__left_;
-    __y->__left_->__parent_ = __y;
-    __y->__right_           = __z->__right_;
-    if (__y->__right_ != NULL) {
-      __y->__right_->__parent_ = __y;
-    }
-    __y->__is_black_ = __z->__is_black_;
-    if (__root == __z) {
-      __root = __y;
-    }
-  }
-  if (__removed_black && __root != NULL) {
-    if (__x != NULL) {
-      __x->__is_black_ = true;
-    } else {
-      while (true) {
-        if (!__tree_is_left_child(__w)) {
-          if (!__w->__is_black_) {
-            __w->__is_black_            = true;
-            __w->__parent_->__is_black_ = false;
-            __tree_left_rotate(__w->__parent_);
-            if (__root == __w->__left_) {
-              __root = __w;
-            }
-            __w = __w->__left_->__right_;
-          }
-          // __w->__is_black_ is new true, __w may have null children
-          if ((__w->__left_ == NULL || __w->__left_->__is_black_) &&
-              (__w->__right_ == NULL || __w->__right_->__is_black_)) {
-            __w->__is_black_ = false;
-            __w              = __w->__parent_;
-            if (__x == __root || __x->__is_black_) {
-              __x->__is_black_ = true;
-              break;
-            }
-            __w = __tree_is_left_child(__x) ? __x->__parent_->__right_
-                                            : __x->__parent_->__left_;
-          } else {
-            if (__w->__right_ == NULL || __w->__right_->__is_black_) {
-              __w->__left_->__is_black_ = true;
-              __w->__is_black_          = false;
-              __tree_right_rotate(__w);
-              __w = __w->__parent_;
-            }
-            __w->__is_black_           = __w->__parent_->__is_black_;
-            __w->__parent_->__is_black_  = true;
-            __w->__right_->__is_black_ = true;
-            __tree_left_rotate(__w->__parent_);
-            break;
-          }
-        } else {
-          if (!__w->__is_black_) {
-            __w->__is_black_            = true;
-            __w->__parent_->__is_black_ = false;
-            __tree_right_rotate(__w->__parent_);
-            if (__root == __w->__right_) {
-              __root = __w;
-            }
-            __w = __w->__right_->__left_;
-          }
-          if ((__w->__left_ == NULL || __w->__left_->__is_black_) &&
-              (__w->__right_ == NULL || __w->__right_->__is_black_)) {
-            __w->__is_black_ = false;
-            __x              = __w->__parent_;
-            if (!__x->__is_black_ || __x == __root) {
-              __x->__is_black_ = true;
-              break;
-            }
-            __w = __tree_is_left_child(__x) ? __x->__parent_->__right_
-                                            : __x->__parent_->__left_;
-          } else {
-            if (__w->__left_ == NULL || __w->__left_->__is_black_) {
-              __w->__right_->__is_black_ = true;
-              __w->__is_black_           = false;
-              __tree_left_rotate(__w);
-              __w = __w->__parent_;
-            }
-            __w->__is_black_            = __w->__parent_->__is_black_;
-            __w->__parent_->__is_black_ = true;
-            __w->__left_->__is_black_   = true;
-            __tree_right_rotate(__w->__parent_);
-            break;
-          }
-        }
-      }
-    }
-  }
-};
+
 }  // namespace ft
 
-#endif  // INCLUDES_MY_RB_TREE_HPP_
+#endif  // INCLUDES_RB_TREE_HPP_

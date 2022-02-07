@@ -1,5 +1,5 @@
-#ifndef TREAP_HPP
-#define TREAP_HPP
+#ifndef INCLUDES_BK_TREAP_HPP_
+#define INCLUDES_BK_TREAP_HPP_
 
 #include <iostream>
 #include <limits>
@@ -181,4 +181,4 @@ void Treap<T>::__rotateWithRightChild(TreapNode *&k1) {
 
 }  // namespace ft
 
-#endif
+#endif  // INCLUDES_BK_TREAP_HPP_

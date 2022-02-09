@@ -166,20 +166,20 @@ TEST_F(RbTreeTest, Erase) {
 }
 
 // swap
-TEST_F(RbTreeTest, Swap) {
-  ftTree __ft_tree1;
-  ftTree __ft_tree2;
-  __ft_tree1.insert(ft::make_pair(1, 1));
-  __ft_tree2.insert(ft::make_pair(0, 0));
-  stdMap __std_tree1;
-  stdMap __std_tree2;
-  __std_tree1.insert(std::make_pair(1, 1));
-  __std_tree2.insert(std::make_pair(0, 0));
-  __ft_tree1.swap(__ft_tree2);
-  __std_tree1.swap(__std_tree2);
-  EXPECT_EQ(__ft_tree1.size(), __std_tree2.size());
-  EXPECT_EQ(__ft_tree2.size(), __std_tree2.size());
-}
+// TEST_F(DISABLED_RbTreeTest, Swap) {
+//   ftTree __ft_tree1;
+//   ftTree __ft_tree2;
+//   __ft_tree1.insert(ft::make_pair(1, 1));
+//   __ft_tree2.insert(ft::make_pair(0, 0));
+//   stdMap __std_tree1;
+//   stdMap __std_tree2;
+//   __std_tree1.insert(std::make_pair(1, 1));
+//   __std_tree2.insert(std::make_pair(0, 0));
+//   __ft_tree1.swap(__ft_tree2);
+//   __std_tree1.swap(__std_tree2);
+//   EXPECT_EQ(__ft_tree1.size(), __std_tree2.size());
+//   EXPECT_EQ(__ft_tree2.size(), __std_tree2.size());
+// }
 
 // lower_bound
 TEST_F(RbTreeTest, LowerBound) {

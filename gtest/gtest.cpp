@@ -7,3 +7,4 @@
 #include "gtest_is_convertible.cpp"
 #include "gtest_vector.cpp"
 #include "gtest_tree.cpp"
+#include "gtest_map.cpp"

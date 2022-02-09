@@ -20,7 +20,7 @@ class stack {
   // ===========================================================================
   // canonic
   // ===========================================================================
-  explicit stack(const container_type &c) : c(c) {}
+  explicit stack(const container_type &c = container_type()) : c(c) {}
   stack(const stack &other) : c(other.c) {}
   ~stack() {}
   stack &operator=(const stack &other) {

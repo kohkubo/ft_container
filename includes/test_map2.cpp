@@ -78,6 +78,18 @@ int main() {
   ft::print_tree_node(tree.__root());
   std::cout << tree.erase(2) << std::endl;
   ft::print_tree_node(tree.__root());
+
+  std::cout << "=== map ========" << std::endl;
+  std::map<int, int> map2;
+  map2.insert(std::make_pair(1, 2));
+  std::cout << map2[1] << std::endl;
+  map2[2] = 3;
+  std::cout << map2[2] << std::endl;
+  map2[2] = 4;
+  std::cout << map2[2] << std::endl;
+  std::cout << map2[3] << std::endl;
+  std::cout << map2.find(2)->second << std::endl;
+  std::cout << map2.find(3)->second << std::endl;
   return 0;
 }
 

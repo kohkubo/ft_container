@@ -6,6 +6,7 @@
 
 #include "pair.hpp"
 #include "pointer_traits.hpp"
+#include "reverse_iterator.hpp"
 #include "tree_util.hpp"
 #include "type_traits.hpp"
 
@@ -67,7 +68,7 @@ class __tree_iterator {
   typedef typename pointer_traits<_NodePtr>::element_type __node_type;
   typedef _NodePtr                                        __node_pointer;
   typedef pointer_traits<__node_pointer>                  __pointer_traits;
-  __node_pointer __ptr_;
+  __node_pointer                                          __ptr_;
 
  public:
   typedef std::bidirectional_iterator_tag iterator_category;
@@ -119,15 +120,15 @@ class __tree_const_iterator {
   typedef typename pointer_traits<_NodePtr>::element_type __node_type;
   typedef _NodePtr                                        __node_pointer;
   typedef pointer_traits<__node_pointer>                  __pointer_traits;
-  __node_pointer __ptr_;
-  typedef __tree_iterator<_Tp, _NodePtr, _DiffType> __non_const_iterator;
+  __node_pointer                                          __ptr_;
+  typedef __tree_iterator<_Tp, _NodePtr, _DiffType>       __non_const_iterator;
 
  public:
   typedef std::bidirectional_iterator_tag iterator_category;
   typedef _Tp                             value_type;
   typedef _DiffType                       difference_type;
-  typedef const value_type&                     reference;
-  typedef _Tp*                            pointer;
+  typedef const value_type&               reference;
+  typedef const _Tp*                      pointer;
 
   __node_pointer                          base() const { return __ptr_; }
 
@@ -137,8 +138,8 @@ class __tree_const_iterator {
     __ptr_ = __x.__ptr_;
     return *this;
   }
-  reference        operator*() const { return __ptr_->__value_; }
-  pointer          operator->() const { return &__ptr_->__value_; }
+  reference              operator*() const { return __ptr_->__value_; }
+  pointer                operator->() const { return &__ptr_->__value_; }
   __tree_const_iterator& operator++() {
     __ptr_ = __tree_next(__ptr_);
     return *this;
@@ -199,7 +200,9 @@ class __tree {
 
   typedef __tree_iterator<value_type, __node_pointer, difference_type> iterator;
   typedef __tree_const_iterator<value_type, __node_pointer, difference_type>
-      const_iterator;
+                                               const_iterator;
+  typedef ft::reverse_iterator<iterator>       reverse_iterator;
+  typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
  public:
   __node_pointer   __begin_node_;
@@ -207,11 +210,6 @@ class __tree {
   __node_allocator __node_alloc_;
   size_type        __size_;
   key_compare      __comp_;
-
- public:
-  allocator_type    __alloc() const { return allocator_type(__node_alloc()); }
-  size_type&        size() { return __size_; }
-  __node_allocator& __node_alloc() { return __node_alloc_; }
 
  public:
   __tree()
@@ -244,24 +242,40 @@ class __tree {
     insert(__first, __last);
   }
   allocator_type get_allocator() const { return allocator_type(__node_alloc_); }
-  template <class _ForwardIterator>
-  void __assign_unique(_ForwardIterator __first, _ForwardIterator __last);
   ~__tree() { __destroy(__end_node_); }
   // ===========================================================================
   // accese
   // ===========================================================================
-  __node_pointer  __root() const { return __end_node_->__left_; }
-  __node_pointer* __root_ptr() { return &(__end_node_->__left_); }
+  __node_pointer         __root() const { return __end_node_->__left_; }
+  __node_pointer*        __root_ptr() { return &(__end_node_->__left_); }
   // ===========================================================================
   // iterator
   // ===========================================================================
-  iterator        begin() { return iterator(__begin_node_); }
-  iterator        end() { return iterator(__end_node_); }
-  size_type       max_size() const { return __node_alloc().max_size(); }
+  iterator               begin() { return iterator(__begin_node_); }
+  const_iterator         begin() const { return const_iterator(__begin_node_); }
+  iterator               end() { return iterator(__end_node_); }
+  const_iterator         end() const { return const_iterator(__end_node_); }
+  reverse_iterator       rbegin() { return reverse_iterator(end()); }
+  const_reverse_iterator rbegin() const {
+    return const_reverse_iterator(end());
+  }
+  reverse_iterator       rend() { return reverse_iterator(begin()); }
+  const_reverse_iterator rend() const {
+    return const_reverse_iterator(begin());
+  }
+  // ===========================================================================
+  // Capacity:
+  // ===========================================================================
+  bool      empty() const { return __size_ == 0; }
+  size_type size() const { return __size_; }
+  size_type max_size() const {
+    return std::min<size_type>(__node_alloc_.max_size(),
+                               std::numeric_limits<difference_type>::max());
+  }
   // ===========================================================================
   // Modifiers
   // ===========================================================================
-  void            clear() {
+  void clear() {
     __destroy(__root());
     __size_              = 0;
     __begin_node_        = __end_node_;
@@ -321,23 +335,7 @@ class __tree {
     }
     return 0;
   }
-  void swap(__tree& __other) {
-    __node_pointer    __tmp_begin_node = __begin_node_;
-    __node_pointer    __tmp_end_node   = __end_node_;
-    size_type         __tmp_size       = __size_;
-    key_compare       __tmp_comp       = __comp_;
-    __node_allocator& __tmp_node_alloc = __node_alloc_;
-    __begin_node_                      = __other.__begin_node_;
-    __end_node_                        = __other.__end_node_;
-    __size_                            = __other.__size_;
-    __comp_                            = __other.__comp_;
-    __node_alloc_                      = __other.__node_alloc_;
-    __other.__begin_node_              = __tmp_begin_node;
-    __other.__end_node_                = __tmp_end_node;
-    __other.__size_                    = __tmp_size;
-    __other.__comp_                    = __tmp_comp;
-    __other.__node_alloc_              = __tmp_node_alloc;
-  }
+  void      swap(__tree& __other);
   // ===========================================================================
   // search
   // ===========================================================================

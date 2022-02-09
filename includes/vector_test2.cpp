@@ -22,6 +22,8 @@ void print_vector(ft::vector<int> v1, std::vector<int> v2) {
 int main() {
   ft::vector<int> v1;
   std::vector<int> v2;
+  std::cout << "sizeof(ft::vector<int>) = " << sizeof(v1) << endl;
+  std::cout << "sizeof(std::vector<int>) = " << sizeof(v2) << endl;
   for (int i = 0; i < 10; i++) {
     v1.push_back(i);
     v2.push_back(i);

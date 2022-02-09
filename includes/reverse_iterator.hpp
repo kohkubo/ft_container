@@ -51,7 +51,7 @@ class reverse_iterator
     Iterator tmp = _current;
     return *--tmp;
   }
-  pointer           operator->() const { return addressof(operator*()); }
+  pointer           operator->() const { return &(operator*()); }
   reverse_iterator &operator++() {
     --_current;
     return *this;

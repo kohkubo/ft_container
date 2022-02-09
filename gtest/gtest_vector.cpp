@@ -90,8 +90,8 @@ TEST_F(VectorTest, DefaultConstructor) {
 
 TEST_F(VectorTest, Constructor_allocator) {
   std::allocator<int>                   alloc;
-  ft::vector<int, std::allocator<int>>  ft(alloc);
-  std::vector<int, std::allocator<int>> std(alloc);
+  ft::vector<int, std::allocator<int> >  ft(alloc);
+  std::vector<int, std::allocator<int> > std(alloc);
   EXPECT_EQ(ft.size(), std.size());
   EXPECT_EQ(ft.capacity(), std.capacity());
   EXPECT_EQ(ft.empty(), std.empty());
@@ -416,4 +416,3 @@ TEST_F(VectorTest, Swap_2) {
   EXPECT_EQ(v1.back(), 1000);
   EXPECT_EQ(v2.back(), _ft_vector.back());
 }
-

@@ -62,9 +62,9 @@ test: $(gtest) fclean
 	# rm -rf tester.dSYM
 
 cave: $(gtest) fclean
-	clang++ -std=c++11 $(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
+	clang++ -std=c++11 -O2 $(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
 	-DDEBUG \
-	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread $(srcs_test) -o tester -fprofile-arcs -ftest-coverage -lgtest -g 
+	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread $(srcs_test) -o tester -fprofile-arcs -ftest-coverage
 	./tester
 	lcov -c -b . -d . -o cov_test.info
 	genhtml cov_test.info -o cov_test
@@ -77,8 +77,16 @@ cave: $(gtest) fclean
 	open cov_test/index-sort-f.html
 
 bench: $(gbench)
-	g++ -std=c++11 -O2 $(benchdir)/gbench.cpp -isystem $(gbench)/include \
-  -L$(gbench)/build/src -lbenchmark -lpthread \
+	g++ -std=c++11 $(benchdir)/gbench2.cpp -isystem $(gbench)/include \
+	-L$(gbench)/build/src -lbenchmark -lpthread \
+	-DUSE_LIB=ft \
+	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark
+	./benchmark
+
+stdbench: $(gbench)
+	g++ -std=c++11 $(benchdir)/gbench2.cpp -isystem $(gbench)/include \
+	-L$(gbench)/build/src -lbenchmark -lpthread \
+	-DUSE_LIB=std \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark
 	./benchmark
 

@@ -54,6 +54,8 @@ struct iterator_traits_base_impl<Iterator, true> {
   typedef typename Iterator::reference         reference;
 };
 
+// TODO ここらへん
+
 template <class Iterator>
 struct iterator_traits
     : iterator_traits_base_impl<Iterator,

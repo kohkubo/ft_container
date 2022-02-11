@@ -86,6 +86,7 @@ TEST_F(VectorTest, DefaultConstructor) {
     std.push_back(i);
   }
   compare_vector(ft, std);
+  EXPECT_EQ(ft.get_allocator(), std.get_allocator());
 }
 
 TEST_F(VectorTest, Constructor_allocator) {

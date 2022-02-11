@@ -18,6 +18,7 @@ $(NAME): $(objs)
 .PHONY: clean
 clean:
 	$(RM) -rf *.dSYM
+	$(RM) -rf tester
 	$(RM) -rf $(objs) $(depends)
 
 .PHONY: fclean
@@ -54,7 +55,7 @@ $(gbench):
 	cmake --build "build" --config Release
 
 test: $(gtest) fclean
-	clang++ -std=c++11 $(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
+	clang++ -std=c++11 -O2 $(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
 	-DDEBUG -g -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread $(srcs_test) -o tester
 	./tester
@@ -62,11 +63,12 @@ test: $(gtest) fclean
 	# rm -rf tester.dSYM
 
 cave: $(gtest) fclean
-	clang++ -std=c++11 -O2 $(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
+	clang++ -std=c++11 -O0 $(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
 	-DDEBUG \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread $(srcs_test) -o tester -fprofile-arcs -ftest-coverage
 	./tester
 	lcov -c -b . -d . -o cov_test.info
+	lcov -r cov_test.info "*gtest*" -o cov_test.info
 	genhtml cov_test.info -o cov_test
 	rm -rf cov_test.info
 	# rm -rf tester
@@ -76,15 +78,19 @@ cave: $(gtest) fclean
 	# rm -rf tester.dSYM
 	open cov_test/index-sort-f.html
 
+benchflg = clang++ -std=c++11 -O2
+
 bench: $(gbench)
-	g++ -std=c++11 $(benchdir)/gbench2.cpp -isystem $(gbench)/include \
+	$(benchflg) \
+	$(benchdir)/gbench_map.cpp -isystem $(gbench)/include \
 	-L$(gbench)/build/src -lbenchmark -lpthread \
 	-DUSE_LIB=ft \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark
 	./benchmark
 
 stdbench: $(gbench)
-	g++ -std=c++11 $(benchdir)/gbench2.cpp -isystem $(gbench)/include \
+	$(benchflg) \
+	$(benchdir)/gbench_map.cpp -isystem $(gbench)/include \
 	-L$(gbench)/build/src -lbenchmark -lpthread \
 	-DUSE_LIB=std \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark

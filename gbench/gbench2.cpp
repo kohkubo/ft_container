@@ -3,6 +3,9 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <random>
+#include "pair.hpp"
+#include "map.hpp"
 
 #include "vector.hpp"
 
@@ -66,5 +69,6 @@ static void BM_VectorAssign(benchmark::State& state) {
   }
 }
 BENCHMARK(BM_VectorAssign)->Range(1, MAX_RANGE_SIZE);
+
 
 BENCHMARK_MAIN();

@@ -194,7 +194,9 @@ class vector {
     insert(begin(), n, value);
   }
   template <class InputIterator>
-  void assign(InputIterator first, InputIterator last) {
+  void assign(InputIterator                           first,
+              typename enable_if<!ft::is_integral<InputIterator>::value,
+                                 InputIterator>::type last) {
     clear();
     insert(begin(), first, last);
   }

@@ -3,11 +3,11 @@
 
 #include <memory>
 
+#include "algorithm.hpp"
 #include "pair.hpp"
 #include "rb_tree.hpp"
 #include "reverse_iterator.hpp"
 #include "type_traits.hpp"
-#include "algorithm.hpp"
 
 namespace ft {
 template <class _Key, class _Tp, class _Compare = std::less<_Key>,
@@ -36,9 +36,7 @@ class map {
   typedef typename __base::const_iterator               const_iterator;
   typedef typename ft::reverse_iterator<iterator>       reverse_iterator;
   typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
-  // ===========================================================================
-  // construct/copy/destroy:
-  // ===========================================================================
+
   class value_compare {
     friend class map;
 
@@ -58,12 +56,14 @@ class map {
   // construct/copy/destroy:
   // ===========================================================================
   map() : __tree_(){};
-  explicit map(const _Compare& comp, const _Allocator& alloc = _Allocator()): __tree_(comp, alloc){};
+  explicit map(const _Compare& comp, const _Allocator& alloc = _Allocator())
+      : __tree_(comp, alloc){};
   template <class InputIterator>
   map(InputIterator first, InputIterator last,
       const _Compare& comp = _Compare(), const _Allocator& alloc = _Allocator())
       : __tree_(first, last, comp, alloc){};
-  map(const map& x) : __tree_(x.__tree_){};
+  map(const map& other) : __tree_(other.__tree_){};
+  ~map(){};
   map& operator=(const map& other) {
     clear();
     insert(other.begin(), other.end());
@@ -137,7 +137,6 @@ class map {
   key_compare   key_comp() const { return __tree_.key_comp(); }
   value_compare value_comp() const { return value_compare(__tree_.key_comp()); }
 };
-
 // =============================================================================
 // non-member functions:
 // =============================================================================
@@ -148,15 +147,20 @@ inline bool operator==(const map<Key, T, Compare, Allocator>& __x,
          ft::equal(__x.begin(), __x.end(), __y.begin());
 }
 template <class Key, class T, class Compare, class Allocator>
+inline bool operator!=(const map<Key, T, Compare, Allocator>& __x,
+                       const map<Key, T, Compare, Allocator>& __y) {
+  return !(__x == __y);
+}
+template <class Key, class T, class Compare, class Allocator>
 inline bool operator<(const map<Key, T, Compare, Allocator>& __x,
                       const map<Key, T, Compare, Allocator>& __y) {
   return ft::lexicographical_compare(__x.begin(), __x.end(), __y.begin(),
                                      __y.end());
 }
 template <class Key, class T, class Compare, class Allocator>
-inline bool operator!=(const map<Key, T, Compare, Allocator>& __x,
+inline bool operator<=(const map<Key, T, Compare, Allocator>& __x,
                        const map<Key, T, Compare, Allocator>& __y) {
-  return !(__x == __y);
+  return !(__y < __x);
 }
 template <class Key, class T, class Compare, class Allocator>
 inline bool operator>(const map<Key, T, Compare, Allocator>& __x,
@@ -167,11 +171,6 @@ template <class Key, class T, class Compare, class Allocator>
 inline bool operator>=(const map<Key, T, Compare, Allocator>& __x,
                        const map<Key, T, Compare, Allocator>& __y) {
   return !(__x < __y);
-}
-template <class Key, class T, class Compare, class Allocator>
-inline bool operator<=(const map<Key, T, Compare, Allocator>& __x,
-                       const map<Key, T, Compare, Allocator>& __y) {
-  return !(__y < __x);
 }
 template <class Key, class T, class Compare, class Allocator>
 inline void swap(map<Key, T, Compare, Allocator>& __x,

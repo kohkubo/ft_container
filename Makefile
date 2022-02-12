@@ -55,7 +55,8 @@ $(gbench):
 	cmake --build "build" --config Release
 
 test: $(gtest) fclean
-	clang++ -std=c++11 -O2 $(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
+	ccache clang++ -std=c++11 \
+	$(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
 	-DDEBUG -g -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread $(srcs_test) -o tester
 	./tester
@@ -81,16 +82,16 @@ cave: $(gtest) fclean
 benchflg = clang++ -std=c++11 -O2
 
 bench: $(gbench)
-	$(benchflg) \
-	$(benchdir)/gbench_map.cpp -isystem $(gbench)/include \
+	ccache $(benchflg) $(benchdir)/gbench_map.cpp \
+	-isystem $(gbench)/include \
 	-L$(gbench)/build/src -lbenchmark -lpthread \
 	-DUSE_LIB=ft \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark
 	./benchmark
 
 stdbench: $(gbench)
-	$(benchflg) \
-	$(benchdir)/gbench_map.cpp -isystem $(gbench)/include \
+	ccache $(benchflg) $(benchdir)/gbench_map.cpp \
+	-isystem $(gbench)/include \
 	-L$(gbench)/build/src -lbenchmark -lpthread \
 	-DUSE_LIB=std \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark

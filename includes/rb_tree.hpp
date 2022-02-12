@@ -13,7 +13,45 @@
 namespace ft {
 
 template <class _Tp>
-class __tree_node;
+class __tree_node {
+  // ===========================================================================
+  // tree_node_type
+  // ===========================================================================
+ public:
+  typedef _Tp                            key_type;
+  typedef key_type                       value_type;
+  typedef value_type                     __node_value_type;
+  typedef __tree_node<__node_value_type> __node_type;
+  typedef __node_type*                   __node_pointer;
+  // ===========================================================================
+  // tree_node
+  // ===========================================================================
+ public:
+  typedef __tree_node* pointer;
+
+ public:
+  __node_value_type __value_;
+  pointer           __parent_;
+  pointer           __right_;
+  pointer           __left_;
+  bool              __is_black_;
+  // ===========================================================================
+  // construct/copy/destroy:
+  // ===========================================================================
+  explicit __tree_node(const __node_value_type& __x, pointer __p = NULL)
+      : __value_(__x),
+        __parent_(__p),
+        __right_(NULL),
+        __left_(NULL),
+        __is_black_(false) {}
+  // ~__tree_node() {}
+  // ===========================================================================
+  // tree_node_type
+  // ===========================================================================
+ private:
+  __tree_node();
+  static const bool __is_map = true;
+};
 
 template <class _Key, class _Tp>
 class __tree_node<pair<const _Key, _Tp> > {
@@ -47,17 +85,12 @@ class __tree_node<pair<const _Key, _Tp> > {
         __right_(NULL),
         __left_(NULL),
         __is_black_(false) {}
-  // ~__tree_node() {}
+  ~__tree_node() {}
   // ===========================================================================
   // tree_node_type
   // ===========================================================================
  private:
-  __tree_node()
-      : __value_(__node_value_type()),
-        __parent_(NULL),
-        __right_(NULL),
-        __left_(NULL),
-        __is_black_(false) {}
+  __tree_node();
   static const bool __is_map = true;
 };
 
@@ -213,8 +246,6 @@ class __tree {
                   const allocator_type& alloc = allocator_type())
       : __size_(0), __comp_(__comp), __node_alloc_(alloc) {
     __end_node_           = __node_alloc_.allocate(1);
-    // __node_alloc_.construct(__end_node_, __node_value_type());
-    // __end_node_->__parent_ = NULL;
     __end_node_->__right_ = NULL;
     __end_node_->__left_  = NULL;
     __begin_node_         = __end_node_;
@@ -225,8 +256,6 @@ class __tree {
          const allocator_type& __alloc = allocator_type())
       : __size_(0), __comp_(__comp), __node_alloc_(__alloc) {
     __end_node_           = __node_alloc_.allocate(1);
-    // __node_alloc_.construct(__end_node_, __node_value_type());
-    // __end_node_->__parent_ = NULL;
     __end_node_->__right_ = NULL;
     __end_node_->__left_  = NULL;
     __begin_node_         = __end_node_;
@@ -235,14 +264,11 @@ class __tree {
   __tree(const __tree& __x)
       : __size_(0), __comp_(__x.__comp_), __node_alloc_(__x.__node_alloc_) {
     __end_node_           = __node_alloc_.allocate(1);
-    // __node_alloc_.construct(__end_node_, __node_value_type());
-    // __end_node_->__parent_ = NULL;
     __end_node_->__right_ = NULL;
     __end_node_->__left_  = NULL;
     __begin_node_         = __end_node_;
     insert(__x.begin(), __x.end());
   }
-
   allocator_type get_allocator() const { return allocator_type(__node_alloc_); }
   ~__tree() { __destroy(__end_node_); }
   // ===========================================================================

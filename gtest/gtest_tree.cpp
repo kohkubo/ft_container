@@ -60,15 +60,13 @@ class DISABLED_RbTreeTest : public ::testing::Test {
 
 TEST_F(RbTreeTest, Constructor) {
   ftTree __ft_tree;
-  stdMap __std_tree;
-  EXPECT_EQ(__ft_tree.size(), __std_tree.size());
+  EXPECT_EQ(__ft_tree.size(), 0);
 }
 
 // clear
 TEST_F(RbTreeTest, Clear) {
   ft_tree_.clear();
-  std_tree_.clear();
-  EXPECT_EQ(ft_tree_.size(), std_tree_.size());
+  EXPECT_EQ(ft_tree_.size(), 0);
 }
 
 // insert true with sequence value

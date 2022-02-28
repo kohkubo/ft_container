@@ -50,12 +50,12 @@ $(gtest):
 $(gbench):
 	mkdir -p $(dir ../test)
 	# git clone https://github.com/google/benchmark.git $(gtestdir)/benchmark
-	cmake -E make_directory "build"
-	cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../
-	cmake --build "build" --config Release
+	# cmake -E make_directory "$(gtestdir)/benchmark/build"
+	# cmake -E chdir "$(gtestdir)/benchmark/build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release $(gtestdir)/benchmark/../
+	# cmake --build "$(gtestdir)/benchmark/build" --config Release
 
 test: $(gtest) fclean
-	ccache clang++ -std=c++11 \
+	clang++ -std=c++11 \
 	$(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
 	-DDEBUG -g -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread $(srcs_test) -o tester
@@ -64,7 +64,7 @@ test: $(gtest) fclean
 	rm -rf tester.dSYM
 
 test_std: $(gtest) fclean
-	ccache clang++ -std=c++11 \
+	clang++ -std=c++11 \
 	$(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
 	-DLIB=std -g -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread $(srcs_test) -o tester
@@ -91,7 +91,7 @@ cave: $(gtest) fclean
 benchflg = clang++ -std=c++11 -O2
 
 bench: $(gbench)
-	ccache $(benchflg) $(benchdir)/gbench_map.cpp \
+	$(benchflg) $(benchdir)/gbench2.cpp \
 	-isystem $(gbench)/include \
 	-L$(gbench)/build/src -lbenchmark -lpthread \
 	-DUSE_LIB=ft \
@@ -99,7 +99,7 @@ bench: $(gbench)
 	./benchmark
 
 stdbench: $(gbench)
-	ccache $(benchflg) $(benchdir)/gbench_map.cpp \
+	$(benchflg) $(benchdir)/gbench2.cpp \
 	-isystem $(gbench)/include \
 	-L$(gbench)/build/src -lbenchmark -lpthread \
 	-DUSE_LIB=std \

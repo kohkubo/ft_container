@@ -1,8 +1,6 @@
 #include <gtest/gtest.h>
 #include "type_traits.hpp"
 
-class IsIntegralTest : public ::testing::Test {};
-
 template<class T>
 void test_is_integral_true()
 {
@@ -21,7 +19,7 @@ void test_is_integral_false()
     EXPECT_FALSE((ft::is_integral<const volatile T>::value));
 }
 
-TEST_F(IsIntegralTest, IntegralTypes)
+TEST(IsIntegralTest, IntegralTypes)
 {
     test_is_integral_true<unsigned char>();
     test_is_integral_true<unsigned short>();
@@ -37,7 +35,7 @@ TEST_F(IsIntegralTest, IntegralTypes)
     test_is_integral_true<wchar_t>();
 }
 
-TEST_F(IsIntegralTest, NonIntegralTypes)
+TEST(IsIntegralTest, NonIntegralTypes)
 {
     test_is_integral_false<double>();
     test_is_integral_false<float>();

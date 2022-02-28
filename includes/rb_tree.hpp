@@ -12,6 +12,9 @@
 
 namespace ft {
 
+// =============================================================================
+// set tree_node
+// =============================================================================
 template <class _Tp>
 class __tree_node {
   // ===========================================================================
@@ -44,15 +47,12 @@ class __tree_node {
         __right_(NULL),
         __left_(NULL),
         __is_black_(false) {}
-  // ~__tree_node() {}
-  // ===========================================================================
-  // tree_node_type
-  // ===========================================================================
- private:
-  __tree_node();
-  static const bool __is_map = true;
+  ~__tree_node() {}
 };
 
+// =============================================================================
+// map tree_node
+// =============================================================================
 template <class _Key, class _Tp>
 class __tree_node<pair<const _Key, _Tp> > {
   // ===========================================================================
@@ -86,12 +86,6 @@ class __tree_node<pair<const _Key, _Tp> > {
         __left_(NULL),
         __is_black_(false) {}
   ~__tree_node() {}
-  // ===========================================================================
-  // tree_node_type
-  // ===========================================================================
- private:
-  __tree_node();
-  static const bool __is_map = true;
 };
 
 template <class _Tp, class _NodePtr, class _DiffType>
@@ -203,7 +197,7 @@ template <class _Tp, class _Compare, class _Allocator>
 class __tree {
  public:
   typedef _Tp                                      value_type;
-  typedef _Compare                                 key_compare;
+  typedef _Compare                                 value_compare;
   typedef _Allocator                               allocator_type;
   typedef __tree_node<value_type>                  _NodeTypes;
   typedef typename _NodeTypes::key_type            key_type;
@@ -491,12 +485,12 @@ class __tree {
   // If __k exists, set parent to node of __k and return reference to node of
   // __k
   inline __node_pointer& __find_equal(__node_pointer& __parent,
-                                      const value_type& __k) {
+                                      const value_type& __v) {
     __node_pointer  __nd = __root();
     __node_pointer* __p  = __root_ptr();
     if (__nd != NULL) {
       while (true) {
-        if (__comp_(__k, __nd->__value_)) {
+        if (__comp_(__v, __nd->__value_)) {
           if (__nd->__left_ != NULL) {
             __p  = &(__nd->__left_);
             __nd = __nd->__left_;
@@ -504,7 +498,7 @@ class __tree {
             __parent = __nd;
             return __parent->__left_;
           }
-        } else if (__comp_(__nd->__value_, __k)) {
+        } else if (__comp_(__nd->__value_, __v)) {
           if (__nd->__right_ != NULL) {
             __p  = &(__nd->__right_);
             __nd = __nd->__right_;
@@ -522,10 +516,10 @@ class __tree {
     return __parent->__left_;
   }
   inline __node_pointer& __find_equal(__node_pointer& __parent,
-                                      const value_type& __k, iterator __hint) {
-    if (__hint.base() == __end_node_ || __comp_(__k, __hint->first)) {
+                                      const value_type& __v, iterator __hint) {
+    if (__hint.base() == __end_node_ || __comp_(__v, *__hint)) {
       iterator __prior = __hint;
-      if (__prior.base() == __begin_node_ || __comp_((--__prior)->first, __k)) {
+      if (__prior.base() == __begin_node_ || __comp_((*--__prior), __v)) {
         if (__hint.base()->__left_ == NULL) {
           __parent = __hint.base();
           return __hint.base()->__left_;
@@ -534,10 +528,10 @@ class __tree {
           return __prior.base()->__right_;
         }
       }
-      return __find_equal(__parent, __k);
-    } else if (__comp_(__hint->first, __k)) {
+      return __find_equal(__parent, __v);
+    } else if (__comp_(*__hint, __v)) {
       iterator __next_it = __next(__hint);
-      if (__next_it.base() == __end_node_ || __comp_(__k, __next_it->first)) {
+      if (__next_it.base() == __end_node_ || __comp_(__v, *__next_it)) {
         if (__hint.base()->__right_ == NULL) {
           __parent = __hint.base();
           return __hint.base()->__right_;
@@ -546,7 +540,7 @@ class __tree {
           return __parent->__left_;
         }
       }
-      return __find_equal(__parent, __k);
+      return __find_equal(__parent, __v);
     }
     __parent = __hint.base();
     return __parent;

@@ -1,4 +1,8 @@
-#include <gtest/gtest.h>
+// #ifdef ft42
+// #include <gtest/gtest.h>
+// #else
+// #include "mygtest.h"
+// #endif
 
 #include <map>
 #include <random>
@@ -218,7 +222,6 @@ TEST(MapTest, MapRandomInsertAndEraseAndClear) {
       ft_ret                               = ft.erase(ft_ret, ft.find(key2));
       std_ret                              = std.erase(std_ret, std.find(key2));
       if (ft_ret != ft.end()) {
-        // std::cout << ft_ret->first << " " << ft_ret->second << std::endl;
         EXPECT_EQ(ft_ret->first, std_ret->first);
         EXPECT_EQ(ft_ret->second, std_ret->second);
       }
@@ -558,8 +561,8 @@ TEST(MapTest, MapNonMemberFunc) {
   EXPECT_EQ(ft >= ft_large, std >= std_large);
   EXPECT_EQ(ft >= ft_small, std >= std_small);
   EXPECT_EQ(ft >= ft_random, std >= std_random);
-  swap(ft_large, ft_small);
-  swap(std_large, std_small);
+  ft::swap(ft_large, ft_small);
+  std::swap(std_large, std_small);
   EXPECT_EQ(ft == ft_large, std == std_large);
   EXPECT_EQ(ft == ft_small, std == std_small);
   EXPECT_EQ(ft == ft_random, std == std_random);

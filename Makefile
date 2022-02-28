@@ -60,8 +60,17 @@ test: $(gtest) fclean
 	-DDEBUG -g -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread $(srcs_test) -o tester
 	./tester
-	# rm -rf tester
-	# rm -rf tester.dSYM
+	rm -rf tester
+	rm -rf tester.dSYM
+
+test_std: $(gtest) fclean
+	ccache clang++ -std=c++11 \
+	$(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
+	-DLIB=std -g -fsanitize=address -fsanitize=undefined -fsanitize=leak \
+	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread $(srcs_test) -o tester
+	./tester
+	rm -rf tester
+	rm -rf tester.dSYM
 
 cave: $(gtest) fclean
 	clang++ -std=c++11 -O0 $(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \

@@ -8,3 +8,4 @@
 #include "gtest_vector.cpp"
 #include "gtest_tree.cpp"
 #include "gtest_map.cpp"
+#include "gtest_map2.cpp"

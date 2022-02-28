@@ -5,7 +5,7 @@
 #include "vector.hpp"
 
 #ifndef LIB
-#define LIB ft
+# define LIB ft
 #endif
 
 TEST(Vector, Constructor) {
@@ -191,7 +191,7 @@ TEST(Vector, Modifiers) {
   v2.swap(v1);
   EXPECT_EQ(v1.size(), 20);
   EXPECT_EQ(v1.back(), 1900);
-  
+
   // insert
   // iterator insert( iterator pos, const T& value );
   for (int i = 0; i < 10; ++i) {
@@ -279,4 +279,116 @@ TEST(Vector, Modifiers) {
 }
 
 // non-member functions
-// 一旦ここまで
+TEST(Vector, NonMemberFunctions) {
+  LIB::vector<int> v1;
+  LIB::vector<int> v2;
+  for (int i = 0; i < 10; ++i) {
+    v1.push_back(i);
+    v2.push_back(i);
+  }
+  // operator==
+  EXPECT_EQ(v1 == v2, true);
+  v2.pop_back();
+  // v1 0 1 2 3 4 5 6 7 8 9
+  // v2 0 1 2 3 4 5 6 7 8
+  EXPECT_EQ(v1 == v2, false);
+
+  // operator!=
+  EXPECT_EQ(v1 != v2, true);
+  v1.pop_back();
+  // v1 0 1 2 3 4 5 6 7 8
+  // v2 0 1 2 3 4 5 6 7 8
+  EXPECT_EQ(v1 != v2, false);
+  // operator<
+  LIB::vector<int> v3;
+  for (int i = 0; i < 9; ++i) {
+    v3.push_back(i * 2);
+  }
+  // v1 0 1 2 3 4  5  6  7  8
+  // v3 0 2 4 6 8 10 12 14 16
+  EXPECT_EQ(v1 < v3, true);
+  EXPECT_EQ(v1 < v2, false);
+  // operator>
+  EXPECT_EQ(v1 > v3, false);
+  EXPECT_EQ(v1 > v2, false);
+  // operator<=
+  EXPECT_EQ(v1 <= v3, true);
+  EXPECT_EQ(v1 <= v2, true);
+  // operator>=
+  EXPECT_EQ(v1 >= v3, false);
+  EXPECT_EQ(v1 >= v2, true);
+  v2.pop_back();
+  // v1 0 1 2 3 4  5  6  7  8
+  // v2 0 1 2 3 4  5  6  7
+  EXPECT_EQ(v1 <= v2, false);
+
+  // swap
+  swap(v1, v2);
+  EXPECT_EQ(v1 <= v2, true);
+}
+
+// type
+TEST(Vector, Type) {
+  LIB::vector<char> v_char;
+  LIB::vector<int> v_int;
+  LIB::vector<float> v_float;
+  LIB::vector<double> v_double;
+  LIB::vector<std::string> v_string;
+
+  // char
+  v_char.push_back('a');
+  v_char.push_back('b');
+  v_char.push_back('c');
+  v_char.push_back('d');
+  EXPECT_EQ(v_char.size(), 4);
+  EXPECT_EQ(v_char.front(), 'a');
+  EXPECT_EQ(v_char.back(), 'd');
+  for (int i = 0; i < 4; ++i) {
+    EXPECT_EQ(v_char[i], 'a' + i);
+  }
+  // int
+  v_int.push_back(1);
+  v_int.push_back(2);
+  v_int.push_back(3);
+  v_int.push_back(4);
+  EXPECT_EQ(v_int.size(), 4);
+  EXPECT_EQ(v_int.front(), 1);
+  EXPECT_EQ(v_int.back(), 4);
+  for (int i = 0; i < 4; ++i) {
+    EXPECT_EQ(v_int[i], 1 + i);
+  }
+  // float
+  v_float.push_back(1.0f);
+  v_float.push_back(2.0f);
+  v_float.push_back(3.0f);
+  v_float.push_back(4.0f);
+  EXPECT_EQ(v_float.size(), 4);
+  EXPECT_EQ(v_float.front(), 1.0f);
+  EXPECT_EQ(v_float.back(), 4.0f);
+  for (int i = 0; i < 4; ++i) {
+    EXPECT_EQ(v_float[i], 1.0f + i);
+  }
+  // double
+  v_double.push_back(1.0);
+  v_double.push_back(2.0);
+  v_double.push_back(3.0);
+  v_double.push_back(4.0);
+  EXPECT_EQ(v_double.size(), 4);
+  EXPECT_EQ(v_double.front(), 1.0);
+  EXPECT_EQ(v_double.back(), 4.0);
+  for (int i = 0; i < 4; ++i) {
+    EXPECT_EQ(v_double[i], 1.0 + i);
+  }
+  // string
+  v_string.push_back("a");
+  v_string.push_back("b");
+  v_string.push_back("c");
+  v_string.push_back("d");
+  EXPECT_EQ(v_string.size(), 4);
+  EXPECT_EQ(v_string.front(), "a");
+  EXPECT_EQ(v_string.back(), "d");
+  EXPECT_EQ(v_string[0], "a");
+  EXPECT_EQ(v_string[1], "b");
+  EXPECT_EQ(v_string[2], "c");
+  EXPECT_EQ(v_string[3], "d");
+}

@@ -10,6 +10,26 @@
 #include "type_traits.hpp"
 
 namespace ft {
+template <typename _Key, typename _CP, typename _Compare>
+class __map_value_compare : private _Compare {
+  _Compare __comp_;
+ public:
+  __map_value_compare() : __comp_() {}
+  __map_value_compare(const _Compare& __comp) : __comp_(__comp) {}
+
+  const _Compare& key_comp() const { return __comp_; }
+  bool            operator()(const _CP& __x, const _CP& __y) const {
+    return __comp_(__x.first, __y.first);
+  }
+  bool operator()(const _CP& __x, const _Key& __y) const {
+    return __comp_(__x.first, __y);
+  }
+  bool operator()(const _Key& __x, const _CP& __y) const {
+    return __comp_(__x, __y.first);
+  }
+  void swap(__map_value_compare& __c) { __comp_.swap(__c.__comp_); }
+};
+
 template <class _Key, class _Tp, class _Compare = std::less<_Key>,
           class _Allocator = std::allocator<pair<const _Key, _Tp> > >
 class map {
@@ -22,10 +42,28 @@ class map {
   typedef value_type&                       reference;
   typedef const value_type&                 const_reference;
 
+ public:
+  class value_compare {
+    friend class map;
+
+   protected:
+    key_compare comp;
+    value_compare(key_compare c) : comp(c) {}
+
+   public:
+    typedef bool       result_type;
+    typedef value_type first_argument_type;
+    typedef value_type second_argument_type;
+    bool operator()(const value_type& x, const value_type& y) const {
+      return comp(x.first, y.first);
+    };
+  };
+
  private:
-  typedef __tree<value_type, key_compare, allocator_type> __base;
-  __base                                                  __tree_;
-  typedef typename __base::__node_pointer                 __node_pointer;
+  typedef __map_value_compare<key_type, value_type, key_compare> __vc;
+  typedef __tree<value_type, __vc, allocator_type>               __base;
+  __base                                                         __tree_;
+  typedef typename __base::__node_pointer                        __node_pointer;
 
  public:
   typedef typename allocator_type::pointer              pointer;
@@ -37,31 +75,17 @@ class map {
   typedef typename ft::reverse_iterator<iterator>       reverse_iterator;
   typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
-  class value_compare {
-    friend class map;
-
-   protected:
-    key_compare comp;
-    value_compare(key_compare c = key_compare()) : comp(c) {}
-
-   public:
-    typedef bool       result_type;
-    typedef value_type first_argument_type;
-    typedef value_type second_argument_type;
-    bool operator()(const value_type& x, const value_type& y) const {
-      return comp(x.first, y.first);
-    };
-  };
   // ===========================================================================
   // construct/copy/destroy:
   // ===========================================================================
-  map() : __tree_(){};
+  map() : __tree_(__vc(key_compare())){};
   explicit map(const _Compare& comp, const _Allocator& alloc = _Allocator())
-      : __tree_(comp, alloc){};
+      : __tree_(__vc(comp), alloc){};
   template <class InputIterator>
   map(InputIterator first, InputIterator last,
-      const _Compare& comp = _Compare(), const _Allocator& alloc = _Allocator())
-      : __tree_(first, last, comp, alloc){};
+      const _Compare&   comp  = _Compare(),
+      const _Allocator& alloc = _Allocator())
+      : __tree_(first, last, __vc(comp), alloc){};
   map(const map& other) : __tree_(other.__tree_){};
   ~map(){};
   map& operator=(const map& other) {
@@ -134,8 +158,10 @@ class map {
   // ===========================================================================
   // observers:
   // ===========================================================================
-  key_compare   key_comp() const { return __tree_.key_comp(); }
-  value_compare value_comp() const { return value_compare(__tree_.key_comp()); }
+  key_compare   key_comp() const { return __tree_.__comp_.key_comp(); }
+  value_compare value_comp() const {
+    return value_compare(__tree_.__comp_.key_comp());
+  }
 };
 // =============================================================================
 // non-member functions:

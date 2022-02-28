@@ -230,11 +230,11 @@ class __tree {
   __node_pointer   __end_node_;
   __node_allocator __node_alloc_;
   size_type        __size_;
-  key_compare      __comp_;
+  value_compare      __comp_;
 
  public:
   __tree()
-      : __size_(0), __comp_(key_compare()), __node_alloc_(__node_allocator()) {
+      : __size_(0), __comp_(value_compare()), __node_alloc_(__node_allocator()) {
     __end_node_           = __node_alloc_.allocate(1);
     // __node_alloc_.construct(__end_node_, __node_value_type());
     // __end_node_->__parent_ = NULL;
@@ -242,7 +242,7 @@ class __tree {
     __end_node_->__left_  = NULL;
     __begin_node_         = __end_node_;
   }
-  explicit __tree(const key_compare&    __comp,
+  explicit __tree(const value_compare&    __comp,
                   const allocator_type& alloc = allocator_type())
       : __size_(0), __comp_(__comp), __node_alloc_(alloc) {
     __end_node_           = __node_alloc_.allocate(1);
@@ -252,7 +252,7 @@ class __tree {
   }
   template <class _InputIterator>
   __tree(_InputIterator __first, _InputIterator __last,
-         const key_compare&    __comp  = key_compare(),
+         const value_compare&    __comp  = value_compare(),
          const allocator_type& __alloc = allocator_type())
       : __size_(0), __comp_(__comp), __node_alloc_(__alloc) {
     __end_node_           = __node_alloc_.allocate(1);
@@ -311,7 +311,7 @@ class __tree {
   }
   pair<iterator, bool> insert(const value_type& __v) {
     __node_pointer  __parent   = NULL;
-    __node_pointer& __child    = __find_equal(__parent, __v.first);
+    __node_pointer& __child    = __find_equal(__parent, __v);
     bool            __inserted = false;
     if (__child == NULL) {
       __child = __create_node(__v, __parent);
@@ -326,7 +326,7 @@ class __tree {
   }
   iterator insert(iterator __hint, const value_type& __v) {
     __node_pointer  __parent = NULL;
-    __node_pointer& __child  = __find_equal(__parent, __v.first, __hint);
+    __node_pointer& __child  = __find_equal(__parent, __v, __hint);
     if (__child == NULL) {
       __child = __create_node(__v, __parent);
       if (__begin_node_->__left_ != NULL) {
@@ -380,7 +380,7 @@ class __tree {
   }
   iterator find(const key_type& __k) {
     iterator __it = lower_bound(__k);
-    if (__it != end() && !__comp_(__k, __it->first)) {
+    if (__it != end() && !__comp_(__k, *__it)) {
       return __it;
     }
     return end();
@@ -388,7 +388,7 @@ class __tree {
   const_iterator find(const key_type& __k) const {
     const_iterator __it = lower_bound(__k);
     if (__it.base() == NULL) return end();
-    if (__it != end() && !__comp_(__k, __it->first)) {
+    if (__it != end() && !__comp_(__k, *__it)) {
       return __it;
     }
     return end();
@@ -409,7 +409,7 @@ class __tree {
       return end();
     }
     while (__node != NULL) {
-      if (!__comp_(__node->__value_.first, __k)) {
+      if (!__comp_(__node->__value_, __k)) {
         __result = __node;
         __node   = __node->__left_;
       } else {
@@ -428,7 +428,7 @@ class __tree {
       return end();
     }
     while (__node != NULL) {
-      if (!__comp_(__node->__value_.first, __k)) {
+      if (!__comp_(__node->__value_, __k)) {
         __result = __node;
         __node   = __node->__left_;
       } else {
@@ -447,7 +447,7 @@ class __tree {
       return end();
     }
     while (__node != NULL) {
-      if (__comp_(__k, __node->__value_.first)) {
+      if (__comp_(__k, __node->__value_)) {
         __result = __node;
         __node   = __node->__left_;
       } else {
@@ -466,7 +466,7 @@ class __tree {
       return end();
     }
     while (__node != NULL) {
-      if (__comp_(__k, __node->__value_.first)) {
+      if (__comp_(__k, __node->__value_)) {
         __result = __node;
         __node   = __node->__left_;
       } else {
@@ -481,7 +481,7 @@ class __tree {
   // ===========================================================================
   // observers
   // ===========================================================================
-  key_compare            key_comp() const { return __comp_; }
+  value_compare            key_comp() const { return __comp_; }
   // ===========================================================================
   // private
   // ===========================================================================
@@ -491,12 +491,12 @@ class __tree {
   // If __k exists, set parent to node of __k and return reference to node of
   // __k
   inline __node_pointer& __find_equal(__node_pointer& __parent,
-                                      const key_type& __k) {
+                                      const value_type& __k) {
     __node_pointer  __nd = __root();
     __node_pointer* __p  = __root_ptr();
     if (__nd != NULL) {
       while (true) {
-        if (__comp_(__k, __nd->__value_.first)) {
+        if (__comp_(__k, __nd->__value_)) {
           if (__nd->__left_ != NULL) {
             __p  = &(__nd->__left_);
             __nd = __nd->__left_;
@@ -504,7 +504,7 @@ class __tree {
             __parent = __nd;
             return __parent->__left_;
           }
-        } else if (__comp_(__nd->__value_.first, __k)) {
+        } else if (__comp_(__nd->__value_, __k)) {
           if (__nd->__right_ != NULL) {
             __p  = &(__nd->__right_);
             __nd = __nd->__right_;
@@ -522,7 +522,7 @@ class __tree {
     return __parent->__left_;
   }
   inline __node_pointer& __find_equal(__node_pointer& __parent,
-                                      const key_type& __k, iterator __hint) {
+                                      const value_type& __k, iterator __hint) {
     if (__hint.base() == __end_node_ || __comp_(__k, __hint->first)) {
       iterator __prior = __hint;
       if (__prior.base() == __begin_node_ || __comp_((--__prior)->first, __k)) {

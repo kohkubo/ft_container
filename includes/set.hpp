@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "pair.hpp"
+#include "algorithm.hpp"
 #include "rb_tree.hpp"
 #include "reverse_iterator.hpp"
 
@@ -25,9 +25,9 @@ class set {
   typedef typename allocator_type::const_pointer   const_pointer;
 
  private:
-  typedef ft::__tree<value_type, key_compare, allocator_type> __base;
-  __base                                                      __tree_;
-  typedef typename __base::__node_pointer                     __node_pointer;
+  typedef ft::__tree<value_type, value_compare, allocator_type> __base;
+  __base                                                        __tree_;
+  typedef typename __base::__node_pointer                       __node_pointer;
 
  public:
   typedef typename __base::iterator            iterator;
@@ -46,11 +46,7 @@ class set {
       const key_compare&    comp  = key_compare(),
       const allocator_type& alloc = allocator_type())
       : __tree_(first, last, comp, alloc){};
-  set(const set& other) {
-    clear();
-    insert(other.begin(), other.end());
-    return *this;
-  }
+  set(const set& other): __tree_(other.__tree_) {}
   ~set(){};
   set& operator=(const set& other) {
     clear();
@@ -82,8 +78,8 @@ class set {
   pair<iterator, bool>   insert(const value_type& value) {
     return __tree_.insert(value);
   }
-  iterator insert(value_type&& value) {
-    return __tree_.insert(std::move(value));
+  iterator insert(iterator hint, const value_type& value) {
+    return __tree_.insert(hint, value);
   }
   template <class InputIterator>
   void insert(InputIterator first, InputIterator last) {
@@ -116,8 +112,8 @@ class set {
   // ===========================================================================
   // observers:
   // ===========================================================================
-  key_compare   key_comp() const { return __tree_.key_comp(); }
-  value_compare value_comp() const { return __tree_.value_comp(); }
+  key_compare   key_comp() const { return __tree_.__comp_; }
+  value_compare value_comp() const { return __tree_.__comp_; }
 };
 // =============================================================================
 // non-member functions:

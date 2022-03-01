@@ -304,4 +304,31 @@ TEST(Map, NonMemberFunctions) {
   for (int i = 0; i < SIZE; i++) {
     EXPECT_EQ(m3[i], i);
   }
+
+  // bool operator==( const Map& lhs, const Map& rhs );
+  LIB::map<int, int> m4;
+  for (int i = 0; i < SIZE; i++) {
+    m4.insert(LIB::make_pair(i, i));
+  }
+  LIB::map<int, int> m5;
+  for (int i = 0; i < SIZE; i++) {
+    m5.insert(LIB::make_pair(i, i));
+  }
+  EXPECT_EQ(m4 == m5, true);
+  LIB::map<int, int> m6;
+  for (int i = 0; i < SIZE; i++) {
+    m6.insert(LIB::make_pair(i * 2, i * 2));
+  }
+  EXPECT_EQ(m4 == m6, false);
+  EXPECT_EQ(m6 == m4, false);
+  EXPECT_EQ(m4 != m6, true);
+  EXPECT_EQ(m6 != m4, true);
+  EXPECT_EQ(m4 < m6, true);
+  EXPECT_EQ(m6 < m4, false);
+  EXPECT_EQ(m4 > m6, false);
+  EXPECT_EQ(m6 > m4, true);
+  EXPECT_EQ(m4 <= m6, true);
+  EXPECT_EQ(m6 <= m4, false);
+  EXPECT_EQ(m4 >= m6, false);
+  EXPECT_EQ(m6 >= m4, true);
 }

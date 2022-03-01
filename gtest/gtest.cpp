@@ -10,3 +10,4 @@
 #include "gtest_vector.cpp"
 #include "gtest_map.cpp"
 #include "gtest_set.cpp"
+#include "gtest_stack.cpp"

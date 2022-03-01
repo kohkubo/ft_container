@@ -221,3 +221,34 @@ TEST(Set, Lookup)
   }
   EXPECT_EQ(s.count(5), 1);
 }
+
+// non-member functions
+TEST(Set, NonMemberFunctions)
+{
+  LIB::set<int> s1;
+  LIB::set<int> s2;
+  LIB::set<int> s3;
+  for (int i = 0; i < 10; ++i) {
+    s1.insert(i);
+    s2.insert(i);
+    s3.insert(i * 2);
+  }
+  // bool operator==( const set& lhs, const set& rhs );
+  EXPECT_EQ(s1 == s2, true);
+  EXPECT_EQ(s1 == s3, false);
+  // bool operator!=( const set& lhs, const set& rhs );
+  EXPECT_EQ(s1 != s2, false);
+  EXPECT_EQ(s1 != s3, true);
+  // bool operator<( const set& lhs, const set& rhs );
+  EXPECT_EQ(s1 < s2, false);
+  EXPECT_EQ(s1 < s3, true);
+  // bool operator<=( const set& lhs, const set& rhs );
+  EXPECT_EQ(s1 <= s2, true);
+  EXPECT_EQ(s1 <= s3, true);
+  // bool operator>( const set& lhs, const set& rhs );
+  EXPECT_EQ(s1 > s2, false);
+  EXPECT_EQ(s1 > s3, false);
+  // bool operator>=( const set& lhs, const set& rhs );
+  EXPECT_EQ(s1 >= s2, true);
+  EXPECT_EQ(s1 >= s3, false);
+}

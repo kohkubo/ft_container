@@ -91,19 +91,19 @@ cave: $(gtest) fclean
 benchflg = clang++ -std=c++11 -O2
 
 bench: $(gbench)
-	$(benchflg) $(benchdir)/gbench2.cpp \
+	$(benchflg) $(benchdir)/gbench.cpp \
 	-isystem $(gbench)/include \
 	-L$(gbench)/build/src -lbenchmark -lpthread \
 	-DUSE_LIB=ft \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark
-	./benchmark
+	./benchmark --benchmark_out_format=csv --benchmark_out=benchmark.csv
 
 stdbench: $(gbench)
-	$(benchflg) $(benchdir)/gbench2.cpp \
+	$(benchflg) $(benchdir)/gbench.cpp \
 	-isystem $(gbench)/include \
 	-L$(gbench)/build/src -lbenchmark -lpthread \
 	-DUSE_LIB=std \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark
-	./benchmark
+	./benchmark --benchmark_out_format=csv --benchmark_out=benchmark_std.csv
 
 -include $(depends)

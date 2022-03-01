@@ -1,18 +1,4 @@
-#include <benchmark/benchmark.h>
-
-#include <iostream>
-#include <map>
-#include <vector>
-#include <random>
-#include "pair.hpp"
-#include "map.hpp"
-
-#include "vector.hpp"
-
-#define MAX_RANGE_SIZE (1 << 22)
-#ifndef USE_LIB
-# define USE_LIB ft
-#endif
+#include "gbench.hpp"
 
 static void BM_MapInsert(benchmark::State& state) {
   std::srand(std::time(0));

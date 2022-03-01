@@ -2,6 +2,7 @@
 #define INCLUDES_STACK_HPP_
 
 #include "vector.hpp"
+#include "algorithm.hpp"
 
 namespace ft {
 template <class _Tp, class _Container = vector<_Tp> >
@@ -43,39 +44,31 @@ class stack {
   void            push(const value_type &x) { c.push_back(x); }
   void            pop() { c.pop_back(); }
   void            swap(stack &other) { c.swap(other.c); }
+  // ===========================================================================
+  // operators
+  // ===========================================================================
+  friend bool operator==(const stack &lhs, const stack &rhs) {
+    return lhs.c == rhs.c;
+  }
+  friend bool operator!=(const stack &lhs, const stack &rhs) {
+    return !(lhs == rhs);
+  }
+  friend bool operator<(const stack &lhs, const stack &rhs) {
+    return lhs.c < rhs.c;
+  }
+  friend bool operator<=(const stack &lhs, const stack &rhs) {
+    return lhs.c <= rhs.c;
+  }
+  friend bool operator>(const stack &lhs, const stack &rhs) {
+    return lhs.c > rhs.c;
+  }
+  friend bool operator>=(const stack &lhs, const stack &rhs) {
+    return lhs.c >= rhs.c;
+  }
 };
-// =============================================================================
-// operators
-// =============================================================================
 template <class _Tp, class _Container>
-inline bool operator==(const stack<_Tp, _Container> &lhs,
-                       const stack<_Tp, _Container> &rhs) {
-  return lhs.c == rhs.c;
-}
-template <class _Tp, class _Container>
-inline bool operator!=(const stack<_Tp, _Container> &lhs,
-                       const stack<_Tp, _Container> &rhs) {
-  return !(lhs == rhs);
-}
-template <class _Tp, class _Container>
-inline bool operator<(const stack<_Tp, _Container> &lhs,
-                      const stack<_Tp, _Container> &rhs) {
-  return lhs.c < rhs.c;
-}
-template <class _Tp, class _Container>
-inline bool operator<=(const stack<_Tp, _Container> &lhs,
-                       const stack<_Tp, _Container> &rhs) {
-  return lhs.c <= rhs.c;
-}
-template <class _Tp, class _Container>
-inline bool operator>(const stack<_Tp, _Container> &lhs,
-                      const stack<_Tp, _Container> &rhs) {
-  return lhs.c > rhs.c;
-}
-template <class _Tp, class _Container>
-inline bool operator>=(const stack<_Tp, _Container> &lhs,
-                       const stack<_Tp, _Container> &rhs) {
-  return lhs.c >= rhs.c;
+inline void swap(stack<_Tp, _Container> &lhs, stack<_Tp, _Container> &rhs) {
+  lhs.swap(rhs);
 }
 }  // namespace ft
 #endif  // INCLUDES_STACK_HPP_

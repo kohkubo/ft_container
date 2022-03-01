@@ -9,3 +9,4 @@
 test
 !.clang-format
 !*.yml
+.idea

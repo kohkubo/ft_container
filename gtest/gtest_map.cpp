@@ -1,7 +1,12 @@
+#if __cplusplus >= 201103L
 #include <gtest/gtest.h>
+#else
+#include "ft_test.hpp"
+#endif
 #include <random>
 
 #include "map.hpp"
+#include <map>
 
 #ifndef LIB
 #define LIB ft
@@ -46,7 +51,7 @@ TEST(Map, Constructor) {
   LIB::map<int, int> m4(m3);
   EXPECT_EQ(m4.size(), 10);
   EXPECT_EQ(m4.empty(), false);
-  for (int i = 0; i < m4.size(); ++i) {
+  for (size_t i = 0; i < m4.size(); ++i) {
     EXPECT_EQ(m4[i], m3[i]);
   }
   EXPECT_EQ(m4.get_allocator(), m3.get_allocator());
@@ -57,7 +62,7 @@ TEST(Map, Constructor) {
   m5 = m3;
   EXPECT_EQ(m5.size(), m6.size());
   EXPECT_EQ(m5.empty(), m6.empty());
-  for (int i = 0; i < m5.size(); ++i) {
+  for (size_t i = 0; i < m5.size(); ++i) {
     EXPECT_EQ(m5[i], m6[i]);
   }
   EXPECT_EQ(m5.get_allocator(), m6.get_allocator());
@@ -143,7 +148,7 @@ TEST(Map, Modifiers) {
   }
   std::sort(random, random + SIZE, std::greater<int>());
   LIB::map<int, int>::reverse_iterator it = m.rbegin();
-  for (int i = 0; i < m.size(); ++i) {
+  for (size_t i = 0; i < m.size(); ++i) {
     EXPECT_EQ(it->first, random[i]);
     ++it;
   }
@@ -163,7 +168,7 @@ TEST(Map, Modifiers) {
   }
   sort(random2, random2 + SIZE, std::greater<int>());
   it2 = m2.begin();
-  for (int i = 0; i < m2.size(); ++i) {
+  for (size_t i = 0; i < m2.size(); ++i) {
     EXPECT_EQ(it2->first, random2[i]);
     ++it2;
   }

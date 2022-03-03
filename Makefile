@@ -74,6 +74,16 @@ test_std: $(gtest) fclean
 	rm -rf tester
 	rm -rf tester.dSYM
 
+.PHONY: mytest
+mytest:
+	$(CXX) $(CXXFLAGS) -o mytest_exe gtest/testlib_main.cpp -I$(includes) -I$(gtestdir)
+	./mytest_exe
+
+.PHONY: mytest_std
+mytest_std:
+	$(CXX) $(CXXFLAGS) -o mytest_std_exe gtest/testlib_main.cpp -DLIB=std -I$(includes) -I$(gtestdir)
+	./mytest_std_exe
+
 .PHONY: cave
 cave: $(gtest) fclean
 	clang++ -std=c++11 -O0 $(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \

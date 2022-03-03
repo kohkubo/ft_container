@@ -113,7 +113,12 @@ stdbench: $(gbench)
 
 .PHONY: mybench
 mybench:
-	$(CXX) $(CXXFLAGS) -o mybenchmark_exe mybenchmark/mybench.cpp -I$(includes) -O0
-	./mybenchmark_exe
+	@$(CXX) $(CXXFLAGS) -o mybenchmark_exe mybenchmark/mybench.cpp -I$(includes) -O0
+	@./mybenchmark_exe
+
+.PHONY: mybench_std
+mybench_std:
+	@$(CXX) $(CXXFLAGS) -o mybenchmark_exe mybenchmark/mybench.cpp -I$(includes) -O0 -DLIB=std
+	@./mybenchmark_exe
 
 -include $(depends)

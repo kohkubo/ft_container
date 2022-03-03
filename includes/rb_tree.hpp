@@ -260,7 +260,7 @@ class __tree {
     insert(__first, __last);
   }
   __tree(const __tree& __x) {
-    __size_ = __x.__size_;
+    __size_ = 0;
     __comp_ = __x.__comp_;
     __node_alloc_ = __x.__node_alloc_;
     __end_node_           = __node_alloc_.allocate(1);

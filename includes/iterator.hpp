@@ -9,9 +9,6 @@
 #include "type_traits.hpp"
 
 namespace ft {
-template <class Iterator>
-struct iterator_traits;
-
 template <class Category, class T, class Distance = ptrdiff_t,
           class Pointer = T *, class Reference = T &>
 struct iterator {
@@ -30,18 +27,6 @@ struct has_iterator_category {
   static const bool value = sizeof(check<T>(0)) == sizeof(yes_type);
 };
 
-template <class T, class U,
-          bool = has_iterator_category<iterator_traits<T> >::value>
-struct has_iterator_category_is_convertible
-    : is_convertible<typename iterator_traits<T>::iterator_category, U> {};
-
-template <class T, class U>
-struct has_iterator_category_is_convertible<T, U, false> : false_type {};
-
-template <class T>
-struct is_input_iterator
-    : has_iterator_category_is_convertible<T, std::input_iterator_tag> {};
-
 template <class Iterator, bool>
 struct iterator_traits_base_impl {};
 
@@ -53,8 +38,6 @@ struct iterator_traits_base_impl<Iterator, true> {
   typedef typename Iterator::pointer           pointer;
   typedef typename Iterator::reference         reference;
 };
-
-// TODO ここらへん
 
 template <class Iterator>
 struct iterator_traits

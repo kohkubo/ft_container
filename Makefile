@@ -47,13 +47,6 @@ $(gtest):
 	python googletest-release-1.11.0/googletest/scripts/fuse_gtest_files.py $(gtestdir)
 	mv googletest-release-1.11.0 $(gtestdir)
 
-$(gbench):
-	mkdir -p $(dir ../test)
-	# git clone https://github.com/google/benchmark.git $(gtestdir)/benchmark
-	# cmake -E make_directory "$(gtestdir)/benchmark/build"
-	# cmake -E chdir "$(gtestdir)/benchmark/build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release $(gtestdir)/benchmark/../
-	# cmake --build "$(gtestdir)/benchmark/build" --config Release
-
 .PHONY: test
 test: $(gtest) fclean
 	clang++ -std=c++11 \
@@ -104,7 +97,7 @@ cave: $(gtest) fclean
 benchflg = clang++ -std=c++11 -O2
 
 .PHONY: bench
-bench: $(gbench)
+bench:
 	$(benchflg) $(benchdir)/gbench.cpp \
 	-isystem $(gbench)/include \
 	-L$(gbench)/build/src -lbenchmark -lpthread \
@@ -113,7 +106,7 @@ bench: $(gbench)
 	./benchmark --benchmark_out_format=csv --benchmark_out=benchmark.csv
 
 .PHONY: stdbench
-stdbench: $(gbench)
+stdbench:
 	$(benchflg) $(benchdir)/gbench.cpp \
 	-isystem $(gbench)/include \
 	-L$(gbench)/build/src -lbenchmark -lpthread \

@@ -5,7 +5,6 @@
 
 #include <iomanip>
 #include <iostream>
-#include <time.h>
 
 namespace ft {
 
@@ -30,8 +29,8 @@ class Stopwatch {
   unsigned long stop() {
     if (!is_started()) return 0;
     unsigned long ms = get_ms();
-    std::cout << __activity_ << "/" << std::left << std::setw(7) << __range_
-              << ": " << std::right << std::setw(3) << ms << " ms" << std::endl;
+    std::cout << __activity_ << "/" << __range_ << ": " << ms << " ms"
+              << std::endl;
     clear();
     return ms;
   }

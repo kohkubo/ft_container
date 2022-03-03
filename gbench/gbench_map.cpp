@@ -25,4 +25,3 @@ static void BM_MapRemove(benchmark::State& state) {
 }
 BENCHMARK(BM_MapRemove)->Range(1, MAX_RANGE_SIZE);
 
-BENCHMARK_MAIN();

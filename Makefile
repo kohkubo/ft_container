@@ -76,12 +76,12 @@ test_std: $(gtest) fclean
 
 .PHONY: mytest
 mytest:
-	$(CXX) $(CXXFLAGS) -o mytest_exe gtest/testlib_main.cpp -I$(includes) -I$(gtestdir)
+	$(CXX) -Wall -Werror -Wextra -Wshadow -std=c++98 -o mytest_exe gtest/testlib_main.cpp -I$(includes) -I$(gtestdir)
 	./mytest_exe
 
 .PHONY: mytest_std
 mytest_std:
-	$(CXX) $(CXXFLAGS) -o mytest_std_exe gtest/testlib_main.cpp -DLIB=std -I$(includes) -I$(gtestdir)
+	$(CXX) -Wall -Werror -Wextra -Wshadow -std=c++98 -o mytest_std_exe gtest/testlib_main.cpp -DLIB=std -I$(includes) -I$(gtestdir)
 	./mytest_std_exe
 
 .PHONY: cave

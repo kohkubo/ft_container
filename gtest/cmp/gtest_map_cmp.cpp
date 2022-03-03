@@ -1,8 +1,4 @@
-// #ifdef ft42
-// #include <gtest/gtest.h>
-// #else
-// #include "mygtest.h"
-// #endif
+#include <gtest/gtest.h>
 
 #include <map>
 #include <random>

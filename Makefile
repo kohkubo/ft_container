@@ -106,4 +106,8 @@ stdbench: $(gbench)
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark
 	./benchmark --benchmark_out_format=csv --benchmark_out=benchmark_std.csv
 
+mybench:
+	$(CXX) $(CXXFLAGS) -o mybenchmark_exe mybenchmark/mybench.cpp -I$(includes) -O0
+	./mybenchmark_exe
+
 -include $(depends)

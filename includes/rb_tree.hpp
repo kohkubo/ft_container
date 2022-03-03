@@ -227,18 +227,20 @@ class __tree {
   value_compare      __comp_;
 
  public:
-  __tree()
-      : __size_(0), __comp_(value_compare()), __node_alloc_(__node_allocator()) {
+  __tree() {
+    __size_ = 0;
+    __comp_ = value_compare();
+    __node_alloc_ = __node_allocator();
     __end_node_           = __node_alloc_.allocate(1);
-    // __node_alloc_.construct(__end_node_, __node_value_type());
-    // __end_node_->__parent_ = NULL;
     __end_node_->__right_ = NULL;
     __end_node_->__left_  = NULL;
     __begin_node_         = __end_node_;
   }
   explicit __tree(const value_compare&    __comp,
-                  const allocator_type& alloc = allocator_type())
-      : __size_(0), __comp_(__comp), __node_alloc_(alloc) {
+                  const allocator_type& __alloc = allocator_type()) {
+    __size_ = 0;
+    __comp_ = __comp;
+    __node_alloc_ = __alloc;
     __end_node_           = __node_alloc_.allocate(1);
     __end_node_->__right_ = NULL;
     __end_node_->__left_  = NULL;
@@ -247,16 +249,20 @@ class __tree {
   template <class _InputIterator>
   __tree(_InputIterator __first, _InputIterator __last,
          const value_compare&    __comp  = value_compare(),
-         const allocator_type& __alloc = allocator_type())
-      : __size_(0), __comp_(__comp), __node_alloc_(__alloc) {
+         const allocator_type& __alloc = allocator_type()) {
+    __size_ = 0;
+    __comp_ = __comp;
+    __node_alloc_ = __alloc;
     __end_node_           = __node_alloc_.allocate(1);
     __end_node_->__right_ = NULL;
     __end_node_->__left_  = NULL;
     __begin_node_         = __end_node_;
     insert(__first, __last);
   }
-  __tree(const __tree& __x)
-      : __size_(0), __comp_(__x.__comp_), __node_alloc_(__x.__node_alloc_) {
+  __tree(const __tree& __x) {
+    __size_ = __x.__size_;
+    __comp_ = __x.__comp_;
+    __node_alloc_ = __x.__node_alloc_;
     __end_node_           = __node_alloc_.allocate(1);
     __end_node_->__right_ = NULL;
     __end_node_->__left_  = NULL;

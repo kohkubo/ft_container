@@ -5,7 +5,7 @@ CXXFLAGS = -Wall -Werror -Wextra -Wshadow -MMD -MP -std=c++98
 srcsdir = ./srcs
 includes = ./includes
 srcs_test =
-srcs = $(srcsdir)/main.cpp $(srcs_test)
+srcs = $(srcsdir)/main.cpp
 objs = $(srcs:.cpp=.o)
 depends = $(objs:.o=.d)
 

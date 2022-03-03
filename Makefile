@@ -54,6 +54,7 @@ $(gbench):
 	# cmake -E chdir "$(gtestdir)/benchmark/build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release $(gtestdir)/benchmark/../
 	# cmake --build "$(gtestdir)/benchmark/build" --config Release
 
+.PHONY: test
 test: $(gtest) fclean
 	clang++ -std=c++11 \
 	$(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
@@ -63,6 +64,7 @@ test: $(gtest) fclean
 	rm -rf tester
 	rm -rf tester.dSYM
 
+.PHONY: test_std
 test_std: $(gtest) fclean
 	clang++ -std=c++11 \
 	$(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
@@ -72,6 +74,7 @@ test_std: $(gtest) fclean
 	rm -rf tester
 	rm -rf tester.dSYM
 
+.PHONY: cave
 cave: $(gtest) fclean
 	clang++ -std=c++11 -O0 $(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
 	-DDEBUG \
@@ -90,6 +93,7 @@ cave: $(gtest) fclean
 
 benchflg = clang++ -std=c++11 -O2
 
+.PHONY: bench
 bench: $(gbench)
 	$(benchflg) $(benchdir)/gbench.cpp \
 	-isystem $(gbench)/include \
@@ -98,6 +102,7 @@ bench: $(gbench)
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark
 	./benchmark --benchmark_out_format=csv --benchmark_out=benchmark.csv
 
+.PHONY: stdbench
 stdbench: $(gbench)
 	$(benchflg) $(benchdir)/gbench.cpp \
 	-isystem $(gbench)/include \
@@ -106,6 +111,7 @@ stdbench: $(gbench)
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark
 	./benchmark --benchmark_out_format=csv --benchmark_out=benchmark_std.csv
 
+.PHONY: mybench
 mybench:
 	$(CXX) $(CXXFLAGS) -o mybenchmark_exe mybenchmark/mybench.cpp -I$(includes) -O0
 	./mybenchmark_exe

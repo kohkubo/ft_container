@@ -129,10 +129,17 @@ class vector {
     insert(pos, 1, value);
     return begin() + pos_index;
   }
+  size_type new_cap(size_type n){
+    size_type maxs = max_size();
+    if (n > maxs) __throw_length_error();
+    size_t cap = (capacity() + n) * 16;
+    if (cap > maxs) cap = maxs;
+    return cap;
+  }
   void insert(iterator pos, size_type n, const_reference value) {
     if (size() + n > capacity()) {
       size_t pos_index = pos - begin();
-      reserve(16 * (capacity() + n));
+      reserve(new_cap(n));
       pos = begin() + pos_index;
     }
     pointer pos_ptr = pos.base();
@@ -152,7 +159,7 @@ class vector {
     size_t pos_index = pos - begin();
     size_t n         = last - first;
     if (size() + n > capacity()) {
-      reserve(16 * (size() + n));
+      reserve(new_cap(n));
       pos = begin() + pos_index;
     }
     pointer pos_ptr = pos.base();

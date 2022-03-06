@@ -98,7 +98,12 @@ class map {
   // element access:
   // ===========================================================================
   mapped_type&   operator[](const key_type& k) {
-    return insert(value_type(k, mapped_type())).first->second;
+    iterator it = __tree_.find(k);
+    if (it != __tree_.end()) {
+      return it->second;
+    }
+    __tree_.insert(value_type(k, mapped_type()));
+    return __tree_.find(k)->second;
   };
   // ===========================================================================
   // iterators:

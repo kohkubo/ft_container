@@ -251,16 +251,12 @@ TEST(MapTest, MapOperate) {
   }
   for (int i = 0; i < size; ++i) {
     int key = std::rand() % size;
-    if (ft.count(key) == 1) {
-      ft[key] = 100;
-      std[key] = 100;
-    }
+    ft[key] = 100;
+    std[key] = 100;
   }
   for (int i = 0; i < size; ++i) {
     int key = std::rand() % size;
-    if (ft.count(key) == 1) {
-      EXPECT_EQ(ft[key], std[key]);
-    }
+    EXPECT_EQ(ft[key], std[key]);
   }
   for (ft::map<int, int>::iterator it = ft.begin(); it != ft.end(); ++it) {
     EXPECT_EQ(it->second, std.find(it->first)->second);

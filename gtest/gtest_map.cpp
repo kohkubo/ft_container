@@ -255,6 +255,7 @@ TEST(Map, Lookup) {
   int random[SIZE] = {0};
   std::srand(std::time(0));
   LIB::map<int, int> m;
+  EXPECT_EQ(m.find(0) == m.end(), true);
   for (int i = 0; i < SIZE; ++i) {
     int key = std::rand() % SIZE;
     random[i] = key;

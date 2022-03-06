@@ -387,7 +387,6 @@ class __tree {
   }
   const_iterator find(const key_type& __k) const {
     const_iterator __it = lower_bound(__k);
-    if (__it.base() == NULL) return end();
     if (__it != end() && !__comp_(__k, *__it)) {
       return __it;
     }

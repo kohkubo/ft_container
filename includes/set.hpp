@@ -76,7 +76,10 @@ class set {
   // ===========================================================================
   void                   clear() { __tree_.clear(); }
   pair<iterator, bool>   insert(const value_type& value) {
-    return __tree_.insert(value);
+    pair<iterator, bool> ret = __tree_.insert(value);
+    if (ret.first.base() == NULL)
+      ret.first = __tree_.find(value);
+    return ret;
   }
   iterator insert(iterator hint, const value_type& value) {
     iterator it = __tree_.insert(hint, value);

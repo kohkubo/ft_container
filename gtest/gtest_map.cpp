@@ -139,6 +139,7 @@ TEST(Map, Modifiers) {
     int key = std::rand() % SIZE;
     LIB::pair<LIB::map<int, int>::iterator, bool> ret =
         m.insert(LIB::make_pair(key, key));
+    EXPECT_EQ(ret.first->first, key);
     if (ret.second == true) {
       random[i] = key;
     }

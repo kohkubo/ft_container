@@ -126,9 +126,17 @@ class map {
   // modifiers:
   // ===========================================================================
   void                   clear() { __tree_.clear(); };
-  pair<iterator, bool> insert(const value_type& v) { return __tree_.insert(v); }
+  pair<iterator, bool> insert(const value_type& v) {
+    pair <iterator, bool> p = __tree_.insert(v);
+    if (p.first.base() == NULL)
+      p.first = __tree_.find(v.first);
+    return p;
+  }
   iterator             insert(iterator position, const value_type& v) {
-    return __tree_.insert(position, v);
+    iterator it = __tree_.insert(position, v);
+    if (it.base() == NULL)
+      return __tree_.find(v.first);
+    return it;
   }
   template <class InputIterator>
   void insert(InputIterator first, InputIterator last) {

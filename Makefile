@@ -18,12 +18,18 @@ $(NAME): $(objs)
 clean:
 	$(RM) -rf *.dSYM
 	$(RM) -rf tester
-	$(RM) -rf $(objs) $(depends)
 	$(RM) -rf tester
 	$(RM) -rf *.gcda
 	$(RM) -rf *.gcno
 	$(RM) -rf *.info
 	$(RM) -rf tester.dSYM
+	$(RM) -rf *_exe
+	$(RM) -rf benchmark
+	$(RM) -rf *.log
+	$(RM) -rf *.d
+	$(RM) -rf *.o
+	$(RM) -rf a.out
+	$(RM) -rf *.csv
 
 .PHONY: fclean
 fclean: clean
@@ -31,10 +37,6 @@ fclean: clean
 
 .PHONY: re
 re: fclean all
-
-.PHONY: debug
-debug: CXXFLAGS += -g -fsanitize=integer -fsanitize=address -DDEBUG
-debug: re
 
 gtestdir	=	./test
 gtest		=	$(gtestdir)/gtest $(gtestdir)/googletest-release-1.11.0
@@ -58,8 +60,6 @@ test: $(gtest) fclean
 	-DDEBUG -g -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread -o tester
 	./tester
-	$(RM) -rf tester
-	$(RM) -rf tester.dSYM
 
 .PHONY: test_std
 test_std: $(gtest) fclean
@@ -68,8 +68,6 @@ test_std: $(gtest) fclean
 	-DLIB=std -g -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread -o tester
 	./tester
-	$(RM) -rf tester
-	$(RM) -rf tester.dSYM
 
 .PHONY: mytest
 mytest:
@@ -109,8 +107,8 @@ bench:
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark
 	./benchmark --benchmark_out_format=csv --benchmark_out=benchmark.csv
 
-.PHONY: stdbench
-stdbench:
+.PHONY: bench_std
+bench_std:
 	$(benchflg) $(benchdir)/gbench.cpp \
 	-isystem $(gbench)/include \
 	-L$(gbench)/build/src -lbenchmark -lpthread \

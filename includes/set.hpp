@@ -79,7 +79,11 @@ class set {
     return __tree_.insert(value);
   }
   iterator insert(iterator hint, const value_type& value) {
-    return __tree_.insert(hint, value);
+    iterator it = __tree_.insert(hint, value);
+    if (it.base() == NULL) {
+      return __tree_.find(value);
+    }
+    return it;
   }
   template <class InputIterator>
   void insert(InputIterator first, InputIterator last) {

@@ -117,20 +117,10 @@ TEST(Set, Modifiers)
   LIB::set<int, std::greater<int> >::iterator it2 = s2.begin();
   for (int i = 0; i < SIZE; ++i) {
     int key = std::rand() % SIZE;
-    if (s2.find(key) != s2.end()) {
-      it2 = s2.insert(it2, int(key));
-      EXPECT_EQ(*it2, key);
-      ++it2;
-      random2[i] = key;
-    }
-  }
-  std::sort(random2, random2 + SIZE, std::greater<int>());
-  it2 = s2.begin();
-  if (it2 != s2.end()) {
-    for (int i = 0; i < SIZE; ++i) {
-      EXPECT_EQ(*it2, random2[i]);
-      ++it2;
-    }
+    it2 = s2.insert(it2, int(key));
+    EXPECT_EQ(*it2, key);
+    ++it2;
+    random2[i] = key;
   }
 
   // iterator insert(InputIterator first, InputIterator last );

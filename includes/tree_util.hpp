@@ -23,6 +23,16 @@ inline bool __tree_is_left_child(__node_pointer __x) {
 }
 
 template <class __node_pointer>
+inline bool __tree_is_right_child(__node_pointer __x) {
+  return __x->__parent_->__right_ == __x;
+}
+
+template <class __node_pointer>
+inline bool __tree_is_red(__node_pointer __x) {
+  return !__x->__is_black_;
+}
+
+template <class __node_pointer>
 inline __node_pointer __tree_min(__node_pointer __x) {
   while (__x->__left_ != NULL) __x = __x->__left_;
   return __x;
@@ -89,6 +99,31 @@ void __tree_right_rotate(__node_pointer __x) {
 }
 
 template <class __node_pointer>
+inline bool __has_left_child(__node_pointer __x) {
+  return __x->__left_ != NULL;
+}
+
+template <class __node_pointer>
+inline bool __has_two_child(__node_pointer __x) {
+  return __x->__left_ != NULL && __x->__right_ != NULL;
+}
+
+
+template <class __node_pointer>
+inline bool __has_only_black_child(__node_pointer __x) {
+  return __tree_is_black(__x->__left_) && __tree_is_black(__x->__right_);
+}
+
+template <class __node_pointer>
+inline __node_pointer __tree_parent_child(__node_pointer __x) {
+  if (__tree_is_left_child(__x)) {
+    return __x->__parent_->__right_;
+  } else {
+    return __x->__parent_->__left_;
+  }
+}
+
+template <class __node_pointer>
 void print_node(__node_pointer __nd) {
   if (__nd == NULL) {
     std::cout << "NULL" << std::endl;
@@ -127,6 +162,9 @@ void print_tree_node(__node_pointer __nd) {
   print_tree(__nd, 0);
 }
 
+/*
+色のルールを下から揃えて行く。形のルールをその後当てはめる。
+*/
 template <class __node_pointer>
 void __tree_balance_after_insert(__node_pointer __root, __node_pointer __x) {
   __x->__is_black_ = __x == __root;
@@ -253,210 +291,129 @@ inline bool __tree_is_black(__node_pointer __x) {
   return __x == NULL || __x->__is_black_;
 }
 
+#define __is_root(x) (x == __root)
+
+/*
+維持しないといけないルール
+消去対象の左は、tree_prev
+消去対象の右は、tree_next
+
+後は、色を揃えていく作業
+*/
 template <class __node_pointer>
 void __tree_remove(__node_pointer __root, __node_pointer __z) {
   // zは消去対象ノード
-  __node_pointer __y;
-  if (__z->__left_ == NULL || __z->__right_ == NULL) {
-    // zが最小値の場合
-    // 消去対象ノードが、子が1つ、子がない場合
-    //      z      z         z
-    //    c          c
-    __y = __z;
-    // yは消去対象ノード
-  } else {
-    // zが最小値でない場合、最小値の次のノードをyとする
-    // zが、子が2つの場合
-    // yはzノードの次のノード
-    //      z
-    //    c   c
-    // zが子が2つの場合
-    // yはzノードの最小のノード
-    __y = __tree_next(__z);
-  }
-
+  // zが最大値の場合は、yはendノードになる
+  __node_pointer __y = __has_two_child(__z) ? __tree_next(__z) : __z;
   // xはyのおそらくは、NULLのシングルチャイルド
   // wはおそらく、NULLのおじノードです。wは最終的には、xの兄弟になります。
   // xをyの親にリンクし、wを見つけます
-
-  __node_pointer __x;
-  if (__y->__left_ != NULL) {
-    // zが自分が最小値で、かつ、左に子がある場合、それをxとする(必ずしも前の子になるわけではない)
-    //      z
-    //    c
-    //     gc
-    // この形のパターンのとき、gcをxとする
-    __x = __y->__left_;
-  } else {
-    // それ以外のパターンではxはyの右ノード
-    __x = __y->__right_;
-  }
-
+  __node_pointer __x = __has_left_child(__y) ? __y->__left_ : __y->__right_;
   if (__x != NULL) {
-    // xがNULLではない場合は、xの親をyの親にする
-    //        y       y
-    //      x           x
     __x->__parent_ = __y->__parent_;
   }
-
-  __node_pointer __w = NULL;
-
-  // ここからyの上の話。
-  // yの切り離し処理を行う
+  __node_pointer __w;
   if (__tree_is_left_child(__y)) {
-    // yが左の子の場合、yが親から切り離される
-    // 親は leftにxを持つように変更する
-
-    //          P  |         P      親側から見て、子を変更する
-    //        y    |       x        yが切り離されて、xになる
     __y->__parent_->__left_ = __x;
-
     if (__y != __root) {
-      // もし、yがルートではないなら
-      // wは、yの親の左ノードである。
-      //            P      |        P     wに入れる
-      //          y        |          w
       __w = __y->__parent_->__right_;
     } else {
-      // yがrootなら, rootをxに変更する
-      // このとき、wはNULLです。
       __root = __x;
+      __w    = NULL;
     }
   } else {
-    // yが右側の場合
-    //        P
-    //          y
-
-    // yをに変える
-    //       P
-    //         x
-    //
-    //    w に Pの左を入れる
     __y->__parent_->__right_ = __x;
-    // yが右の子の場合、rootになることはないです。
     __w                      = __y->__parent_->__left_;
   }
-
   bool __removed_black = __y->__is_black_;
 
-  // zを切り離し、yに置き換える
   if (__y != __z) {
-    // yがzでない場合,つまり、zが現状最小のノードで会った場合
-    // yの親はzの親である。
     __y->__parent_ = __z->__parent_;
     if (__tree_is_left_child(__z)) {
-      // zが左ノードだった場合、zの親のleftにyを入れる
       __y->__parent_->__left_ = __y;
     } else {
-      // zが右ノードだった場合、zの親のrightにyを入れる
       __y->__parent_->__right_ = __y;
     }
-    // yはzと入れ替えされる
     __y->__left_            = __z->__left_;
     __y->__left_->__parent_ = __y;
     __y->__right_           = __z->__right_;
-
     if (__y->__right_ != NULL) {
       __y->__right_->__parent_ = __y;
     }
-
     __y->__is_black_ = __z->__is_black_;
-    if (__root == __z) {
+    if (__is_root(__z)) {
       __root = __y;
     }
   }
-  // yが黒で勝つ、 ルートがnullでないなら、
-  // つまり、赤を消去した場合、または、最後のノードを消去した場合にはrebalanceを行う必要がないです。
-  if (__removed_black && __root != NULL) {
-    if (__x != NULL) {
-      // xがnullでないなら、xは黒ノードにする
-      __x->__is_black_ = true;
-    } else {
-      while (true) {
-        if (!__tree_is_left_child(__w)) {
-          // wが右ノードの場合
-          if (!__w->__is_black_) {
-            // wが赤の場合
-            // wを黒にし、親を赤にする
-            __w->__is_black_            = true;
-            __w->__parent_->__is_black_ = false;
-            // wの親の親の位置にwが来る
-            __tree_left_rotate(__w->__parent_);
-            // ルートがwの左なら, wはルートにする
-            if (__root == __w->__left_) {
-              // rotateする前、wがルートの親を保つ場合、はルートになる
-              __root = __w;
-            }
-            // wの左の右がwにする
-            // くの字の下のところがwになる
-            // yがルートになることはないです。
-            __w = __w->__left_->__right_;
-          }
-          if (__tree_is_black(__w->__left_) && __tree_is_black(__w->__right_)) {
-            // wの子が全部黒なら、wを赤にする
-            __w->__is_black_ = false;
-            __x              = __w->__parent_;
-            if (__x == __root || !__x->__is_black_) {
-              // xがルート、または、xが赤なら、xを黒にする
-              __x->__is_black_ = true;
-              break;
-            }
-            if (__tree_is_left_child(__x)) {
-              __w = __x->__parent_->__right_;
-            } else {
-              __w = __x->__parent_->__left_;
-            }
-          } else {
-            // wが赤の子を持つなら
-            if (__tree_is_black(__w->__right_)) {
-              // wの右が黒なら
-              __w->__left_->__is_black_ = true;
-              __w->__is_black_          = false;
-              __tree_right_rotate(__w);
-              __w = __w->__parent_;
-            }
-            __w->__is_black_            = __w->__parent_->__is_black_;
-            __w->__parent_->__is_black_ = true;
-            __w->__right_->__is_black_  = true;
-            __tree_left_rotate(__w->__parent_);
-            break;
-          }
-        } else {
-          if (!__w->__is_black_) {
-            __w->__is_black_            = true;
-            __w->__parent_->__is_black_ = false;
-            __tree_right_rotate(__w->__parent_);
-            if (__root == __w->__right_) {
-              __root = __w;
-            }
-            __w = __w->__right_->__left_;
-          }
-          if (__tree_is_black(__w->__left_) && __tree_is_black(__w->__right_)) {
-            __w->__is_black_ = false;
-            __x              = __w->__parent_;
-            if (!__x->__is_black_ || __x == __root) {
-              __x->__is_black_ = true;
-              break;
-            }
-            if (__tree_is_left_child(__x)) {
-              __w = __x->__parent_->__right_;
-            } else {
-              __w = __x->__parent_->__left_;
-            }
-          } else {
-            if (__tree_is_black(__w->__left_)) {
-              __w->__right_->__is_black_ = true;
-              __w->__is_black_           = false;
-              __tree_left_rotate(__w);
-              __w = __w->__parent_;
-            }
-            __w->__is_black_            = __w->__parent_->__is_black_;
-            __w->__parent_->__is_black_ = true;
-            __w->__left_->__is_black_   = true;
-            __tree_right_rotate(__w->__parent_);
-            break;
-          }
+  if (__removed_black == false || __root == NULL) {
+    return;
+  }
+  if (__x != NULL) {
+    __x->__is_black_ = true;
+    return;
+  }
+  while (true) {
+    if (__tree_is_right_child(__w)) {
+      if (__tree_is_red(__w)) {
+        __w->__is_black_            = true;
+        __w->__parent_->__is_black_ = false;
+        __tree_left_rotate(__w->__parent_);
+        if (__is_root(__w->__left_)) {
+          __root = __w;
         }
+        __w = __w->__left_->__right_;
+      }
+      if (__has_only_black_child(__w)) {
+        __w->__is_black_ = false;
+        __x              = __w->__parent_;
+        if (__is_root(__x) || __tree_is_red(__x)) {
+          __x->__is_black_ = true;
+          return;
+        }
+        __w = __tree_parent_child(__x);
+      } else {
+        if (__tree_is_black(__w->__right_)) {
+          __w->__left_->__is_black_ = true;
+          __w->__is_black_          = false;
+          __tree_right_rotate(__w);
+          __w = __w->__parent_;
+        }
+        __w->__is_black_            = __w->__parent_->__is_black_;
+        __w->__parent_->__is_black_ = true;
+        __w->__right_->__is_black_  = true;
+        __tree_left_rotate(__w->__parent_);
+        return;
+      }
+    } else {
+      if (__tree_is_red(__w)) {
+        __w->__is_black_            = true;
+        __w->__parent_->__is_black_ = false;
+        __tree_right_rotate(__w->__parent_);
+        if (__is_root(__w->__right_)) {
+          __root = __w;
+        }
+        __w = __w->__right_->__left_;
+      }
+      if (__has_only_black_child(__w)) {
+        __w->__is_black_ = false;
+        __x              = __w->__parent_;
+        if (__tree_is_red(__x) || __is_root(__x)) {
+          __x->__is_black_ = true;
+          return;
+        }
+        __w = __tree_parent_child(__x);
+      } else {
+        if (__tree_is_black(__w->__left_)) {
+          __w->__right_->__is_black_ = true;
+          __w->__is_black_           = false;
+          __tree_left_rotate(__w);
+          __w = __w->__parent_;
+        }
+        __w->__is_black_            = __w->__parent_->__is_black_;
+        __w->__parent_->__is_black_ = true;
+        __w->__left_->__is_black_   = true;
+        __tree_right_rotate(__w->__parent_);
+        return;
       }
     }
   }

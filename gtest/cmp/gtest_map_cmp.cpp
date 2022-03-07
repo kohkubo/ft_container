@@ -154,7 +154,6 @@ TEST(MapTest, MapRandomInsertAndEraseAndClear) {
         std.insert(std.begin(), std::make_pair(key, val));
   }
   if (std::rand() % 4 == 0) {
-    std::cout << "clear" << std::endl;
     ft.clear();
     std.clear();
     ft.clear();
@@ -184,7 +183,6 @@ TEST(MapTest, MapRandomInsertAndEraseAndClear) {
     EXPECT_EQ(ft_it->second, std_it->second);
   }
   if (std::rand() % 4 == 0) {
-    std::cout << "clear" << std::endl;
     ft.clear();
     std.clear();
     ft.clear();
@@ -212,7 +210,6 @@ TEST(MapTest, MapRandomInsertAndEraseAndClear) {
       std::swap(key, key2);
     }
     if (ft.count(key) + ft.count(key2) == 2) {
-      std::cout << "key: " << key << " key2: " << key2 << std::endl;
       ft::map<int, int>::iterator  ft_ret  = ft.find(key);
       std::map<int, int>::iterator std_ret = std.find(key);
       ft_ret                               = ft.erase(ft_ret, ft.find(key2));

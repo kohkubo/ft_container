@@ -36,7 +36,7 @@ static void BM_VectorReserve(benchmark::State& state) {
 BENCHMARK(BM_VectorReserve)->Range(1, MAX_RANGE_SIZE);
 
 static void BM_VectorInsert_from_begin(benchmark::State& state) {
-  ft::vector<int> v(1000);
+  USE_LIB::vector<int> v(1000);
   for (auto _ : state) {
     v.insert(v.begin(), state.range(0), 100);
   }
@@ -44,15 +44,38 @@ static void BM_VectorInsert_from_begin(benchmark::State& state) {
 BENCHMARK(BM_VectorInsert_from_begin)->Range(1, MAX_RANGE_SIZE);
 
 static void BM_VectorInsert_from_end(benchmark::State& state) {
-  ft::vector<int> v(1000);
+  USE_LIB::vector<int> v(1000);
   for (auto _ : state) {
     v.insert(v.end(), state.range(0), 100);
   }
 }
 BENCHMARK(BM_VectorInsert_from_end)->Range(1, MAX_RANGE_SIZE);
 
+#include <sstream>
+
+static void BM_VectorInsert_input_iterator(benchmark::State& state) {
+  USE_LIB::vector<int> v(1000);
+  std::stringstream ss;
+  for (int i = 0; i < state.range(0); ++i) ss << i << " ";
+  std::istream_iterator<int> ii(ss);
+  std::istream_iterator<int> eos;
+  for (auto _ : state) {
+    v.insert(v.begin(), ii, eos);
+  }
+}
+BENCHMARK(BM_VectorInsert_input_iterator)->Range(1, MAX_RANGE_SIZE);
+
+static void BM_VectorInsert_forward_iterator(benchmark::State& state) {
+  USE_LIB::vector<int> v(1000);
+  USE_LIB::vector<int> v2(state.range(0));
+  for (auto _ : state) {
+    v.insert(v.begin(), v2.begin(), v2.end());
+  }
+}
+BENCHMARK(BM_VectorInsert_forward_iterator)->Range(1, MAX_RANGE_SIZE);
+
 static void BM_VectorAssign(benchmark::State& state) {
-  ft::vector<int> v(1000);
+  USE_LIB::vector<int> v(1000);
   for (auto _ : state) {
     v.assign(static_cast<size_t>(state.range(0)), 100);
   }

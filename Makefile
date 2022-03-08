@@ -61,12 +61,12 @@ test_compile = clang++ -std=c++11 \
 .PHONY: test
 test: $(gtest) fclean
 	$(test_compile)
-	./tester
+	./tester # --gtest_filter=Vector.other
 
 .PHONY: test_std
 test_std: $(gtest) fclean
 	$(test_compile) -DLIB=std
-	./tester
+	./tester # --gtest_filter=Vector.other
 
 mytest_compile = $(CXX) -Wall -Werror -Wextra -Wshadow -std=c++98 gtest/testlib_main.cpp -I$(includes) -I$(gtestdir)
 
@@ -83,7 +83,6 @@ mytest_std:
 .PHONY: cave
 cave: $(gtest) fclean
 	clang++ -std=c++11 -O0 $(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
-	-DDEBUG \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread -o tester -fprofile-arcs -ftest-coverage
 	./tester
 	lcov -c -b . -d . -o cov_test.info
@@ -108,14 +107,16 @@ bench:
 	$(benchflg) \
 	$(benchflg2) \
 	-DUSE_LIB=ft
-	./benchmark --benchmark_out_format=csv --benchmark_out=benchmark.csv
+	./benchmark \ #--benchmark_filter=BM_VectorInsert_input_iterator \
+	--benchmark_out_format=csv --benchmark_out=benchmark.csv
 
 .PHONY: bench_std
 bench_std:
 	$(benchflg) \
 	$(benchflg2) \
 	-DUSE_LIB=std
-	./benchmark --benchmark_out_format=csv --benchmark_out=benchmark_std.csv
+	./benchmark \ #--benchmark_filter=BM_VectorInsert_input_iterator \
+	--benchmark_out_format=csv --benchmark_out=benchmark_std.csv
 
 mybenchflg = @$(CXX) $(CXXFLAGS) -o mybenchmark_exe mybenchmark/mybench.cpp -I$(includes) -O0
 

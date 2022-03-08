@@ -107,16 +107,18 @@ bench:
 	$(benchflg) \
 	$(benchflg2) \
 	-DUSE_LIB=ft
-	./benchmark \ #--benchmark_filter=BM_VectorInsert_input_iterator \
-	--benchmark_out_format=csv --benchmark_out=benchmark.csv
+	./benchmark \
+	--benchmark_out_format=csv \
+	--benchmark_out=benchmark.csv # --benchmark_filter=BM_VectorInsert_input_iterator
 
 .PHONY: bench_std
 bench_std:
 	$(benchflg) \
 	$(benchflg2) \
 	-DUSE_LIB=std
-	./benchmark \ #--benchmark_filter=BM_VectorInsert_input_iterator \
-	--benchmark_out_format=csv --benchmark_out=benchmark_std.csv
+	./benchmark \
+	--benchmark_out_format=csv \
+	--benchmark_out=benchmark_std.csv # --benchmark_filter=BM_VectorInsert_input_iterator
 
 mybenchflg = @$(CXX) $(CXXFLAGS) -o mybenchmark_exe mybenchmark/mybench.cpp -I$(includes) -O0
 

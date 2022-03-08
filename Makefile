@@ -53,30 +53,31 @@ $(gtest):
 	python googletest-release-1.11.0/googletest/scripts/fuse_gtest_files.py $(gtestdir)
 	mv googletest-release-1.11.0 $(gtestdir)
 
+test_compile = clang++ -std=c++11 \
+	$(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
+	-g -fsanitize=address -fsanitize=undefined -fsanitize=leak \
+	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread -o tester
+
 .PHONY: test
 test: $(gtest) fclean
-	clang++ -std=c++11 \
-	$(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
-	-DDEBUG -g -fsanitize=address -fsanitize=undefined -fsanitize=leak \
-	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread -o tester
+	$(test_compile)
 	./tester
 
 .PHONY: test_std
 test_std: $(gtest) fclean
-	clang++ -std=c++11 \
-	$(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
-	-DLIB=std -g -fsanitize=address -fsanitize=undefined -fsanitize=leak \
-	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread -o tester
+	$(test_compile) -DLIB=std
 	./tester
+
+mytest_compile = $(CXX) -Wall -Werror -Wextra -Wshadow -std=c++98 gtest/testlib_main.cpp -I$(includes) -I$(gtestdir)
 
 .PHONY: mytest
 mytest:
-	$(CXX) -Wall -Werror -Wextra -Wshadow -std=c++98 -o mytest_exe gtest/testlib_main.cpp -I$(includes) -I$(gtestdir)
+	$(mytest_compile) -o mytest_exe
 	./mytest_exe
 
 .PHONY: mytest_std
 mytest_std:
-	$(CXX) -Wall -Werror -Wextra -Wshadow -std=c++98 -o mytest_std_exe gtest/testlib_main.cpp -DLIB=std -I$(includes) -I$(gtestdir)
+	$(mytest_compile) -DLIB=std -o mytest_std_exe
 	./mytest_std_exe
 
 .PHONY: cave
@@ -97,33 +98,35 @@ cave: $(gtest) fclean
 	open cov_test/index-sort-f.html
 
 benchflg = clang++ -std=c++11 -O2
+benchflg2 = $(benchdir)/gbench.cpp \
+	-isystem $(gbench)/include \
+	-L$(gbench)/build/src -lbenchmark -lpthread \
+	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark
 
 .PHONY: bench
 bench:
-	$(benchflg) $(benchdir)/gbench.cpp \
-	-isystem $(gbench)/include \
-	-L$(gbench)/build/src -lbenchmark -lpthread \
-	-DUSE_LIB=ft \
-	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark
+	$(benchflg) \
+	$(benchflg2) \
+	-DUSE_LIB=ft
 	./benchmark --benchmark_out_format=csv --benchmark_out=benchmark.csv
 
 .PHONY: bench_std
 bench_std:
-	$(benchflg) $(benchdir)/gbench.cpp \
-	-isystem $(gbench)/include \
-	-L$(gbench)/build/src -lbenchmark -lpthread \
-	-DUSE_LIB=std \
-	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -I$(benchdir) -o benchmark
+	$(benchflg) \
+	$(benchflg2) \
+	-DUSE_LIB=std
 	./benchmark --benchmark_out_format=csv --benchmark_out=benchmark_std.csv
+
+mybenchflg = @$(CXX) $(CXXFLAGS) -o mybenchmark_exe mybenchmark/mybench.cpp -I$(includes) -O0
 
 .PHONY: mybench
 mybench:
-	@$(CXX) $(CXXFLAGS) -o mybenchmark_exe mybenchmark/mybench.cpp -I$(includes) -O0
+	$(mybenchflg)
 	@./mybenchmark_exe
 
 .PHONY: mybench_std
 mybench_std:
-	@$(CXX) $(CXXFLAGS) -o mybenchmark_exe mybenchmark/mybench.cpp -I$(includes) -O0 -DLIB=std
+	$(mybenchflg) -DLIB=std
 	@./mybenchmark_exe
 
 -include $(depends)

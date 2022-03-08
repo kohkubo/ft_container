@@ -52,7 +52,6 @@ TEST(Vector, Constructor) {
   // );
   LIB::vector<int> v4(v3.begin(), v3.end(), (std::allocator<int>()));
   EXPECT_EQ(v4.size(), 10);
-  EXPECT_EQ(v4.capacity(), 10);
   EXPECT_EQ(v4.empty(), false);
   for (int i = 0; i < 10; ++i) {
     EXPECT_EQ(v4[i], 0);

@@ -42,9 +42,9 @@ class __tree_node {
   // ===========================================================================
   // construct/copy/destroy:
   // ===========================================================================
-  explicit __tree_node(const __node_value_type& __x, pointer __p = NULL)
+  explicit __tree_node(const __node_value_type& __x)
       : __value_(__x),
-        __parent_(__p),
+        __parent_(NULL),
         __right_(NULL),
         __left_(NULL),
         __is_black_(false) {}
@@ -80,9 +80,9 @@ class __tree_node<pair<const _Key, _Tp> > {
   // ===========================================================================
   // construct/copy/destroy:
   // ===========================================================================
-  explicit __tree_node(const __node_value_type& __x, pointer __p = NULL)
+  explicit __tree_node(const __node_value_type& __x)
       : __value_(__x),
-        __parent_(__p),
+        __parent_(NULL),
         __right_(NULL),
         __left_(NULL),
         __is_black_(false) {}
@@ -562,7 +562,8 @@ class __tree {
   inline __node_pointer __create_node(const value_type&     __v,
                                       const __node_pointer& __parent) {
     __node_pointer __new_node = __node_alloc_.allocate(1);
-    __node_alloc_.construct(__new_node, __v, __parent);
+    __node_alloc_.construct(__new_node, __v);
+    __new_node->__parent_ = __parent;
     __new_node->__left_  = NULL;
     __new_node->__right_ = NULL;
     return __new_node;

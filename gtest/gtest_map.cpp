@@ -4,6 +4,9 @@
 #include "ft_test.hpp"
 #endif
 #include <random>
+#include <stdlib.h>
+#include <time.h>
+#include <algorithm>
 
 #include "map.hpp"
 #include <map>
@@ -133,7 +136,7 @@ TEST(Map, Iterator) {
 TEST(Map, Modifiers) {
   // LIB::pair<iterator, bool> insert( const value_type& value );
   int random[SIZE] = {0};
-  std::srand(std::time(0));
+  srand(time(0));
   LIB::map<int, int> m;
   for (int i = 0; i < SIZE; ++i) {
     int key = std::rand() % SIZE;
@@ -155,7 +158,7 @@ TEST(Map, Modifiers) {
   }
   // iterator insert( iterator position, const value_type& value );
   int random2[SIZE] = {0};
-  std::srand(std::time(0));
+  srand(time(0));
   LIB::map<int, int, std::greater<int> > m2;
   LIB::map<int, int>::iterator it2 = m2.begin();
   for (int i = 0; i < SIZE; ++i) {
@@ -254,7 +257,7 @@ TEST(Map, Modifiers) {
 // lookup
 TEST(Map, Lookup) {
   int random[SIZE] = {0};
-  std::srand(std::time(0));
+  srand(time(0));
   LIB::map<int, int> m;
   EXPECT_EQ(m.find(0) == m.end(), true);
   for (int i = 0; i < SIZE; ++i) {
@@ -284,7 +287,7 @@ TEST(Map, Lookup) {
 // non-member functions
 TEST(Map, NonMemberFunctions) {
   int random[SIZE] = {0};
-  std::srand(std::time(0));
+  srand(time(0));
   LIB::map<int, int> m;
   for (int i = 0; i < SIZE; ++i) {
     int key = std::rand() % SIZE;

@@ -16,8 +16,8 @@ $(NAME): $(objs)
 
 .PHONY: clean
 clean:
+	$(RM) $(objs) $(objs) $(NAME)
 	$(RM) -rf *.dSYM
-	$(RM) -rf tester
 	$(RM) -rf tester
 	$(RM) -rf *.gcda
 	$(RM) -rf *.gcno

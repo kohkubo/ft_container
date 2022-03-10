@@ -398,7 +398,7 @@ TEST(Vector, Type) {
 
 
 void print_vector(const LIB::vector<int>& v) {
-  for (int i = 0; i < v.size(); ++i) {
+  for (size_t i = 0; i < v.size(); ++i) {
     std::cout << v[i] << " ";
   }
   std::cout << std::endl;
@@ -407,21 +407,21 @@ void print_vector(const LIB::vector<int>& v) {
 #include <sstream>
 
 TEST(Vector, insert) {
-  int size = 4194304;
+  size_t size = 4194304;
   // random access_iterator
   LIB::vector<int> v1;
   LIB::vector<int> v2;
-  for (int i = 0; i < size; ++i) {
-    v2.push_back(i);
+  for (size_t i = 0; i < size; ++i) {
+    v2.push_back((int)i);
   }
   v1.insert(v1.begin(), v2.begin(), v2.end());
   EXPECT_EQ(v1.size(), size);
-  for (int i = 0; i < size; ++i) {
-    EXPECT_EQ(v1[i], i);
+  for (size_t i = 0; i < size; ++i) {
+    EXPECT_EQ(v1[i], (int)i);
   }
   // input iterator
   std::stringstream ss;
-  for (int i = 0; i < size; ++i) {
+  for (size_t i = 0; i < size; ++i) {
     ss << i << " ";
   }
   std::istream_iterator<int> istream_iter(ss);
@@ -431,12 +431,12 @@ TEST(Vector, insert) {
   // begin
   v.insert(v.begin(), istream_iter, istream_iter_end);
   EXPECT_EQ(v.size(), size);
-  for (int i = 0; i < size; ++i) {
-    EXPECT_EQ(v[i], i);
+  for (size_t i = 0; i < size; ++i) {
+    EXPECT_EQ(v[i], (int)i);
   }
    // end
   std::stringstream ss2;
-  for (int i = 0; i < size; ++i) {
+  for (size_t i = 0; i < size; ++i) {
     ss2 << i + size << " ";
   }
   std::istream_iterator<int> istream_iter2(ss2);
@@ -444,54 +444,54 @@ TEST(Vector, insert) {
 
   v.insert(v.end(), istream_iter2, istream_iter_end2);
   EXPECT_EQ(v.size(), size * 2);
-  for (int i = 0; i < size * 2; ++i) {
-    EXPECT_EQ(v[i], i);
+  for (size_t i = 0; i < size * 2; ++i) {
+    EXPECT_EQ(v[i], (int)i);
   }
 }
 
 TEST(Vector, other) {
-  int size = 10;
-  int base_size = 10;
+  size_t size = 10;
+  size_t base_size = 10;
   LIB::vector<int> v3(base_size);
   std::stringstream ss3;
-  for (int i = 0; i < size; ++i) {
+  for (size_t i = 0; i < size; ++i) {
     ss3 << i << " ";
   }
   std::istream_iterator<int> ii(ss3);
   std::istream_iterator<int> eos;
   v3.insert(v3.begin(), ii, eos);
   EXPECT_EQ(v3.size(), size + base_size);
-  for (int i = 0; i < base_size; ++i) {
-    EXPECT_EQ(v3[i], i);
+  for (size_t i = 0; i < base_size; ++i) {
+    EXPECT_EQ(v3[i], (int)i);
   }
   print_vector(v3);
   std::stringstream ss4;
-  for (int i = 0; i < size; ++i) {
+  for (size_t i = 0; i < size; ++i) {
     ss4 << i << " ";
   }
   std::istream_iterator<int> ii2(ss4);
   std::istream_iterator<int> eos2;
   LIB::vector<int> v4(ii2, eos2);
   EXPECT_EQ(v4.size(), size);
-  for (int i = 0; i < size; ++i) {
-    EXPECT_EQ(v4[i], i);
+  for (size_t i = 0; i < size; ++i) {
+    EXPECT_EQ(v4[i], (int)i);
   }
 }
 
 TEST(Vector, insert2) {
-  int size = 10;
+  size_t size = 10;
   LIB::vector<int> v1(size);
   v1.insert(v1.begin(), size, 1);
   v1.insert(v1.end(), size, 2);
   EXPECT_EQ(v1.size(), size * 3);
-  for (int i = 0; i < size; ++i) {
+  for (size_t i = 0; i < size; ++i) {
     EXPECT_EQ(v1[i], 1);
   }
 }
 
 TEST(Vector, insert3) {
-  int size = 10;
-  LIB::vector<int> v1(size);
+  size_t size = 10;
+  LIB::vector<int> v1((int)size);
   v1.insert(v1.begin(), 1);
   v1.insert(v1.end(), 1);
   EXPECT_EQ(v1.size(), size + 2);

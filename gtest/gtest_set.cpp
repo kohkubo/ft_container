@@ -102,7 +102,7 @@ TEST(Set, Iterator)
 TEST(Set, Modifiers)
 {
   int random[SIZE] = {0};
-  std::srand(std::time(0));
+  srand(time(0));
   LIB::set<int> s;
   for (int i = 0; i < SIZE; ++i) {
     int key = std::rand() % SIZE;

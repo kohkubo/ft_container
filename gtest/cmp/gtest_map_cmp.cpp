@@ -131,7 +131,7 @@ TEST(MapTest, MapReverseIterator) {
 
 TEST(MapTest, MapRandomInsertAndEraseAndClear) {
   int size = 100000;
-  std::srand(std::time(0));
+  srand(time(0));
   ft::map<int, int>  ft;
   std::map<int, int> std;
   // insert(const value_type& __x)
@@ -236,7 +236,7 @@ TEST(MapTest, MapOperate) {
   ft::map<int, int>  ft;
   std::map<int, int> std;
   int                 size = 100000;
-  std::srand(std::time(0));
+  srand(time(0));
   for (int i = 0; i < size; ++i) {
     int                                         key = std::rand() % size;
     int                                         val = std::rand() % size;
@@ -262,7 +262,7 @@ TEST(MapTest, MapOperate) {
 
 // swap
 TEST(MapTest, MapSwap) {
-  std::srand(std::time(0));
+  srand(time(0));
   size_t             size = 100;
   ft::map<int, int>  ft1;
   std::map<int, int> std1;
@@ -366,7 +366,7 @@ TEST(MapTest, MapCount) {
 // lower_bound
 TEST(MapTest, MapLower_bound) {
   size_t size = 10000;
-  std::srand(std::time(0));
+  srand(time(0));
 
   // iterator lower_bound(const key_type& k)
   ft::map<int, int>  ft;
@@ -501,7 +501,7 @@ TEST(MapTest, MapEqual_range) {
 // non-member functions
 TEST(MapTest, MapNonMemberFunc) {
   int size = 5;
-  std::srand(std::time(0));
+  srand(time(0));
   ft::map<int, int>  ft;
   std::map<int, int> std;
   ft::map<int, int>  ft_large;

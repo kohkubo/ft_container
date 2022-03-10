@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <memory>
+#include <limits>
 
 #include "pair.hpp"
 #include "pointer_traits.hpp"

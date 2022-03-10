@@ -81,3 +81,12 @@ static void BM_VectorAssign(benchmark::State& state) {
   }
 }
 BENCHMARK(BM_VectorAssign)->Range(1, MAX_RANGE_SIZE);
+
+static void BM_VectorSwap(benchmark::State& state) {
+  USE_LIB::vector<int> v(1000);
+  USE_LIB::vector<int> v2(state.range(0));
+  for (auto _ : state) {
+    v.swap(v2);
+  }
+}
+BENCHMARK(BM_VectorSwap)->Range(1, MAX_RANGE_SIZE);

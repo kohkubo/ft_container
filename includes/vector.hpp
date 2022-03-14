@@ -54,7 +54,10 @@ class vector {
     __end_ = __begin_ + v.size();
   }
   ~vector() {
-    if (__begin_) __alloc_.deallocate(__begin_, __end_cap_ - __begin_);
+    if (__begin_) {
+      clear();
+      __alloc_.deallocate(__begin_, capacity());
+    }
   }
   // ===========================================================================
   // Element access

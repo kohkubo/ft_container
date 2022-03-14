@@ -1,4 +1,5 @@
 #include <deque>
+#include <list>
 #include <iostream>
 #include <string>
 #if 1  // CREATE A REAL STL EXAMPLE
@@ -55,6 +56,7 @@ int main(int argc, char** argv) {
   ft::stack<int>                         stack_int;
   ft::vector<Buffer>                     vector_buffer;
   ft::stack<Buffer, std::deque<Buffer> > stack_deq_buffer;
+  ft::stack<Buffer, std::list<Buffer> >  stack_list_buffer;
   ft::map<int, int>                      map_int;
 
   for (int i = 0; i < COUNT; i++) {

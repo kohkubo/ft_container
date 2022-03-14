@@ -342,3 +342,30 @@ TEST(Map, NonMemberFunctions) {
   EXPECT_EQ(m4 >= m6, false);
   EXPECT_EQ(m6 >= m4, true);
 }
+
+TEST(Map, other) {
+  LIB::map<int, int> m;
+  m.insert(LIB::make_pair(1, 1));
+  std::cout << "m  " << &*m.begin() << std::endl;
+
+  LIB::map<int, int>::iterator it = m.begin();
+  std::cout << it->first << " " << it->second << std::endl;
+  std::cout << m.size() << std::endl;
+
+  LIB::map<int, int> m2;
+  m2.insert(LIB::make_pair(1, 1));
+  std::cout << "m2 " << &*m2.begin() << std::endl;
+  std::cout << "swap" << std::endl;
+  swap(m, m2);
+  std::cout << "m  " << &*m.begin() << std::endl;
+  std::cout << "m2 " << &*m2.begin() << std::endl;
+}
+
+TEST(Map, other2) {
+  LIB::map<int, int> m;
+  m.insert(LIB::make_pair(1, 1));
+  std::cout << "first " << &*m.begin() << std::endl;
+
+  m.insert(LIB::make_pair(2, 2));
+  std::cout << "second " << &*m.begin() << std::endl;
+}

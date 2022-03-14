@@ -142,9 +142,9 @@ class map {
   void insert(InputIterator first, InputIterator last) {
     __tree_.insert(first, last);
   }
-  iterator erase(iterator position) { return __tree_.erase(position); }
-  iterator erase(iterator first, iterator last) {
-    return __tree_.erase(first, last);
+  void erase(iterator position) { __tree_.erase(position); }
+  void erase(iterator first, iterator last) {
+    __tree_.erase(first, last);
   }
   size_type      erase(const key_type& k) { return __tree_.erase(k); }
   void           swap(map& x) { __tree_.swap(x.__tree_); }

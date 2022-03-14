@@ -194,12 +194,8 @@ TEST(MapTest, MapRandomInsertAndEraseAndClear) {
     ft::map<int, int>::iterator  ft_ret  = ft.find(key);
     std::map<int, int>::iterator std_ret = std.find(key);
     if (ft_ret != ft.end()) {
-      ft_ret  = ft.erase(ft_ret);
-      std_ret = std.erase(std_ret);
-      if (ft_ret != ft.end()) {
-        EXPECT_EQ(ft_ret->first, std_ret->first);
-        EXPECT_EQ(ft_ret->second, std_ret->second);
-      }
+      ft.erase(ft_ret);
+      std.erase(std_ret);
     }
   }
   // erase(iterator first, iterator last)
@@ -212,12 +208,8 @@ TEST(MapTest, MapRandomInsertAndEraseAndClear) {
     if (ft.count(key) + ft.count(key2) == 2) {
       ft::map<int, int>::iterator  ft_ret  = ft.find(key);
       std::map<int, int>::iterator std_ret = std.find(key);
-      ft_ret                               = ft.erase(ft_ret, ft.find(key2));
-      std_ret                              = std.erase(std_ret, std.find(key2));
-      if (ft_ret != ft.end()) {
-        EXPECT_EQ(ft_ret->first, std_ret->first);
-        EXPECT_EQ(ft_ret->second, std_ret->second);
-      }
+      ft.erase(ft_ret, ft.find(key2));
+      std.erase(std_ret, std.find(key2));
     }
   }
   // erase(const key_type& __x)

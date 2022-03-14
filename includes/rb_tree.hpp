@@ -18,18 +18,13 @@ namespace ft {
 // =============================================================================
 template <class _Tp>
 class __tree_node {
-  // ===========================================================================
-  // tree_node_type
-  // ===========================================================================
  public:
   typedef _Tp                            key_type;
   typedef key_type                       value_type;
   typedef value_type                     __node_value_type;
   typedef __tree_node<__node_value_type> __node_type;
   typedef __node_type*                   __node_pointer;
-  // ===========================================================================
-  // tree_node
-  // ===========================================================================
+
  public:
   typedef __tree_node* pointer;
 
@@ -39,9 +34,7 @@ class __tree_node {
   pointer           __right_;
   pointer           __left_;
   bool              __is_black_;
-  // ===========================================================================
-  // construct/copy/destroy:
-  // ===========================================================================
+
   explicit __tree_node(const __node_value_type& __x)
       : __value_(__x),
         __parent_(NULL),
@@ -56,18 +49,13 @@ class __tree_node {
 // =============================================================================
 template <class _Key, class _Tp>
 class __tree_node<pair<const _Key, _Tp> > {
-  // ===========================================================================
-  // tree_node_type
-  // ===========================================================================
  public:
   typedef _Key                           key_type;
   typedef _Tp                            mapped_type;
   typedef pair<const _Key, _Tp>          __node_value_type;
   typedef __tree_node<__node_value_type> __node_type;
   typedef __node_type*                   __node_pointer;
-  // ===========================================================================
-  // tree_node
-  // ===========================================================================
+
  public:
   typedef __tree_node* pointer;
 
@@ -77,9 +65,7 @@ class __tree_node<pair<const _Key, _Tp> > {
   pointer           __right_;
   pointer           __left_;
   bool              __is_black_;
-  // ===========================================================================
-  // construct/copy/destroy:
-  // ===========================================================================
+
   explicit __tree_node(const __node_value_type& __x)
       : __value_(__x),
         __parent_(NULL),

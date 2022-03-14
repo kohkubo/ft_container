@@ -225,7 +225,7 @@ class vector {
   }
   void __vdeallocate() {
     if (__begin_) {
-      __alloc_.deallocate(__begin_, __end_cap_ - __begin_);
+      __alloc_.deallocate(__begin_, capacity());
       __begin_   = 0;
       __end_     = 0;
       __end_cap_ = 0;

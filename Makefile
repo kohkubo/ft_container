@@ -50,12 +50,12 @@ $(gtest):
 	curl -OL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
 	tar -xvzf release-1.11.0.tar.gz googletest-release-1.11.0
 	$(RM) -rf release-1.11.0.tar.gz
-	python googletest-release-1.11.0/googletest/scripts/fuse_gtest_files.py $(gtestdir)
+	python3 googletest-release-1.11.0/googletest/scripts/fuse_gtest_files.py $(gtestdir)
 	mv googletest-release-1.11.0 $(gtestdir)
 
 test_compile = clang++ -std=c++11 \
 	$(testdir)/gtest.cpp $(gtestdir)/googletest-release-1.11.0/googletest/src/gtest_main.cc $(gtestdir)/gtest/gtest-all.cc \
-	-g -fsanitize=address -fsanitize=undefined \
+	-g -fsanitize=address -fsanitize=undefined -fsanitize=leak \
 	-I$(gtestdir) -I/usr/local/opt/llvm/include -I$(includes) -lpthread -o tester
 
 .PHONY: test

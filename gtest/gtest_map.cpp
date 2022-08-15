@@ -196,8 +196,10 @@ TEST(Map, Modifiers) {
   for (int i = 0; i < SIZE; ++i) {
     m4.insert(LIB::make_pair(i, i));
   }
+  LIB::map<int, int>::iterator it3 = m4.begin();
   for (int i = 0; i < SIZE; ++i) {
-    EXPECT_EQ(m4[i], i);
+    EXPECT_EQ(it3->first, i);
+    ++it3;
   }
 
   // void erase( iterator first, iterator last );
@@ -368,4 +370,7 @@ TEST(Map, other2) {
 
   m.insert(LIB::make_pair(2, 2));
   std::cout << "second " << &*m.begin() << std::endl;
+
+  m[3];
+  std::cout << "m[3]" << m.count(3) << std::endl;
 }

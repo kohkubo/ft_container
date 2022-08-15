@@ -14,12 +14,15 @@
 
 TEST(Vector, Constructor) {
   // vector();
+
   LIB::vector<int> v;
+
   EXPECT_EQ(v.size(), 0);
   EXPECT_EQ(v.capacity(), 0);
   EXPECT_EQ(v.empty(), true);
   EXPECT_EQ(v.begin(), v.end());
   EXPECT_EQ(v.rbegin(), v.rend());
+
   for (int i = 0; i < 10; ++i) {
     v.push_back(i);
   }
@@ -136,8 +139,10 @@ TEST(Vector, Access) {
 // iterators
 TEST(Vector, Iterators) {
   LIB::vector<int> v1;
+  LIB::vector<int> v2;
   for (int i = 0; i < 10; ++i) {
     v1.push_back(i);
+    v2.push_back(i + 1);
   }
   // begin
   for (int i = 0; i < 10; ++i) {
@@ -155,6 +160,10 @@ TEST(Vector, Iterators) {
   for (int i = 0; i < 10; ++i) {
     EXPECT_EQ(*(v1.rend() - i - 1), i);
   }
+  LIB::vector<int>::iterator it = v1.begin();
+  LIB::vector<int>::const_iterator cit = v2.begin();
+  std::cout << "v1.begin() < v2.begin() : " << (v1.begin() < v2.begin())
+            << std::endl;
 }
 
 // capacity
@@ -170,6 +179,7 @@ TEST(Vector, Capacity) {
   // reserve
   v1.reserve(100);
   EXPECT_EQ(v1.capacity(), 100);
+  std::cout << v1.max_size() << std::endl;
 }
 
 // modifiers
@@ -326,7 +336,12 @@ TEST(Vector, NonMemberFunctions) {
   EXPECT_EQ(v1 <= v2, false);
 
   // swap
+  std::cout << "v1.begin() = " << v1.begin().base() << std::endl;
+  std::cout << "v2.begin() = " << v2.begin().base() << std::endl;
+  std::cout << "swap" << std::endl;
   swap(v1, v2);
+  std::cout << "v1.begin() = " << v1.begin().base() << std::endl;
+  std::cout << "v2.begin() = " << v2.begin().base() << std::endl;
   EXPECT_EQ(v1 <= v2, true);
 }
 
